@@ -1,0 +1,148 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Findlydeal design tokens.
+   The whole palette is defined here and nowhere else: components only ever
+   reference semantic names (bg-primary, text-muted-foreground, bg-cream…).
+   The UI is deliberately light-only — no dark theme is exposed.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* Brand */
+  --brand-500: #e8763a; /* primary orange */
+  --brand-400: #f0996b; /* gradient end */
+  --brand-100: #fbe4d5; /* icon tiles */
+  --brand-50: #fdf5ef; /* warm section background */
+
+  --ink: #1f1d1b; /* footer, hero backdrop */
+  --deal: #3fa46a; /* discounted price */
+  --deal-soft: #6ecf97; /* "best deal" badge */
+
+  /* Semantic (shadcn contract) */
+  --background: #ffffff;
+  --foreground: #262320;
+
+  --card: #ffffff;
+  --card-foreground: #262320;
+  --popover: #ffffff;
+  --popover-foreground: #262320;
+
+  --primary: var(--brand-500);
+  --primary-foreground: #ffffff;
+
+  --secondary: var(--brand-50);
+  --secondary-foreground: #262320;
+
+  --muted: #f6f3f0;
+  --muted-foreground: #6f6862;
+
+  --accent: var(--brand-50);
+  --accent-foreground: var(--brand-500);
+
+  --destructive: #d64545;
+
+  --border: #ece7e2;
+  --input: #e4ded8;
+  --ring: var(--brand-500);
+
+  --radius: 0.875rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Findlydeal-specific */
+  --color-cream: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-400: var(--brand-400);
+  --color-ink: var(--ink);
+  --color-deal: var(--deal);
+  --color-deal-soft: var(--deal-soft);
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-poppins);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@utility brand-gradient {
+  background-image: linear-gradient(100deg, var(--brand-500) 0%, var(--brand-400) 100%);
+}
+
+/**
+ * Scroll shadows for any horizontally scrollable container.
+ *
+ * Pure CSS: the two white gradients are attached to the *content* (`local`),
+ * the two dark ones to the *viewport* (`scroll`). The result is that a shadow
+ * only appears on the side where content is still hidden, and fades away as
+ * soon as you reach that end. No JavaScript, no scroll listener.
+ *
+ * Used on tables, which are the one element that cannot be made narrow enough
+ * for a phone without becoming unreadable.
+ */
+@utility scroll-shadows {
+  background-image:
+    linear-gradient(to right, var(--background) 30%, transparent),
+    linear-gradient(to left, var(--background) 30%, transparent),
+    radial-gradient(farthest-side at 0 50%, rgba(31, 29, 27, 0.16), transparent),
+    radial-gradient(farthest-side at 100% 50%, rgba(31, 29, 27, 0.16), transparent);
+  background-position:
+    left center,
+    right center,
+    left center,
+    right center;
+  background-repeat: no-repeat;
+  background-size:
+    2.5rem 100%,
+    2.5rem 100%,
+    0.9rem 100%,
+    0.9rem 100%;
+  background-attachment: local, local, scroll, scroll;
+}
