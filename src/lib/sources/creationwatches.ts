@@ -1,3 +1,4 @@
+import { sourcePresentation } from "@/config/sources";
 import type { Locale, Offer } from "@/types";
 import {
   SourceNotConfiguredError,
@@ -31,7 +32,7 @@ export function buildStoreSearchUrl(term: string): string {
 
 export const creationWatchesSource: SourceAdapter = {
   id: "creationwatches",
-  label: "Creation Watches",
+  label: sourcePresentation.creationwatches.label,
   categories: ["watches-jewelry"],
 
   isConfigured() {

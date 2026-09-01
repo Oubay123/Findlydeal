@@ -1,4 +1,4 @@
-import type { CategorySlug, SourceId } from "@/types";
+import type { SourceId } from "@/types";
 import { backMarketSource } from "./backmarket";
 import { creationWatchesSource } from "./creationwatches";
 import { ebaySource } from "./ebay";
@@ -27,8 +27,4 @@ export function getSource(id: SourceId): SourceAdapter | undefined {
 /** Sources whose credentials are present — the only ones worth querying. */
 export function getConfiguredSources(): SourceAdapter[] {
   return adapters.filter((adapter) => adapter.isConfigured());
-}
-
-export function getSourcesForCategory(categorySlug: CategorySlug): SourceAdapter[] {
-  return adapters.filter((adapter) => adapter.categories.includes(categorySlug));
 }

@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { categories } from "@/config/categories";
 import { browseMenuGroups } from "@/config/menu";
 import { mainNav, siteConfig } from "@/config/site";
+import { useLocalePath } from "@/i18n/use-locale";
 
 /**
  * Navigation drawer, opened by the hamburger. Available at every breakpoint:
@@ -22,6 +23,7 @@ import { mainNav, siteConfig } from "@/config/site";
  * and a lost open animation, so it stays inline.
  */
 export function MobileMenu() {
+  const path = useLocalePath();
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -45,7 +47,7 @@ export function MobileMenu() {
         <nav className="flex-1 overflow-y-auto pb-8" aria-label="Navigation mobile">
           <Section title="Tous les univers">
             {categories.map((category) => (
-              <Row key={category.slug} href={`/category/${category.slug}`} onNavigate={close}>
+              <Row key={category.slug} href={path(`/category/${category.slug}`)} onNavigate={close}>
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-primary">
                   <CategoryIcon name={category.icon} className="size-4" />
                 </span>
@@ -57,7 +59,7 @@ export function MobileMenu() {
           {browseMenuGroups.map((group) => (
             <Section key={group.title} title={group.title}>
               {group.items.map((item) => (
-                <Row key={item.href} href={item.href} onNavigate={close}>
+                <Row key={item.href} href={path(item.href)} onNavigate={close}>
                   {item.title}
                 </Row>
               ))}
@@ -66,11 +68,11 @@ export function MobileMenu() {
 
           <Section title={siteConfig.name}>
             {mainNav.map((item) => (
-              <Row key={item.href} href={item.href} onNavigate={close}>
+              <Row key={item.href} href={path(item.href)} onNavigate={close}>
                 {item.title}
               </Row>
             ))}
-            <Row href="/about" onNavigate={close}>
+            <Row href={path("/about")} onNavigate={close}>
               À propos
             </Row>
           </Section>
@@ -83,9 +85,9 @@ export function MobileMenu() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="border-b py-3 last:border-b-0">
-      <h3 className="px-5 pt-1 pb-2 font-display text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+      <h2 className="px-5 pt-1 pb-2 font-display text-xs font-semibold tracking-wider text-muted-foreground uppercase">
         {title}
-      </h3>
+      </h2>
       <ul>{children}</ul>
     </section>
   );

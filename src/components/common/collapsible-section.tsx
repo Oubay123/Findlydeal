@@ -39,7 +39,7 @@ export function CollapsibleSection({
       className={cn("rounded-2xl border bg-white", className)}
     >
       <AccordionItem value="section" className="border-b-0 px-5 sm:px-6">
-        <AccordionTrigger className="py-5 hover:no-underline">
+        <AccordionTrigger headingLevel={2} className="py-5 hover:no-underline">
           <span className="flex flex-1 flex-wrap items-center justify-between gap-3 pr-3">
             <span className="font-display text-xl font-semibold">{title}</span>
             {meta}

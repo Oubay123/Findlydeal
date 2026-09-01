@@ -27,14 +27,3 @@ export function normalizeTerm(term: string): string {
 export function buildQueryKey(term: string, locale: string): string {
   return `${locale}:${normalizeTerm(term)}`;
 }
-
-/**
- * Rough signal used to decide whether a query is specific enough to group
- * offers into a single product ("iphone 15 pro 256") or too broad ("laptop").
- */
-export function isSpecificQuery(term: string): boolean {
-  const normalized = normalizeTerm(term);
-  const hasNumber = /\d/.test(normalized);
-  const wordCount = normalized.split(" ").filter(Boolean).length;
-  return wordCount >= 2 && hasNumber;
-}

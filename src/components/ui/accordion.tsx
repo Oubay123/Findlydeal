@@ -32,28 +32,41 @@ function AccordionItem({
 function AccordionTrigger({
   className,
   children,
+  headingLevel = 3,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Trigger> & {
+  /**
+   * Heading level of the trigger. Radix renders `h3` and offers no way to
+   * change it, which is wrong wherever the accordion is the page's own
+   * content: on `/faq` the questions sit directly under the `h1`, and an
+   * `h1 -> h3` jump is a real outline error, not a nitpick.
+   */
+  headingLevel?: 2 | 3 | 4;
+}) {
+  const Heading = `h${headingLevel}` as "h2" | "h3" | "h4";
+
   return (
-    <AccordionPrimitive.Header className="flex">
-      <AccordionPrimitive.Trigger
-        data-slot="accordion-trigger"
-        className={cn(
-          "group/accordion-trigger relative flex flex-1 items-start justify-between rounded-lg border border-transparent py-2.5 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:after:border-ring disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 **:data-[slot=accordion-trigger-icon]:text-muted-foreground",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        <ChevronDownIcon
-          data-slot="accordion-trigger-icon"
-          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
-        />
-        <ChevronUpIcon
-          data-slot="accordion-trigger-icon"
-          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
-        />
-      </AccordionPrimitive.Trigger>
+    <AccordionPrimitive.Header asChild>
+      <Heading className="flex">
+        <AccordionPrimitive.Trigger
+          data-slot="accordion-trigger"
+          className={cn(
+            "group/accordion-trigger relative flex flex-1 items-start justify-between rounded-lg border border-transparent py-2.5 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:after:border-ring disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 **:data-[slot=accordion-trigger-icon]:text-muted-foreground",
+            className,
+          )}
+          {...props}
+        >
+          {children}
+          <ChevronDownIcon
+            data-slot="accordion-trigger-icon"
+            className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+          />
+          <ChevronUpIcon
+            data-slot="accordion-trigger-icon"
+            className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+          />
+        </AccordionPrimitive.Trigger>
+      </Heading>
     </AccordionPrimitive.Header>
   );
 }

@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
+import { localePath, type UiLocale } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
+  /** Which language's home page the wordmark links back to. */
+  locale: UiLocale;
   className?: string;
   /** Light wordmark, for the dark footer. */
   inverted?: boolean;
@@ -12,10 +15,10 @@ interface LogoProps {
  * Findlydeal wordmark: a magnifier tile followed by "Findly" + "deal",
  * the second half carrying the brand orange.
  */
-export function Logo({ className, inverted }: LogoProps) {
+export function Logo({ locale, className, inverted }: LogoProps) {
   return (
     <Link
-      href="/"
+      href={localePath(locale, "/")}
       aria-label="Findlydeal, retour à l'accueil"
       className={cn("flex items-center gap-2.5", className)}
     >

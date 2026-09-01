@@ -67,20 +67,12 @@ export function getMockProductById(id: string): Product | undefined {
   return productsById.get(id);
 }
 
-export function getMockProductsByCategory(slug: CategorySlug): Product[] {
-  return products.filter((product) => matchesCategory(product, slug));
-}
-
-/**
- * Products carrying the strongest deal signal, best first.
- * Feeds the "Les bonnes affaires du moment" section of the landing page.
+/*
+ * The home page's deal shelf used to live here as `getFeaturedMockDeals()`.
+ * It now goes through `@/lib/products/collections`, which asks the same
+ * question of whichever pool is active — this catalogue today, the real
+ * sources tomorrow — so the page does not have to know which one answered.
  */
-export function getFeaturedMockDeals(limit = 8): Product[] {
-  return [...products]
-    .filter((product) => (product.bestOffer?.deal?.score ?? 0) > 0)
-    .sort((a, b) => (b.bestOffer?.deal?.score ?? 0) - (a.bestOffer?.deal?.score ?? 0))
-    .slice(0, limit);
-}
 
 /** Same filtering contract as a real search, applied in memory. */
 export function searchMockProducts(query: SearchQuery): Product[] {

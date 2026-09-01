@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/common/locale-link";
 import { ImageOff } from "lucide-react";
 import { DemoBadge } from "@/components/common/demo-notice";
 import { RatingStars } from "@/components/common/rating-stars";
@@ -7,33 +7,46 @@ import { DealBadge } from "@/components/product/deal-badge";
 import { PriceBadge } from "@/components/product/price-badge";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS } from "@/lib/constants";
+import { getServerDictionary } from "@/i18n/server";
+import type { ImageContext } from "@/lib/utils/images";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
   product: Product;
   /** Rendered next to the button — the compare checkbox on the search page. */
   action?: React.ReactNode;
+  /**
+   * Where the card is displayed, which decides the `sizes` attribute.
+   * A card in a scrolling shelf is ~264 px wide even on mobile, so the grid
+   * default would make the browser download a full-width image for it.
+   */
+  imageContext?: ImageContext;
 }
 
 /**
  * One result in a product grid. Links to the comparison page rather than to a
  * merchant, so the user always sees every offer before leaving.
  */
-export function ProductCard({ product, action }: ProductCardProps) {
+export async function ProductCard({
+  product,
+  action,
+  imageContext = "productCardGrid",
+}: ProductCardProps) {
+  const t = await getServerDictionary();
   const { bestOffer } = product;
   const href = `/product/${encodeURIComponent(product.id)}`;
   const otherOffers = product.offers.length - 1;
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border bg-white transition-shadow hover:shadow-lg hover:shadow-black/5">
-      <Link href={href} className="block">
+      <LocaleLink href={href} className="block">
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
           {product.imageUrl ? (
             <SmartImage
               src={product.imageUrl}
               alt={product.imageAlt ?? product.title}
               fill
-              context="productCardGrid"
+              context={imageContext}
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
@@ -56,17 +69,21 @@ export function ProductCard({ product, action }: ProductCardProps) {
 
           <DemoBadge className="absolute bottom-3 left-3" />
         </div>
-      </Link>
+      </LocaleLink>
 
       <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-4">
-        <Link href={href}>
+        <LocaleLink href={href}>
           <h3 className="line-clamp-2 text-sm leading-snug font-medium transition-colors hover:text-primary">
             {product.title}
           </h3>
-        </Link>
+        </LocaleLink>
 
         {product.rating ? (
-          <RatingStars value={product.rating.value} count={product.rating.count} />
+          <RatingStars
+            value={product.rating.value}
+            count={product.rating.count}
+            variant="compact"
+          />
         ) : null}
 
         {bestOffer ? (
@@ -84,7 +101,7 @@ export function ProductCard({ product, action }: ProductCardProps) {
         <div className="mt-auto space-y-2 pt-1">
           {action}
           <Button asChild className="h-11 w-full rounded-lg">
-            <Link href={href}>Comparer les offres</Link>
+            <LocaleLink href={href}>{t.product.compareOffers}</LocaleLink>
           </Button>
         </div>
       </div>

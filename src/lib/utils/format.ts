@@ -15,14 +15,6 @@ export function formatPrice(money: Money, locale: string = "fr-FR"): string {
   }).format(money.amount / 100);
 }
 
-/** Render a price range, collapsing it when both ends are equal. */
-export function formatPriceRange(min: Money, max: Money, locale: string = "fr-FR"): string {
-  if (min.currency === max.currency && min.amount === max.amount) {
-    return formatPrice(min, locale);
-  }
-  return `${formatPrice(min, locale)} – ${formatPrice(max, locale)}`;
-}
-
 /** `formatDiscount(18.4)` -> "-18%" */
 export function formatDiscount(percent: number): string {
   return `-${Math.round(percent)}%`;

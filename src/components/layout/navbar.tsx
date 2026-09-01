@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { CategoryIcon } from "@/components/category/category-icon";
 import {
@@ -12,6 +11,7 @@ import {
 import { categories } from "@/config/categories";
 import { browseMenuGroups } from "@/config/menu";
 import { mainNav } from "@/config/site";
+import { useLocalePath, useUnprefixedPathname } from "@/i18n/use-locale";
 import { cn } from "@/lib/utils";
 
 /**
@@ -22,7 +22,8 @@ import { cn } from "@/lib/utils";
  * both without becoming a scrollbar.
  */
 export function Navbar() {
-  const pathname = usePathname();
+  const pathname = useUnprefixedPathname();
+  const path = useLocalePath();
   const isBrowseActive = pathname.startsWith("/category") || pathname.startsWith("/search");
 
   return (
@@ -54,7 +55,7 @@ export function Navbar() {
                 {categories.map((category) => (
                   <li key={category.slug}>
                     <Link
-                      href={`/category/${category.slug}`}
+                      href={path(`/category/${category.slug}`)}
                       className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-accent"
                     >
                       <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-primary">
@@ -82,7 +83,7 @@ export function Navbar() {
                     {group.items.map((item) => (
                       <li key={item.href}>
                         <Link
-                          href={item.href}
+                          href={path(item.href)}
                           className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm text-foreground/80 transition-colors hover:bg-white hover:text-primary"
                         >
                           {item.title}
@@ -103,7 +104,7 @@ export function Navbar() {
         return (
           <Link
             key={item.href}
-            href={item.href}
+            href={path(item.href)}
             aria-current={isActive ? "page" : undefined}
             className={cn(
               "text-[15px] transition-colors",

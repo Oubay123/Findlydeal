@@ -1,5 +1,8 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/common/locale-link";
 import type { MDXComponents } from "mdx/types";
+import { ArticleFigure } from "@/components/blog/article-figure";
+import { ArticleProduct } from "@/components/blog/article-product";
+import { ArticleSummary } from "@/components/blog/article-summary";
 import { ScrollableTable } from "@/components/common/scrollable-table";
 import { SmartImage } from "@/components/common/smart-image";
 
@@ -67,9 +70,12 @@ const components: MDXComponents = {
         {children}
       </a>
     ) : (
-      <Link href={href ?? "#"} className="break-words text-primary underline underline-offset-4">
+      <LocaleLink
+        href={href ?? "#"}
+        className="break-words text-primary underline underline-offset-4"
+      >
         {children}
-      </Link>
+      </LocaleLink>
     );
   },
 
@@ -98,6 +104,17 @@ const components: MDXComponents = {
   td: ({ children }) => (
     <td className="border-b px-4 py-3 align-top text-foreground/80 last:border-b-0">{children}</td>
   ),
+
+  /**
+   * Custom blocks available in any article without an import.
+   *
+   *   <ArticleSummary points={["…", "…"]} />
+   *   <ArticleFigure src="…" alt="…" caption="…" credit="…" />
+   *   <ArticleProduct slug="apple-iphone-13-128go-minuit" />
+   */
+  ArticleSummary,
+  ArticleFigure,
+  ArticleProduct,
 
   img: (props) => (
     <SmartImage

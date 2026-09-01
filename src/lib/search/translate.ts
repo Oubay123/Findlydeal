@@ -34,8 +34,3 @@ export async function expandTermToLocales(
   // TODO: replace with the glossary + translation API strategy above.
   return locales.map((locale) => ({ locale, term: normalized }));
 }
-
-/** True when the term is language-neutral (model numbers, references, EANs). */
-export function isLanguageNeutral(term: string): boolean {
-  return /^[\p{Lu}\p{N}\s\-+./]+$/u.test(term.trim()) && /\d/.test(term);
-}

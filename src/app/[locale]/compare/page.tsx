@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { LocaleLink } from "@/components/common/locale-link";
 import { Breadcrumbs } from "@/components/common/breadcrumbs";
 import { Container } from "@/components/common/container";
 import { DemoBanner, DemoFootnote } from "@/components/common/demo-notice";
 import { SectionTitle } from "@/components/common/section-title";
 import { ComparisonTable } from "@/components/product/comparison-table";
+import { ProductRow } from "@/components/product/product-row";
 import { Button } from "@/components/ui/button";
 import { MAX_COMPARED_PRODUCTS, MIN_COMPARED_PRODUCTS, SEARCH_PARAM_KEYS } from "@/lib/constants";
 import { getProductById } from "@/lib/products";
+import { getSimilarToAll } from "@/lib/products/related";
 
 export const metadata: Metadata = {
   title: "Comparer des produits",
   description:
-    "Mettez jusqu'à quatre produits côte à côte : prix, état, note et fiche technique alignés sur une seule page.",
+    "Mettez jusqu'à six produits côte à côte : prix, état, note et fiche technique alignés sur une seule page.",
   // A comparison is a personal, ephemeral selection: useful to share by link,
   // useless in a search index.
   robots: { index: false, follow: true },
@@ -31,6 +33,10 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
     await Promise.all(ids.slice(0, MAX_COMPARED_PRODUCTS).map((id) => getProductById(id)))
   ).filter((product) => product !== null);
 
+  // Alternatives à l'ensemble du panier, pas à un seul de ses produits.
+  const alternatives =
+    products.length >= MIN_COMPARED_PRODUCTS ? await getSimilarToAll(products) : [];
+
   return (
     <>
       <DemoBanner />
@@ -39,6 +45,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         <Breadcrumbs items={[{ name: "Comparateur", href: "/search" }, { name: "Comparaison" }]} />
 
         <SectionTitle
+          as="h1"
           title="Comparaison côte à côte"
           description={
             products.length > 0
@@ -53,9 +60,16 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             <DemoFootnote />
             <div>
               <Button asChild variant="outline-brand" size="md">
-                <Link href="/search">Retour aux résultats</Link>
+                <LocaleLink href="/search">Retour aux résultats</LocaleLink>
               </Button>
             </div>
+
+            <ProductRow
+              title="Produits similaires"
+              description="D'autres références proches de celles que vous comparez."
+              products={alternatives}
+              href="/search"
+            />
           </>
         ) : (
           <div className="space-y-3 rounded-2xl bg-cream p-12 text-center">
@@ -67,7 +81,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
               intéressent (jusqu&apos;à {MAX_COMPARED_PRODUCTS}), puis revenez ici.
             </p>
             <Button asChild size="md" className="mt-2">
-              <Link href="/search">Aller au comparateur</Link>
+              <LocaleLink href="/search">Aller au comparateur</LocaleLink>
             </Button>
           </div>
         )}

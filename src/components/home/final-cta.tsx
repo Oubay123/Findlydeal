@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/common/locale-link";
 import { Container } from "@/components/common/container";
 import { Button } from "@/components/ui/button";
 
@@ -18,7 +18,7 @@ export function FinalCta() {
           size="xl"
           className="mt-2 bg-white font-semibold text-primary hover:bg-white/90"
         >
-          <Link href="/search">Voir les produits</Link>
+          <LocaleLink href="/search">Voir les produits</LocaleLink>
         </Button>
       </Container>
     </section>

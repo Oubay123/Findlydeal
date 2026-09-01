@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { SourceLogo } from "@/components/common/source-logo";
+import { LocaleLink } from "@/components/common/locale-link";
 import { ImageOff } from "lucide-react";
 import { DemoBadge } from "@/components/common/demo-notice";
 import { RatingStars } from "@/components/common/rating-stars";
@@ -30,7 +31,7 @@ export function ProductListRow({ product, action }: ProductListRowProps) {
 
   return (
     <article className="group flex flex-col gap-4 rounded-2xl border bg-white p-4 transition-shadow hover:shadow-md hover:shadow-black/5 sm:flex-row">
-      <Link href={href} className="shrink-0">
+      <LocaleLink href={href} className="shrink-0">
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-muted sm:aspect-square sm:w-40">
           {product.imageUrl ? (
             <SmartImage
@@ -47,7 +48,7 @@ export function ProductListRow({ product, action }: ProductListRowProps) {
           )}
           <DemoBadge className="absolute bottom-2 left-2" />
         </div>
-      </Link>
+      </LocaleLink>
 
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
@@ -60,20 +61,24 @@ export function ProductListRow({ product, action }: ProductListRowProps) {
         </div>
 
         <h3 className="text-sm leading-snug font-medium">
-          <Link href={href} className="transition-colors hover:text-primary">
+          <LocaleLink href={href} className="transition-colors hover:text-primary">
             {product.title}
-          </Link>
+          </LocaleLink>
         </h3>
 
         {product.rating ? (
-          <RatingStars value={product.rating.value} count={product.rating.count} />
+          <RatingStars
+            value={product.rating.value}
+            count={product.rating.count}
+            variant="compact"
+          />
         ) : null}
 
         {sortedOffers.length > 0 ? (
           <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
             {sortedOffers.slice(0, 4).map((offer, index) => (
               <li key={offer.id} className="flex items-center gap-1.5">
-                <span className="capitalize">{offer.source}</span>
+                <SourceLogo source={offer.source} />
                 <span className={index === 0 ? "font-semibold text-deal" : "font-medium"}>
                   {formatPrice(offer.totalPrice)}
                 </span>
@@ -101,7 +106,7 @@ export function ProductListRow({ product, action }: ProductListRowProps) {
         <div className="w-full space-y-2 sm:w-40">
           {action}
           <Button asChild className="h-10 w-full rounded-lg">
-            <Link href={href}>Voir les offres</Link>
+            <LocaleLink href={href}>Voir les offres</LocaleLink>
           </Button>
         </div>
       </div>

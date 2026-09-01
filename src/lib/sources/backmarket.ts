@@ -1,3 +1,4 @@
+import { sourcePresentation } from "@/config/sources";
 import type { Locale, Offer } from "@/types";
 import {
   SourceNotConfiguredError,
@@ -21,7 +22,7 @@ import {
  */
 export const backMarketSource: SourceAdapter = {
   id: "backmarket",
-  label: "Back Market",
+  label: sourcePresentation.backmarket.label,
   categories: ["tech", "refurbished", "second-hand"],
 
   isConfigured() {

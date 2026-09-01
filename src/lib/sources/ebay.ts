@@ -1,3 +1,4 @@
+import { sourcePresentation } from "@/config/sources";
 import type { Locale, Offer } from "@/types";
 import {
   SourceNotConfiguredError,
@@ -23,7 +24,7 @@ import {
  */
 export const ebaySource: SourceAdapter = {
   id: "ebay",
-  label: "eBay",
+  label: sourcePresentation.ebay.label,
   categories: ["tech", "home-appliances", "watches-jewelry", "fashion", "leisure", "second-hand"],
 
   isConfigured() {

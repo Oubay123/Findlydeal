@@ -47,7 +47,16 @@ export function DemoBadge({ className }: { className?: string }) {
   );
 }
 
-/** One-line footnote for the bottom of a product section. */
+/**
+ * One-line footnote closing a section that shows demonstration prices.
+ *
+ * The wording is never paraphrased: this is the sentence an affiliate reviewer
+ * reads, so every call site renders the same one.
+ *
+ * The home page does not use it. Its `DemoBanner` carries the disclosure above
+ * the fold, and repeating it under the shelves said the same thing a second
+ * time on the one page where it was already the first thing visible.
+ */
 export function DemoFootnote({ className }: { className?: string }) {
   if (!isDemoCatalogueActive()) return null;
 

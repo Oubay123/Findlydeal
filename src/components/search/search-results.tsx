@@ -1,11 +1,12 @@
-import { PackageSearch, SearchX, TriangleAlert } from "lucide-react";
+import { LocaleLink } from "@/components/common/locale-link";
+import { FilterX, PackageSearch, SearchX, TriangleAlert } from "lucide-react";
 import { DemoFootnote } from "@/components/common/demo-notice";
 import { ProductCard } from "@/components/product/product-card";
 import { ProductListRow } from "@/components/product/product-list-row";
 import { CompareToggle } from "@/components/search/compare-toggle";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ResultsView } from "@/lib/constants";
-import type { SearchResult } from "@/types";
+import type { SearchFilters, SearchQuery, SearchResult } from "@/types";
 
 interface SearchResultsProps {
   result: SearchResult;
@@ -30,7 +31,16 @@ export function SearchResults({
   const label = query.term || emptyTermLabel;
 
   return (
-    <section aria-label="Résultats de recherche" className="space-y-6">
+    <section aria-labelledby="resultats" className="space-y-6">
+      {/*
+        Visually hidden, but it is what makes the outline valid: product card
+        titles are h3, and without an h2 here the page jumps from its h1
+        straight to them.
+      */}
+      <h2 id="resultats" className="sr-only">
+        Résultats de recherche
+      </h2>
+
       {errors.length > 0 ? (
         <div className="flex items-start gap-2 rounded-xl border p-4 text-sm text-muted-foreground">
           <TriangleAlert className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
@@ -86,14 +96,36 @@ export function SearchResults({
           <DemoFootnote className="pt-2" />
         </>
       ) : (
-        <EmptyState hasQuery={Boolean(query.term)} />
+        <EmptyState query={query} />
       )}
     </section>
   );
 }
 
-function EmptyState({ hasQuery }: { hasQuery: boolean }) {
-  if (!hasQuery) {
+/** Any filter beyond the sort order, which is always set. */
+function hasActiveFilters(filters: SearchFilters): boolean {
+  return Boolean(
+    filters.categorySlug ||
+    filters.conditions?.length ||
+    filters.sources?.length ||
+    filters.minPrice !== undefined ||
+    filters.maxPrice !== undefined ||
+    filters.dealsOnly,
+  );
+}
+
+/**
+ * Three different situations, three different messages.
+ *
+ * The distinction matters: a visitor who set a price ceiling and got nothing
+ * back was told "Lancez une recherche", which reads as if their filter had
+ * never been applied. Zero results caused by a filter has to say so, and give
+ * a way out.
+ */
+function EmptyState({ query }: { query: SearchQuery }) {
+  const filtered = hasActiveFilters(query.filters);
+
+  if (!query.term && !filtered) {
     return (
       <Placeholder
         icon={<PackageSearch className="size-6" aria-hidden />}
@@ -103,11 +135,33 @@ function EmptyState({ hasQuery }: { hasQuery: boolean }) {
     );
   }
 
+  if (filtered) {
+    return (
+      <Placeholder
+        icon={<FilterX className="size-6" aria-hidden />}
+        title="Aucun produit ne passe ces filtres"
+        description={
+          query.term
+            ? "Aucune offre ne correspond à la fois à votre recherche et aux filtres appliqués."
+            : "Les filtres appliqués ne laissent passer aucune offre du catalogue."
+        }
+        action={
+          <LocaleLink
+            href={query.term ? `/search?q=${encodeURIComponent(query.term)}` : "/search"}
+            className="rounded-md font-medium text-primary underline-offset-4 hover:underline focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none"
+          >
+            Réinitialiser les filtres
+          </LocaleLink>
+        }
+      />
+    );
+  }
+
   return (
     <Placeholder
       icon={<SearchX className="size-6" aria-hidden />}
       title="Aucune offre trouvée"
-      description="Essayez un terme plus large, ou assouplissez les filtres."
+      description="Essayez un terme plus large, ou une autre orthographe."
     />
   );
 }
@@ -116,10 +170,13 @@ function Placeholder({
   icon,
   title,
   description,
+  action,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
+  /** A way out of the empty state, when one exists. */
+  action?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col items-center gap-3 rounded-2xl bg-cream py-20 text-center">
@@ -128,6 +185,7 @@ function Placeholder({
       </span>
       <h3 className="font-display font-semibold">{title}</h3>
       <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">{description}</p>
+      {action ? <div className="pt-1 text-sm">{action}</div> : null}
     </div>
   );
 }

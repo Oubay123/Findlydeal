@@ -10,6 +10,7 @@ export const furnitureSeeds: MockProductSeed[] = [
     brand: "Nordic Home",
     model: "Nordic Corner 4P",
     category: "furniture",
+    releasedAt: "2024-09-01",
     description:
       "Une assise profonde de 60 centimètres et un revêtement en velours côtelé qui garde son aspect neuf après un passage à la brosse. La structure en bois d'hêtre massif est garantie dix ans, et l'angle est réversible : vous choisissez le côté au montage, sans outil spécifique.",
     rating: { value: 4.4, count: 512 },
@@ -79,6 +80,7 @@ export const furnitureSeeds: MockProductSeed[] = [
     brand: "Atelier Milan",
     model: "Milan 3P",
     category: "furniture",
+    releasedAt: "2023-05-01",
     description:
       "Du cuir de vachette pleine fleur teinté dans la masse, qui développe une patine plus profonde avec les années. Les coussins d'assise sont déhoussables et la suspension à sangles élastiques croisées assure un maintien constant sans affaissement.",
     rating: { value: 4.7, count: 287 },
@@ -140,6 +142,7 @@ export const furnitureSeeds: MockProductSeed[] = [
     brand: "Nordic Home",
     model: "Oslo",
     category: "furniture",
+    releasedAt: "2024-03-01",
     description:
       "Le classique scandinave revisité : piètement en chêne massif huilé, assise garnie et dossier galbé qui soutient réellement le bas du dos. Vendu par lot de quatre, avec des patins feutre déjà posés sous les pieds pour préserver les parquets.",
     rating: { value: 4.5, count: 1043 },
@@ -201,6 +204,7 @@ export const furnitureSeeds: MockProductSeed[] = [
     brand: "Atelier Milan",
     model: "Copenhague Lounge",
     category: "furniture",
+    releasedAt: "2025-02-01",
     description:
       "Une réinterprétation du fauteuil de lecture des années soixante : coque en noyer cintré, coussins en cuir camel et inclinaison du dossier calculée pour de longues sessions. Livré avec son repose-pieds assorti.",
     rating: { value: 4.8, count: 194 },
@@ -263,6 +267,7 @@ export const furnitureSeeds: MockProductSeed[] = [
     brand: "Lumen Studio",
     model: "Globe",
     category: "furniture",
+    releasedAt: "2025-06-01",
     description:
       "Un globe en verre opalin soufflé posé sur un socle en laiton brossé, qui diffuse une lumière chaude et sans éblouissement. Le variateur tactile intégré au socle permet de passer de la lecture à l'ambiance sans changer d'ampoule.",
     rating: { value: 4.5, count: 621 },
@@ -325,6 +330,7 @@ export const furnitureSeeds: MockProductSeed[] = [
     brand: "Lumen Studio",
     model: "Aurora Arc",
     category: "furniture",
+    releasedAt: "2024-11-01",
     description:
       "L'arc en acier laqué déporte la lumière de 120 centimètres, ce qui permet d'éclairer un canapé sans encombrer l'espace au sol. Le socle en marbre de Carrare pèse quatorze kilos et assure une stabilité totale malgré le porte-à-faux.",
     rating: { value: 4.6, count: 338 },

@@ -12,6 +12,21 @@ import NeufOuOccasion, {
   meta as neufOuOccasionMeta,
 } from "./neuf-reconditionne-occasion-que-choisir.mdx";
 import BonneAffaire, { meta as bonneAffaireMeta } from "./reperer-une-vraie-bonne-affaire.mdx";
+import PourquoiReconditionne, {
+  meta as pourquoiReconditionneMeta,
+} from "./pourquoi-acheter-reconditionne.mdx";
+import GarantieReconditionne, {
+  meta as garantieReconditionneMeta,
+} from "./garantie-produit-reconditionne.mdx";
+import ChoisirOrdinateur, {
+  meta as choisirOrdinateurMeta,
+} from "./bien-choisir-ordinateur-reconditionne.mdx";
+import VetementsSecondeMain, {
+  meta as vetementsSecondeMainMeta,
+} from "./vetements-seconde-main-guide.mdx";
+import EconomieCirculaire, {
+  meta as economieCirculaireMeta,
+} from "./economie-circulaire-tendances-2026.mdx";
 
 /**
  * The blog index.
@@ -43,6 +58,36 @@ const articles: BlogArticle[] = [
     Content: BonneAffaire,
     ...bonneAffaireMeta,
     author: blogAuthors[bonneAffaireMeta.authorId] ?? DEFAULT_BLOG_AUTHOR,
+  },
+  {
+    slug: "pourquoi-acheter-reconditionne",
+    Content: PourquoiReconditionne,
+    ...pourquoiReconditionneMeta,
+    author: blogAuthors[pourquoiReconditionneMeta.authorId] ?? DEFAULT_BLOG_AUTHOR,
+  },
+  {
+    slug: "garantie-produit-reconditionne",
+    Content: GarantieReconditionne,
+    ...garantieReconditionneMeta,
+    author: blogAuthors[garantieReconditionneMeta.authorId] ?? DEFAULT_BLOG_AUTHOR,
+  },
+  {
+    slug: "bien-choisir-ordinateur-reconditionne",
+    Content: ChoisirOrdinateur,
+    ...choisirOrdinateurMeta,
+    author: blogAuthors[choisirOrdinateurMeta.authorId] ?? DEFAULT_BLOG_AUTHOR,
+  },
+  {
+    slug: "vetements-seconde-main-guide",
+    Content: VetementsSecondeMain,
+    ...vetementsSecondeMainMeta,
+    author: blogAuthors[vetementsSecondeMainMeta.authorId] ?? DEFAULT_BLOG_AUTHOR,
+  },
+  {
+    slug: "economie-circulaire-tendances-2026",
+    Content: EconomieCirculaire,
+    ...economieCirculaireMeta,
+    author: blogAuthors[economieCirculaireMeta.authorId] ?? DEFAULT_BLOG_AUTHOR,
   },
   {
     slug: "grades-reconditionnement-expliques",

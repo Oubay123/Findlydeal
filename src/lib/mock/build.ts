@@ -53,6 +53,8 @@ export interface MockProductSeed {
   imageSubject: string;
   /** Optional YouTube review id, see `VideoReview`. */
   videoReviewId?: string;
+  /** ISO date the model reached the market. Real dates for real products. */
+  releasedAt: string;
   specs: ProductSpec[];
   reviews: Omit<ProductReview, "id">[];
   offers: MockOfferSeed[];
@@ -131,6 +133,7 @@ export function buildMockProduct(seed: MockProductSeed): Product {
     imageAlt: `${seed.imageSubject} ${seed.title}`,
     images: [...seed.images],
     videoReviewId: seed.videoReviewId,
+    releasedAt: seed.releasedAt,
     description: seed.description,
     rating: seed.rating,
     specs: seed.specs,

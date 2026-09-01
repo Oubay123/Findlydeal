@@ -20,6 +20,8 @@ export const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: "price_asc", label: "Prix croissant" },
   { value: "price_desc", label: "Prix décroissant" },
   { value: "deal_score", label: "Meilleures affaires" },
+  { value: "rating_desc", label: "Meilleures notes" },
+  { value: "newest", label: "Nouveautés" },
 ];
 
 export const DEFAULT_FILTERS: SearchFilters = {

@@ -31,7 +31,7 @@ export const faqItems: FaqItem[] = [
   {
     question: "Dans quels pays fonctionne le service ?",
     answer:
-      "La recherche est multilingue et interroge les marketplaces de plusieurs pays européens. Les frais de port sont inclus dans le prix comparé pour éviter les mauvaises surprises.",
+      "La recherche est multilingue et interroge les marketplaces de plusieurs pays européens. Le prix affiché est celui communiqué par le marchand : vérifiez toujours le total sur son site avant de valider.",
   },
   {
     question: "Une commission influence-t-elle le classement des offres ?",

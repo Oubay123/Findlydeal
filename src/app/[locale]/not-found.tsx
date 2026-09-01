@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/common/locale-link";
 import { Container } from "@/components/common/container";
 import { Button } from "@/components/ui/button";
 
@@ -13,10 +13,10 @@ export default function NotFound() {
       </p>
       <div className="mt-2 flex flex-wrap justify-center gap-3">
         <Button asChild size="md">
-          <Link href="/search">Rechercher un produit</Link>
+          <LocaleLink href="/search">Rechercher un produit</LocaleLink>
         </Button>
         <Button asChild variant="outline-brand" size="md">
-          <Link href="/">Retour à l&apos;accueil</Link>
+          <LocaleLink href="/">Retour à l&apos;accueil</LocaleLink>
         </Button>
       </div>
     </Container>

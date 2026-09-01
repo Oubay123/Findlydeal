@@ -10,6 +10,7 @@ export const lifestyleSeeds: MockProductSeed[] = [
     brand: "Nike",
     model: "Air Force 1 '07",
     category: "fashion",
+    releasedAt: "2007-01-01",
     description:
       "La silhouette la plus vendue de l'histoire de Nike, inchangée depuis 1982 : tige en cuir pleine fleur, unité Air encapsulée dans le talon et semelle en gomme à pivot circulaire. Un modèle qui se nettoie facilement et se porte aussi bien avec un jean qu'avec un pantalon habillé.",
     rating: { value: 4.7, count: 6218 },
@@ -71,6 +72,7 @@ export const lifestyleSeeds: MockProductSeed[] = [
     brand: "Atelier 1954",
     model: "Rider",
     category: "fashion",
+    releasedAt: "2025-01-01",
     description:
       "Une veste taillée dans un cuir d'agneau tanné végétal, souple dès le premier port et qui se patine sans se craqueler. La doublure en viscose permet de la porter par-dessus un pull fin, et les fermetures YKK sont garanties à vie.",
     rating: { value: 4.6, count: 384 },
@@ -133,6 +135,7 @@ export const lifestyleSeeds: MockProductSeed[] = [
     brand: "Vélorama",
     model: "City Hybrid 28",
     category: "leisure",
+    releasedAt: "2024-04-01",
     description:
       "Un cadre en aluminium de seulement 13,8 kilos, une position de conduite droite et un dérailleur Shimano Tourney à sept vitesses : de quoi couvrir le trajet quotidien comme les sorties du week-end. Garde-boue, porte-bagages et éclairage à dynamo sont montés d'origine.",
     rating: { value: 4.4, count: 726 },
@@ -194,6 +197,7 @@ export const lifestyleSeeds: MockProductSeed[] = [
     brand: "Cordoba Works",
     model: "DN-500E",
     category: "leisure",
+    releasedAt: "2023-08-01",
     description:
       "Une table en épicéa massif qui s'ouvre avec les années, montée sur un corps dreadnought pour un volume acoustique généreux. Le préampli à trois bandes avec accordeur intégré permet de brancher directement en sono sans micro externe.",
     rating: { value: 4.5, count: 512 },

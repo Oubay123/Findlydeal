@@ -153,9 +153,17 @@ export interface Product {
    * `VideoReview`; the section disappears when unset.
    */
   videoReviewId?: string;
+
+  /**
+   * ISO date the product reached the market, used by the "Nouveautés" shelf.
+   * A marketplace exposes a listing date rather than a release date; map it
+   * here and the shelf keeps working unchanged.
+   */
+  releasedAt?: string;
 }
 
-export type SortOption = "relevance" | "price_asc" | "price_desc" | "deal_score";
+export type SortOption =
+  "relevance" | "price_asc" | "price_desc" | "deal_score" | "rating_desc" | "newest";
 
 export interface SearchFilters {
   minPrice?: number;
@@ -195,13 +203,16 @@ export interface Category {
   slug: CategorySlug;
   name: string;
   description: string;
+  /**
+   * Meta description of the category page, 140 to 160 characters.
+   *
+   * Kept separate from `description` because the two have different jobs: the
+   * on-page subtitle stays short and punchy, while a meta description needs the
+   * length search engines actually display. Falls back to `description`.
+   */
+  metaDescription?: string;
   /** Lucide icon name, resolved by `CategoryCard`. */
   icon: string;
-  /**
-   * Optional photo for the category tile (put files in `public/images/`).
-   * Without one the card falls back to a branded gradient + icon.
-   */
-  image?: string;
   /** Sources that are relevant for this category. */
   sources: SourceId[];
 }

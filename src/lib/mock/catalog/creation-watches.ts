@@ -21,6 +21,7 @@ export const creationWatchesSeeds: MockProductSeed[] = [
     brand: "Seiko",
     model: "Prospex SRPE93K1",
     category: "watches-jewelry",
+    releasedAt: "2019-03-01",
     imageSubject: "Montre de plongée automatique",
     description:
       "Le boîtier coussin surnommé « Turtle » revient dans sa version moderne, avec le calibre 4R36 à remontage automatique et manuel. La lunette tournante unidirectionnelle et le Lumibrite sur les index en font une vraie montre de plongée, homologuée à 200 mètres, qui reste portable au quotidien malgré ses 45 millimètres.",
@@ -92,6 +93,7 @@ export const creationWatchesSeeds: MockProductSeed[] = [
     brand: "Citizen",
     model: "Eco-Drive CA4500-91X",
     category: "watches-jewelry",
+    releasedAt: "2021-06-01",
     imageSubject: "Montre chronographe solaire",
     description:
       "La technologie Eco-Drive supprime la pile : la montre se recharge à la lumière, même artificielle, et tient six mois dans le noir une fois pleine. Le chronographe compte jusqu'à soixante minutes au 1/5ᵉ de seconde, et le cadran vert soleillé change nettement d'intensité selon l'angle.",
@@ -156,6 +158,7 @@ export const creationWatchesSeeds: MockProductSeed[] = [
     brand: "Orient",
     model: "Bambino V4 RA-AC0002S",
     category: "watches-jewelry",
+    releasedAt: "2016-09-01",
     imageSubject: "Montre habillée automatique",
     description:
       "La Bambino est devenue la référence de la montre habillée abordable : verre minéral bombé façon plexi d'époque, cadran blanc dépouillé et aiguilles dauphine polies. Le calibre F6724 d'Orient est un mouvement maison, avec remontage manuel et arrêt de la seconde, ce qui reste rare sous les 200 euros.",
@@ -226,6 +229,7 @@ export const creationWatchesSeeds: MockProductSeed[] = [
     brand: "Bulova",
     model: "Lunar Pilot 96B251",
     category: "watches-jewelry",
+    releasedAt: "2015-11-01",
     imageSubject: "Montre chronographe de pilote",
     description:
       "Réédition du chronographe porté sur la Lune lors d'Apollo 15, avec le mouvement quartz haute fréquence à 262 kHz de Bulova, précis au 1/1000ᵉ de seconde et doté d'une aiguille de chronographe qui balaie le cadran de façon fluide. Le boîtier de 45 millimètres reprend fidèlement les proportions de l'original.",
@@ -290,6 +294,7 @@ export const creationWatchesSeeds: MockProductSeed[] = [
     brand: "Casio",
     model: "G-Shock GA-2100-1A1",
     category: "watches-jewelry",
+    releasedAt: "2019-08-01",
     imageSubject: "Montre de sport résistante aux chocs",
     description:
       "Surnommée « CasiOak » pour sa lunette octogonale, la GA-2100 est la G-Shock la plus fine et la plus légère de la gamme grâce à sa structure Carbon Core Guard. Affichage analogique et numérique combiné, résistance aux chocs, étanchéité 200 mètres et une pile annoncée pour trois ans.",
@@ -361,6 +366,7 @@ export const creationWatchesSeeds: MockProductSeed[] = [
     brand: "Creation Straps",
     model: "Milanese 20",
     category: "watches-jewelry",
+    releasedAt: "2024-02-01",
     imageSubject: "Bracelet de montre en maille milanaise",
     description:
       "La maille milanaise tissée serrée s'ajuste au millimètre grâce à son fermoir papillon coulissant, sans outil ni maillon à retirer. Acier 316L brossé, compatible avec la plupart des montres à cornes de 20 millimètres, livré avec des barrettes à ressort de rechange.",

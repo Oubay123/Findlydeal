@@ -10,6 +10,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Apple",
     model: "iPhone 13",
     category: "tech",
+    releasedAt: "2021-09-24",
     description:
       "L'iPhone 13 conserve la puce A15 Bionic, largement suffisante pour tous les usages actuels, et une autonomie nettement supérieure à celle du 12. Son double capteur 12 Mpx avec stabilisation par décalage du capteur reste une référence en photo de nuit. Reconditionné grade A : aucune rayure visible, batterie garantie à plus de 85 % de sa capacité.",
     rating: { value: 4.6, count: 1284 },
@@ -90,6 +91,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Samsung",
     model: "Galaxy S23",
     category: "tech",
+    releasedAt: "2023-02-17",
     description:
       "Le Galaxy S23 mise sur un format compact devenu rare et sur le Snapdragon 8 Gen 2 for Galaxy, l'une des puces les plus performantes de sa génération. L'écran Dynamic AMOLED 120 Hz reste lisible en plein soleil et la batterie de 3 900 mAh tient sans difficulté une journée chargée.",
     rating: { value: 4.5, count: 942 },
@@ -153,6 +155,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Google",
     model: "Pixel 8",
     category: "tech",
+    releasedAt: "2023-10-12",
     description:
       "Le Pixel 8 reste la référence du traitement photo par logiciel : Gomme magique, Photo non floue et Meilleure prise sont intégrés d'office. Google garantit sept ans de mises à jour Android et de correctifs de sécurité, ce qui en fait l'un des smartphones les plus durables du marché.",
     rating: { value: 4.4, count: 638 },
@@ -214,6 +217,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Apple",
     model: "MacBook Air M2",
     category: "tech",
+    releasedAt: "2022-07-15",
     description:
       "Le MacBook Air M2 reste le meilleur compromis entre puissance et silence : aucun ventilateur, 18 heures d'autonomie annoncées et un châssis de 1,24 kg. L'écran Liquid Retina de 13,6 pouces monte à 500 nits, largement suffisant pour travailler en extérieur.",
     rating: { value: 4.8, count: 2140 },
@@ -292,6 +296,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Dell",
     model: "XPS 13 Plus",
     category: "tech",
+    releasedAt: "2022-04-01",
     description:
       "Le XPS 13 Plus pousse le design ultraportable à l'extrême : clavier bord à bord, pavé tactile invisible et rangée de touches capacitives. Sous le capot, un Core i7 de 12ᵉ génération et 16 Go de mémoire assurent une aisance totale en multitâche bureautique et créatif.",
     rating: { value: 4.3, count: 421 },
@@ -354,6 +359,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Apple",
     model: "iPad Air M1",
     category: "tech",
+    releasedAt: "2022-03-18",
     description:
       "L'iPad Air équipé de la puce M1 offre une puissance de portable dans un format de 461 grammes. Compatible Apple Pencil 2 et Magic Keyboard, il couvre aussi bien la prise de notes que le montage vidéo léger.",
     rating: { value: 4.7, count: 1533 },
@@ -416,6 +422,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Sony",
     model: "WH-1000XM5",
     category: "tech",
+    releasedAt: "2022-05-20",
     description:
       "Référence de la réduction de bruit active depuis plusieurs générations, le WH-1000XM5 embarque huit microphones et deux processeurs dédiés. Trente heures d'autonomie, une charge rapide de 3 minutes pour 3 heures d'écoute, et un confort de port qui tient sur un long-courrier.",
     rating: { value: 4.7, count: 3862 },
@@ -492,6 +499,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Bose",
     model: "QuietComfort Ultra",
     category: "tech",
+    releasedAt: "2023-10-01",
     description:
       "Bose signe ici son casque le plus abouti, avec un mode Immersion qui spatialise le son sans dénaturer le mixage d'origine. Le confort reste la marque de fabrique de la gamme QuietComfort : coussinets larges et arceau très souple.",
     rating: { value: 4.6, count: 1176 },
@@ -554,6 +562,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Sony",
     model: "PlayStation 5 Slim",
     category: "tech",
+    releasedAt: "2023-11-10",
     description:
       "La révision Slim de la PS5 réduit le volume de 30 % tout en conservant l'intégralité des performances : SSD ultra-rapide, ray tracing matériel et manette DualSense à retour haptique. Le lecteur de disque est ici amovible.",
     rating: { value: 4.8, count: 5240 },
@@ -621,6 +630,7 @@ export const techSeeds: MockProductSeed[] = [
     brand: "Microsoft",
     model: "Xbox Series X",
     category: "tech",
+    releasedAt: "2020-11-10",
     description:
       "La Series X reste la console la plus puissante de sa génération sur le papier, avec 12 téraflops et une compatibilité ascendante qui couvre quatre générations de jeux Xbox. Le Quick Resume permet de basculer instantanément entre plusieurs parties en cours.",
     rating: { value: 4.7, count: 2890 },

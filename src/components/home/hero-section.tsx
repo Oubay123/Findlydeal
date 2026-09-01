@@ -17,8 +17,8 @@ const HERO_IMAGES = [
   unsplash("photo-1441986300917-64674bd600d8", 1920), // boutique
   unsplash("photo-1519389950473-47ba0277781c", 1920), // tech
   unsplash("photo-1560769629-975ec94e6a86", 1920), // mode
-  unsplash("photo-1567016432779-094069958ea5", 1920), // meubles
-  unsplash("photo-1523275335684-37898b6baf30", 1920), // montres
+  unsplash("photo-1616486338812-3dadae4b4ace", 1920), // meubles
+  unsplash("photo-1524805444758-089113d48a6d", 1920), // montres
 ];
 
 export function HeroSection() {

@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { SourceLogo } from "@/components/common/source-logo";
+import { LocaleLink } from "@/components/common/locale-link";
 import { Check, Minus } from "lucide-react";
 import { RatingStars } from "@/components/common/rating-stars";
 import { ScrollableTable } from "@/components/common/scrollable-table";
@@ -56,7 +57,10 @@ export function ComparisonTable({ products }: ComparisonTableProps) {
 
           {products.map((product) => (
             <th key={product.id} scope="col" className="p-3 align-bottom">
-              <Link href={`/product/${encodeURIComponent(product.id)}`} className="group block">
+              <LocaleLink
+                href={`/product/${encodeURIComponent(product.id)}`}
+                className="group block"
+              >
                 <span className="relative mb-2.5 block aspect-[4/3] overflow-hidden rounded-lg bg-muted">
                   {product.imageUrl ? (
                     <SmartImage
@@ -71,7 +75,7 @@ export function ComparisonTable({ products }: ComparisonTableProps) {
                 <span className="block text-left text-xs leading-snug font-medium text-balance transition-colors group-hover:text-primary sm:text-sm">
                   {product.title}
                 </span>
-              </Link>
+              </LocaleLink>
             </th>
           ))}
         </tr>
@@ -140,10 +144,19 @@ export function ComparisonTable({ products }: ComparisonTableProps) {
 
         <Row label="Offres">
           {products.map((product) => {
-            const platforms = new Set(product.offers.map((offer) => offer.source)).size;
+            const platforms = [...new Set(product.offers.map((offer) => offer.source))];
             return (
               <Cell key={product.id}>
-                {product.offers.length} sur {platforms} plateforme{platforms > 1 ? "s" : ""}
+                <span className="space-y-1.5">
+                  <span className="block">
+                    {product.offers.length} offre{product.offers.length > 1 ? "s" : ""}
+                  </span>
+                  <span className="flex flex-wrap gap-x-3 gap-y-1">
+                    {platforms.map((source) => (
+                      <SourceLogo key={source} source={source} />
+                    ))}
+                  </span>
+                </span>
               </Cell>
             );
           })}
@@ -162,7 +175,9 @@ export function ComparisonTable({ products }: ComparisonTableProps) {
           {products.map((product) => (
             <Cell key={product.id}>
               <Button asChild size="sm" className="h-9 w-full rounded-lg">
-                <Link href={`/product/${encodeURIComponent(product.id)}`}>Voir les offres</Link>
+                <LocaleLink href={`/product/${encodeURIComponent(product.id)}`}>
+                  Voir les offres
+                </LocaleLink>
               </Button>
             </Cell>
           ))}

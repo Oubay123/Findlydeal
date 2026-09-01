@@ -146,3 +146,20 @@
     0.9rem 100%;
   background-attachment: local, local, scroll, scroll;
 }
+
+/**
+ * Hides the horizontal scrollbar while keeping the element scrollable.
+ *
+ * Used by the product shelves, which are driven by arrow buttons: the native
+ * bar would sit under the cards saying the same thing twice. Touch dragging
+ * and keyboard scrolling are untouched, so nothing becomes unreachable when
+ * the arrows are not the input method.
+ */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

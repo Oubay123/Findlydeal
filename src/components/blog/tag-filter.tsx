@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/common/locale-link";
 import { tagSlug } from "@/content/blog";
 import { cn } from "@/lib/utils";
 
@@ -46,7 +46,7 @@ function TagLink({
   children: React.ReactNode;
 }) {
   return (
-    <Link
+    <LocaleLink
       href={href}
       aria-current={isActive ? "page" : undefined}
       className={cn(
@@ -57,6 +57,6 @@ function TagLink({
       )}
     >
       {children}
-    </Link>
+    </LocaleLink>
   );
 }

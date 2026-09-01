@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/common/locale-link";
 import { Clock } from "lucide-react";
 import { SmartImage } from "@/components/common/smart-image";
 import { formatArticleDate } from "@/lib/utils";
@@ -20,7 +20,7 @@ export function ArticleCard({ article, featured }: ArticleCardProps) {
         featured ? "flex-col md:flex-row" : "flex-col"
       }`}
     >
-      <Link
+      <LocaleLink
         href={href}
         tabIndex={-1}
         aria-hidden
@@ -35,7 +35,7 @@ export function ArticleCard({ article, featured }: ArticleCardProps) {
           context="blogCard"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-      </Link>
+      </LocaleLink>
 
       <div
         className={`flex min-w-0 flex-1 flex-col gap-3 p-5 ${featured ? "md:justify-center md:p-8" : ""}`}
@@ -52,9 +52,9 @@ export function ArticleCard({ article, featured }: ArticleCardProps) {
         </ul>
 
         <h2 className={`font-display font-bold break-words ${featured ? "text-2xl" : "text-lg"}`}>
-          <Link href={href} className="transition-colors hover:text-primary">
+          <LocaleLink href={href} className="transition-colors hover:text-primary">
             {article.title}
-          </Link>
+          </LocaleLink>
         </h2>
 
         <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">

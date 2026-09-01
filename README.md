@@ -309,24 +309,101 @@ Puis PageSpeed Insights sur l'URL de production, qui donne les données terrain 
 raisonnables : **LCP < 2,5 s**, **CLS < 0,1**, **INP < 200 ms**, score Performance > 90 sur les pages
 statiques. `/search` restera en dessous : elle est dynamique par nature.
 
+## Bilingue (français rempli, anglais à traduire)
+
+Le site est publié en deux langues, chacune sur son propre préfixe d'URL : `/fr/...` et
+`/en/...`. Aujourd'hui **seul le français est complet** ; l'anglais existe, se visite, mais
+n'est pas encore traduit.
+
+### Comment ça marche
+
+```
+/               -> 307 vers /fr ou /en selon l'en-tête Accept-Language  (src/proxy.ts)
+/fr/search      -> app/[locale]/search/page.tsx avec locale = "fr"
+/en/search      -> la même page avec locale = "en"
+/de/quoi        -> 404
+```
+
+Toutes les routes vivent sous `app/[locale]/`, y compris le layout racine : c'est ce qui permet
+au `<html lang>` de suivre la langue. `sitemap.xml` et `robots.txt` restent à la racine du
+domaine, sans préfixe, parce que ce sont les adresses que les moteurs vont chercher par
+convention.
+
+Le nom du segment n'est pas décoratif : `app/[locale]` fait que `next/root-params` exporte un
+getter `locale`, ce qui laisse n'importe quel Server Component lire la langue courante sans
+qu'on la fasse descendre en prop à travers quatre niveaux.
+
+### Lire la langue et les textes
+
+| Contexte         | Locale          | Textes                  | Liens                         |
+| ---------------- | --------------- | ----------------------- | ----------------------------- |
+| Server Component | `getUiLocale()` | `getServerDictionary()` | `<LocaleLink href="/search">` |
+| Client Component | `useUiLocale()` | `useDictionary()`       | `useLocalePath()`             |
+
+`next/root-params` ne fonctionne pas dans un Client Component : ceux-ci relisent la locale
+depuis le pathname, où elle se trouve de toute façon puisque c'est le routing qui la définit.
+
+### Traduire l'anglais
+
+Tout se joue dans **`src/i18n/dictionaries/en.ts`**, dont chaque valeur est aujourd'hui une
+chaîne vide. Remplacez-les par la traduction ; il n'y a rien d'autre à toucher.
+
+Deux comportements en découlent, tous deux automatiques :
+
+- **Tant qu'une valeur est vide**, elle affiche le texte français à la place. `/en` reste donc
+  lisible plutôt que vide.
+- **Tant qu'il reste une seule valeur vide**, `isLocaleTranslated("en")` vaut `false`, ce qui
+  met les pages `/en` en `noindex`, les exclut du `sitemap.xml` et supprime les balises
+  `hreflang`. Une page anglaise à moitié française indexée par Google ferait plus de mal que pas
+  de page anglaise du tout.
+
+Dès la dernière chaîne remplie, les trois se réactivent seuls : le sitemap passe de 69 à 138 URLs,
+les `hreflang` `fr` / `en` / `x-default` apparaissent, et `/en` devient indexable. Aucun
+drapeau à basculer, aucune route à ajouter.
+
+Ajouter une clé dans `fr.ts` casse volontairement la compilation de `en.ts` tant qu'elle n'y est
+pas ajoutée : c'est le seul mécanisme qui empêche les deux langues de diverger.
+
+### Ce qui n'est pas dans le dictionnaire
+
+Le dictionnaire couvre l'**interface** : navigation, filtres, boutons, états vides, titres de
+sections. Restent en français et relèvent d'un travail éditorial, pas d'une table de
+correspondance :
+
+- les articles du blog (`src/content/blog/*.mdx`) ;
+- le corps des pages légales ;
+- les libellés du catalogue de démonstration (titres produits, avis, catégories).
+
+### Attention à ne pas confondre deux `Locale`
+
+- `UiLocale` (`src/i18n/config.ts`) : `fr` | `en`, **la langue du site**.
+- `Locale` (`src/types/index.ts`) : `fr` | `en` | `de` | `es` | `it`, **les langues dans
+  lesquelles une recherche est envoyée aux marketplaces**, parce que le même produit s'appelle
+  « casque audio », « headphones » ou « Kopfhörer » selon le pays du vendeur.
+
+Publier le site en français ne dit rien des marketplaces interrogées : les deux listes bougent
+indépendamment, et sont séparées pour cette raison.
+
 ## Arborescence
 
 ```
 src/
+  proxy.ts                 # Redirige / vers /fr ou /en selon Accept-Language
   app/                     # App Router : routing uniquement, pas de logique métier
-    (marketing)/           # Groupe de routes vitrine (n'apparaît pas dans l'URL)
-      page.tsx             #   /            landing
-      how-it-works/        #   /how-it-works
-      faq/                 #   /faq
-      about/               #   /about
-    blog/                  #   /blog, /blog/[slug], /blog/theme/[tag]
-    compare/               #   /compare  comparaison côte à côte (noindex)
-    search/                #   /search      cœur fonctionnel
-    category/[slug]/       #   /category/tech
-    product/[id]/          #   /product/<slug>     page de comparaison
-    legal/                 #   privacy, terms, cookies, legal-notice, affiliate-disclosure
-    layout.tsx             # Layout racine : polices + Header + Footer + metadata
-    not-found.tsx          # 404
+    [locale]/              # TOUTES les routes vivent sous /fr ou /en
+      (marketing)/         # Groupe de routes vitrine (n'apparaît pas dans l'URL)
+        page.tsx           #   /fr          landing
+        how-it-works/      #   /fr/how-it-works
+        faq/               #   /fr/faq
+        about/             #   /fr/about
+      blog/                #   /fr/blog, /fr/blog/[slug], /fr/blog/theme/[tag]
+      compare/             #   /fr/compare  comparaison côte à côte (noindex)
+      search/              #   /fr/search      cœur fonctionnel
+      category/[slug]/     #   /fr/category/tech
+      product/[id]/        #   /fr/product/<slug>     page de comparaison
+      legal/               #   privacy, terms, cookies, legal-notice, affiliate-disclosure
+      layout.tsx           # Layout racine : lang, polices, Header, Footer, metadata
+      not-found.tsx        # 404
     globals.css            # Tailwind v4 + tokens de la charte
     icon.svg               # Favicon (loupe orange), source de favicon.ico et apple-icon.png
     sitemap.ts             # sitemap.xml généré depuis les catégories, articles et produits
@@ -367,6 +444,14 @@ src/
     utils/                 # cn, format (prix, dates), currency, slug, images (Unsplash)
     constants/             # langues, clés d'URL, seuils de deals
 
+  i18n/                    # Architecture bilingue, voir la section dédiée
+    config.ts              #   locales d'interface, préfixage des chemins
+    dictionaries/fr.ts     #   dictionnaire de référence (rempli)
+    dictionaries/en.ts     #   même structure, valeurs vides (à traduire)
+    index.ts               #   getDictionary, isLocaleTranslated, format
+    server.ts              #   lecture de la locale en Server Component
+    use-locale.ts          #   idem en Client Component
+
   content/blog/            # Articles .mdx + registre typé
   mdx-components.tsx       # Style du corps des articles MDX
   types/
@@ -397,6 +482,9 @@ public/images/             # Assets statiques
    lit et écrit la query string, si bien que les résultats restent partageables et rendus côté serveur.
 6. **Les prix sont stockés en centimes** (`Money.amount`) et formatés uniquement via `formatPrice()`.
 7. **Aucune couleur en dur** dans un composant : tout passe par les tokens de `globals.css`.
+8. **Aucun lien interne en dur.** Un `href="/search"` écrit tel quel renverrait un visiteur
+   anglophone dans l'arbre français. Les Server Components passent par `<LocaleLink>`, les Client
+   Components par `useLocalePath()`.
 
 ## Où ajouter les choses ensuite
 

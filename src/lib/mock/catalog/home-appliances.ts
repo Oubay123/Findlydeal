@@ -10,6 +10,7 @@ export const homeApplianceSeeds: MockProductSeed[] = [
     brand: "Dyson",
     model: "V15 Detect",
     category: "home-appliances",
+    releasedAt: "2021-05-01",
     description:
       "La brosse laser du V15 Detect révèle la poussière invisible à l'œil nu sur les sols durs, et le capteur piézoélectrique compte les particules aspirées en temps réel. Soixante minutes d'autonomie en mode Éco et une filtration intégrale qui retient 99,99 % des particules jusqu'à 0,3 micron.",
     rating: { value: 4.6, count: 2417 },
@@ -74,15 +75,16 @@ export const homeApplianceSeeds: MockProductSeed[] = [
   },
   {
     slug: "rowenta-x-force-flex-14-60",
-    imageSubject: "Aspirateur balai sans fil",
+    imageSubject: "Aspirateur laveur de sols",
     title: "Rowenta X-Force Flex 14.60 Aqua - Aspirateur balai",
     brand: "Rowenta",
     model: "X-Force Flex 14.60",
     category: "home-appliances",
+    releasedAt: "2022-09-01",
     description:
       "Le tube Flex se plie à 90 degrés pour passer sous les meubles sans se baisser. Le module Aqua transforme l'appareil en laveur de sols, et la batterie amovible de 70 minutes se remplace sans outil, ce qui allonge nettement la durée de vie de l'aspirateur.",
     rating: { value: 4.4, count: 863 },
-    images: productImages.kitchenAppliance,
+    images: productImages.vacuumWasher,
     specs: [
       { label: "Type", value: "Balai sans fil avec lavage" },
       { label: "Autonomie", value: "Jusqu'à 70 min, batterie amovible" },
@@ -141,6 +143,7 @@ export const homeApplianceSeeds: MockProductSeed[] = [
     brand: "De'Longhi",
     model: "Magnifica Evo",
     category: "home-appliances",
+    releasedAt: "2021-03-01",
     description:
       "Un broyeur en acier réglable sur treize finesses de mouture et un panneau à touches directes pour espresso, café long et Doppio+. Le système LatteCrema chauffe et mousse le lait automatiquement, et le groupe café amovible se rince sous le robinet en quelques secondes.",
     rating: { value: 4.5, count: 1942 },
@@ -210,10 +213,11 @@ export const homeApplianceSeeds: MockProductSeed[] = [
     brand: "Sage",
     model: "Barista Express",
     category: "home-appliances",
+    releasedAt: "2015-04-01",
     description:
       "La machine qui a converti des milliers de foyers à l'expresso préparé à la main : broyeur conique intégré, dosage automatique dans le porte-filtre et buse vapeur professionnelle orientable. Le manomètre en façade permet d'ajuster la mouture jusqu'à l'extraction idéale.",
     rating: { value: 4.7, count: 1284 },
-    images: productImages.kitchenAppliance,
+    images: productImages.espressoManual,
     specs: [
       { label: "Type", value: "Expresso manuel avec broyeur intégré" },
       { label: "Broyeur", value: "Conique en acier, 18 réglages" },
@@ -271,10 +275,11 @@ export const homeApplianceSeeds: MockProductSeed[] = [
     brand: "Ninja",
     model: "Foodi MAX AF400",
     category: "home-appliances",
+    releasedAt: "2021-10-01",
     description:
       "Deux paniers indépendants de 4,75 litres qui permettent de cuire deux préparations différentes et de les terminer en même temps grâce à la fonction Synchro. Six modes de cuisson, du réchauffage à la déshydratation, pour un encombrement raisonnable sur le plan de travail.",
     rating: { value: 4.6, count: 3105 },
-    images: productImages.kitchenAppliance,
+    images: productImages.airFryer,
     specs: [
       { label: "Capacité", value: "9,5 L au total (2 × 4,75 L)" },
       {

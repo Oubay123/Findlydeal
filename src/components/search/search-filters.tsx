@@ -8,7 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SourceLogo } from "@/components/common/source-logo";
 import { FilterPill } from "@/components/search/filter-pill";
+import { getSourcePresentation } from "@/config/sources";
 import { PriceRangeFilter } from "@/components/search/price-range-filter";
 import { categories } from "@/config/categories";
 import {
@@ -18,17 +20,21 @@ import {
   SORT_OPTIONS,
 } from "@/lib/constants";
 import { useFilters } from "@/hooks/use-filters";
+import { useDictionary } from "@/i18n/use-locale";
 
 interface SearchFiltersProps {
   /**
-   * Platform list, handed down by the page.
+   * Which platforms exist, handed down by the page.
    *
    * Deliberately a prop and not `getAllSources()`: importing the source
    * registry here would pull the adapters — their env reads, their error
-   * classes, their future HTTP clients — into the browser bundle, to render
-   * two labels.
+   * classes, their future HTTP clients — into the browser bundle. Only the ids
+   * travel; names and colours come from `@/config/sources`, which is plain
+   * data and safe on the client.
    */
-  sources: { id: string; label: string }[];
+  sourceIds: string[];
+  /** Off inside the drawer, which already has a title and a close button. */
+  showHeading?: boolean;
 }
 
 /**
@@ -37,19 +43,26 @@ interface SearchFiltersProps {
  * Every control writes to the URL through `useFilters`, so the server
  * component re-renders the results with no client-side state to keep in sync.
  */
-export function SearchFilters({ sources }: SearchFiltersProps) {
+export function SearchFilters({ sourceIds, showHeading = true }: SearchFiltersProps) {
   const { get, isActive, apply, toggle, clear } = useFilters();
+  const t = useDictionary();
 
   return (
-    <aside className="space-y-6" aria-label="Filtres de recherche">
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-sm font-semibold">Filtres</h2>
-        <Button variant="ghost" size="sm" onClick={clear} className="text-primary">
-          Réinitialiser
+    <aside className="space-y-6" aria-label={t.search.filters}>
+      {showHeading ? (
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-sm font-semibold">{t.search.filters}</h2>
+          <Button variant="ghost" size="sm" onClick={clear} className="text-primary">
+            {t.search.reset}
+          </Button>
+        </div>
+      ) : (
+        <Button variant="ghost" size="sm" onClick={clear} className="-ml-2 text-primary">
+          {t.search.reset}
         </Button>
-      </div>
+      )}
 
-      <FilterGroup label="Trier par">
+      <FilterGroup label={t.search.sortBy}>
         <Select
           value={get(SEARCH_PARAM_KEYS.sort) ?? "relevance"}
           onValueChange={(value) => apply({ [SEARCH_PARAM_KEYS.sort]: value })}
@@ -67,7 +80,7 @@ export function SearchFilters({ sources }: SearchFiltersProps) {
         </Select>
       </FilterGroup>
 
-      <FilterGroup label="Catégorie">
+      <FilterGroup label={t.search.category}>
         <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
             <FilterPill
@@ -86,11 +99,11 @@ export function SearchFilters({ sources }: SearchFiltersProps) {
         </div>
       </FilterGroup>
 
-      <FilterGroup label="Prix (€, livraison comprise)">
+      <FilterGroup label={t.search.price}>
         <PriceRangeFilter />
       </FilterGroup>
 
-      <FilterGroup label="État">
+      <FilterGroup label={t.search.condition}>
         <div className="flex flex-wrap gap-2">
           {CONDITION_OPTIONS.map((condition) => (
             <FilterPill
@@ -103,22 +116,23 @@ export function SearchFilters({ sources }: SearchFiltersProps) {
         </div>
       </FilterGroup>
 
-      <FilterGroup label="Plateforme">
+      <FilterGroup label={t.search.platform}>
         <div className="flex flex-wrap gap-2">
-          {sources.map((source) => (
+          {sourceIds.map((sourceId) => (
             <FilterPill
-              key={source.id}
-              label={source.label}
-              active={isActive(SEARCH_PARAM_KEYS.source, source.id)}
-              onToggle={() => toggle(SEARCH_PARAM_KEYS.source, source.id)}
+              key={sourceId}
+              label={<SourceLogo source={sourceId} />}
+              ariaLabel={getSourcePresentation(sourceId).label}
+              active={isActive(SEARCH_PARAM_KEYS.source, sourceId)}
+              onToggle={() => toggle(SEARCH_PARAM_KEYS.source, sourceId)}
             />
           ))}
         </div>
       </FilterGroup>
 
-      <FilterGroup label="Bonnes affaires">
+      <FilterGroup label={t.search.deals}>
         <FilterPill
-          label="Bonnes affaires uniquement"
+          label={t.search.dealsOnly}
           active={isActive(SEARCH_PARAM_KEYS.dealsOnly, "1")}
           onToggle={() =>
             apply({

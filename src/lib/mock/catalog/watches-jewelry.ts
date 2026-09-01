@@ -10,6 +10,7 @@ export const watchesJewelrySeeds: MockProductSeed[] = [
     brand: "Seiko",
     model: "5 Sports SRPD55K1",
     category: "watches-jewelry",
+    releasedAt: "2019-07-01",
     description:
       "Le calibre 4R36 à remontage automatique et manuel, avec arrêt de la seconde, dans un boîtier de 40 millimètres qui passe sous une manche de chemise. La lunette tournante unidirectionnelle et les index luminescents font de cette Seiko l'une des meilleures portes d'entrée vers l'horlogerie mécanique.",
     rating: { value: 4.7, count: 1876 },
@@ -80,6 +81,7 @@ export const watchesJewelrySeeds: MockProductSeed[] = [
     brand: "Tissot",
     model: "PRX Powermatic 80",
     category: "watches-jewelry",
+    releasedAt: "2021-03-01",
     description:
       "Le boîtier tonneau intégré au bracelet reprend le dessin d'un modèle Tissot de 1978. Le calibre Powermatic 80 offre quatre-vingts heures de réserve de marche, soit un week-end entier sans porter la montre, et le cadran gaufré bleu change d'intensité selon la lumière.",
     rating: { value: 4.8, count: 942 },
@@ -143,6 +145,7 @@ export const watchesJewelrySeeds: MockProductSeed[] = [
     brand: "Apple",
     model: "Watch Series 9",
     category: "watches-jewelry",
+    releasedAt: "2023-09-22",
     description:
       "La puce S9 double la vitesse de traitement et rend Siri utilisable hors ligne. Le geste Double Tap permet de répondre à un appel d'une seule main, et l'écran monte à 2 000 nits, lisible en plein soleil comme en pleine nuit à 1 nit.",
     rating: { value: 4.6, count: 4218 },
@@ -213,6 +216,7 @@ export const watchesJewelrySeeds: MockProductSeed[] = [
     brand: "Maison Aurea",
     model: "Torsade",
     category: "watches-jewelry",
+    releasedAt: "2025-03-01",
     description:
       "Un jonc rigide au motif torsadé, plaqué or 18 carats sur laiton avec une épaisseur de placage de trois microns, soit trois fois la norme minimale. Le fermoir à charnière invisible se ferme d'une main et la pièce est garantie deux ans contre le ternissement.",
     rating: { value: 4.5, count: 728 },
@@ -276,6 +280,7 @@ export const watchesJewelrySeeds: MockProductSeed[] = [
     brand: "Maison Aurea",
     model: "Éclat Solitaire",
     category: "watches-jewelry",
+    releasedAt: "2024-10-01",
     description:
       "Un zircon cubique taille brillant de huit facettes serti sur quatre griffes en argent massif 925 rhodié. Le rhodiage protège l'argent de l'oxydation et conserve l'éclat blanc pendant plusieurs années sans polissage.",
     rating: { value: 4.4, count: 496 },
@@ -337,6 +342,7 @@ export const watchesJewelrySeeds: MockProductSeed[] = [
     brand: "Maison Aurea",
     model: "Figaro 50",
     category: "watches-jewelry",
+    releasedAt: "2025-05-01",
     description:
       "La maille figaro alterne trois anneaux courts et un anneau allongé, un dessin classique qui se porte seul ou avec un pendentif. Argent massif 925 poinçonné, avec un fermoir mousqueton renforcé et un anneau de réglage à 45 centimètres.",
     rating: { value: 4.6, count: 613 },
