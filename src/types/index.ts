@@ -211,8 +211,17 @@ export interface Category {
    * length search engines actually display. Falls back to `description`.
    */
   metaDescription?: string;
-  /** Lucide icon name, resolved by `CategoryCard`. */
+  /** Lucide icon name, used by the header menus. */
   icon: string;
+  /**
+   * Photo shown on the category tile.
+   *
+   * Every id was checked against the CDN and looked at before assignment, and
+   * appears nowhere else on the site: a category tile showing the same picture
+   * as a product card reads as a bug. To use your own asset, drop a file in
+   * `public/images/` and put its path here instead of the `unsplash(...)` call.
+   */
+  image: string;
   /** Sources that are relevant for this category. */
   sources: SourceId[];
 }

@@ -28,6 +28,7 @@ export type ImageContext =
   | "productCardRow"
   | "productHero"
   | "thumbnail"
+  | "categoryTile"
   | "blogCard"
   | "blogCover"
   | "fullBleed";
@@ -42,6 +43,7 @@ export const IMAGE_SIZES: Record<ImageContext, string> = {
   // half the page on desktop, full width on mobile
   productHero: "(max-width: 1024px) 100vw, 45vw",
   thumbnail: "(max-width: 1024px) 25vw, 120px",
+  categoryTile: "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw",
   blogCard: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   blogCover: "(max-width: 1024px) 100vw, 800px",
   fullBleed: "100vw",

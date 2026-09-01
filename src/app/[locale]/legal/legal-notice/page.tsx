@@ -16,7 +16,7 @@ export async function generateMetadata({
     alternates: localeAlternates(locale, "/legal/legal-notice"),
     title: "Mentions légales",
     description:
-      "Mentions légales de Findlydeal : éditeur du site, hébergeur, coordonnées de contact et propriété intellectuelle du comparateur de prix.",
+      "Mentions légales de Findlydeal : nature du service de comparaison de prix, propriété intellectuelle et procédure pour signaler un contenu.",
   };
 }
 
@@ -35,32 +35,25 @@ const SECTIONS = [
  * before real commercial operation: obligations differ with the legal form
  * chosen, the country of establishment and the turnover.
  *
- * ## The hosting provider must match reality
+ * ## Two required identifications are absent
  *
- * The "Hébergement" section names Cloudflare. Naming an operator's hosting
- * provider is a legal requirement in both France and Switzerland, and naming
- * the wrong one is a false statement rather than a stale detail. If the
- * deployment target ever moves away from Cloudflare, this block moves with it.
- *
- * ## Identification of the publisher is missing on purpose
- *
- * Name, postal address, legal status and company number were removed at the
- * operator's request. They are not optional in the long run: France's LCEN
- * (art. 6 III) and Switzerland's LCD (art. 3 para. 1 let. s) both require a
- * commercial site to identify who runs it, and an affiliate network reviewing
- * an application will look for exactly that. Put them back before real
- * commercial operation, along with the publication director, which is a
- * separate French obligation.
+ * The page no longer says who publishes the site, nor who hosts it. Both were
+ * removed at the operator's request and are left out on purpose, so this is a
+ * note rather than a bug report: France's LCEN (art. 6 III) and Switzerland's
+ * LCD (art. 3 para. 1 let. s) both require a commercial site to identify its
+ * publisher and its host, and an affiliate network reviewing an application
+ * looks for exactly that. They need to come back before real commercial
+ * operation.
  */
 export default function LegalNoticePage() {
   return (
     <LegalPage
       title="Mentions légales"
-      intro="Informations sur l'éditeur, l'hébergeur et le fonctionnement du site, conformément aux obligations d'identification applicables aux services en ligne."
+      intro="Comment fonctionne le comparateur, à qui appartiennent les contenus qu'il affiche, et comment nous signaler un problème sur une page."
       lastUpdated="2026-08-23"
       sections={SECTIONS}
     >
-            <h2 id={slugify("Nature du service")}>Nature du service</h2>
+      <h2 id={slugify("Nature du service")}>Nature du service</h2>
       <p>
         {siteConfig.name} est un comparateur de prix. Le site ne vend aucun produit, ne détient
         aucun stock et n&apos;intervient dans aucune transaction. Il présente des offres provenant
