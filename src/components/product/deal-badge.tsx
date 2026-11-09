@@ -1,4 +1,4 @@
-import { formatDiscount } from "@/lib/utils";
+import { formatBelowMedian } from "@/lib/utils";
 import type { DealSignal } from "@/types";
 
 interface DealBadgeProps {
@@ -7,8 +7,10 @@ interface DealBadgeProps {
 
 /**
  * Visual translation of a `DealSignal`.
- * A discount shows the exact percentage in orange; an offer that wins on other
- * grounds gets the green "Meilleure affaire" label instead.
+ * A gap below the median of the other offers shows its exact percentage in
+ * orange ("18 % sous la médiane", never "-18 %", which would read as a seller
+ * discount); an offer that wins on other grounds gets the green "Meilleure
+ * affaire" label instead.
  */
 export function DealBadge({ deal }: DealBadgeProps) {
   if (deal.level === "none") return null;
@@ -22,7 +24,7 @@ export function DealBadge({ deal }: DealBadgeProps) {
         hasDiscount ? "bg-primary" : "bg-deal-soft"
       }`}
     >
-      {hasDiscount ? formatDiscount(deal.discountPercent!) : "Meilleure affaire"}
+      {hasDiscount ? formatBelowMedian(deal.discountPercent!) : "Meilleure affaire"}
     </span>
   );
 }

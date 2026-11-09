@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { siteConfig } from "@/config/site";
 import { getDictionary, isLocaleTranslated, isUiLocale, UI_LOCALES } from "@/i18n";
-import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/seo/json-ld";
+import { buildGraph, organizationNode, webSiteNode } from "@/lib/seo/json-ld";
 import { localeOpenGraph } from "@/lib/seo/locale";
 import "../globals.css";
 
@@ -106,8 +106,8 @@ export default async function RootLayout({
 
         {/* Icon paths that repeat dozens of times per page, declared once. */}
         <IconSprite />
-        <JsonLd data={buildOrganizationSchema()} />
-        <JsonLd data={buildWebSiteSchema()} />
+        {/* Site-wide entities: every page's graph points at these two `@id`s. */}
+        <JsonLd data={buildGraph(organizationNode(), webSiteNode())} />
         <Header locale={locale} />
         <main id="contenu" className="flex-1">
           {children}

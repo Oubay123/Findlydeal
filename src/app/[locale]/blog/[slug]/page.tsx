@@ -11,7 +11,15 @@ import { JsonLd } from "@/components/common/json-ld";
 import { SmartImage } from "@/components/common/smart-image";
 import { Button } from "@/components/ui/button";
 import { getArticleBySlug, getArticleSlugs, getRelatedArticles, tagSlug } from "@/content/blog";
-import { buildArticleSchema } from "@/lib/seo/json-ld";
+import {
+  REFURBISHED_GRADES_PATH,
+  articleNode,
+  buildGraph,
+  pageUrl,
+  refurbishedGradesNodes,
+  schemaIds,
+  webPageNode,
+} from "@/lib/seo/json-ld";
 import { formatArticleDate } from "@/lib/utils";
 
 interface ArticlePageProps {
@@ -53,19 +61,39 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const article = getArticleBySlug(slug);
   if (!article) notFound();
 
   const { Content } = article;
   const related = getRelatedArticles(slug);
+  const path = `/blog/${article.slug}`;
+  const url = pageUrl(locale, path);
 
   return (
     <>
-      <JsonLd data={buildArticleSchema(article)} />
+      <JsonLd
+        data={buildGraph(
+          webPageNode({
+            url,
+            name: article.title,
+            description: article.description,
+            about: schemaIds.article(url),
+            mainEntity: schemaIds.article(url),
+            hasBreadcrumb: true,
+            dateModified: article.updatedAt ?? article.date,
+          }),
+          articleNode(article, url),
+          // The grade vocabulary lives on the page whose text defines it.
+          path === REFURBISHED_GRADES_PATH && refurbishedGradesNodes(url),
+        )}
+      />
 
       <Container className="max-w-3xl py-10">
-        <Breadcrumbs items={[{ name: "Blog", href: "/blog" }, { name: article.title }]} />
+        <Breadcrumbs
+          path={path}
+          items={[{ name: "Blog", href: "/blog" }, { name: article.title }]}
+        />
 
         <header className="mx-auto mt-8 max-w-[68ch] space-y-4">
           <ul className="flex flex-wrap gap-2">
@@ -125,7 +153,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <aside className="mx-auto mt-14 max-w-[68ch] space-y-3 rounded-2xl bg-cream p-8 text-center">
           <h2 className="font-display text-xl font-bold">Passez de la théorie à la pratique</h2>
           <p className="text-sm text-muted-foreground">
-            Comparez le prix d&apos;un produit sur toutes les plateformes en une seule recherche.
+            Comparez le prix d&apos;un produit sur plusieurs plateformes en une seule recherche.
           </p>
           <Button asChild size="md" className="mt-2">
             <LocaleLink href="/search">Lancer une comparaison</LocaleLink>

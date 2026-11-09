@@ -16,9 +16,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: { absolute: "Findlydeal, comparateur de prix multi-plateformes" },
+    title: { absolute: "Findlydeal : comparateur neuf, reconditionné et occasion" },
     description:
-      "Comparez en une recherche les prix de plusieurs marketplaces : neuf, reconditionné et occasion, avec les vraies bonnes affaires signalées et les remises vérifiées.",
+      "Comparez en une recherche les prix de plusieurs marketplaces, en neuf, en reconditionné et en occasion, avec les offres nettement sous le prix médian signalées.",
     alternates: localeAlternates(locale, "/"),
   };
 }

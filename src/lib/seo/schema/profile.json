@@ -1,0 +1,167 @@
+{
+  "$comment": "Profil de données structurées Findlydeal. Source unique lue par le code (src/lib/seo/schema) et par le contrôle de build (scripts/check-structured-data.mjs). Explications : docs/donnees-structurees.md.",
+  "version": "1.0.0",
+  "context": "https://schema.org",
+  "language": "fr-FR",
+  "ids": {
+    "$comment": "Chaque entité porte un @id stable : URL absolue de la page + fragment. Les blocs se référencent par @id au lieu de répéter les entités.",
+    "organization": "{origin}/#organization",
+    "website": "{origin}/#website",
+    "webpage": "{pageUrl}#webpage",
+    "breadcrumb": "{pageUrl}#breadcrumb",
+    "product": "{pageUrl}#product",
+    "itemList": "{pageUrl}#itemlist",
+    "article": "{pageUrl}#article",
+    "faq": "{pageUrl}#faq",
+    "definedTermSet": "{pageUrl}#{setSlug}",
+    "definedTerm": "{pageUrl}#{setSlug}-{termSlug}"
+  },
+  "types": {
+    "Organization": {
+      "required": ["@id", "name", "url", "logo"],
+      "recommended": ["description", "contactPoint", "areaServed", "sameAs"],
+      "forbidden": []
+    },
+    "WebSite": {
+      "required": ["@id", "name", "url", "publisher", "inLanguage"],
+      "recommended": ["description"],
+      "forbidden": ["potentialAction"],
+      "$comment": "potentialAction (SearchAction) est interdit : Google a retiré la sitelinks search box en novembre 2024."
+    },
+    "WebPage": {
+      "required": ["@id", "url", "name", "isPartOf", "inLanguage"],
+      "recommended": ["description", "breadcrumb", "about", "mainEntity", "publisher"],
+      "forbidden": []
+    },
+    "CollectionPage": { "extends": "WebPage" },
+    "ItemPage": { "extends": "WebPage" },
+    "AboutPage": { "extends": "WebPage" },
+    "FAQPage": {
+      "extends": "WebPage",
+      "required": ["mainEntity"]
+    },
+    "BreadcrumbList": {
+      "required": ["itemListElement"],
+      "recommended": ["@id"],
+      "forbidden": []
+    },
+    "ItemList": {
+      "required": ["@id", "itemListElement", "numberOfItems"],
+      "recommended": ["itemListOrder"],
+      "forbidden": []
+    },
+    "Product": {
+      "required": ["@id", "name", "offers"],
+      "recommended": ["description", "brand", "model", "image", "category"],
+      "forbidden": ["review", "aggregateRating"],
+      "$comment": "review et aggregateRating sont interdits tant que la page n'affiche pas d'avis réels et vérifiables (règles Google du 24 juillet 2026 sur les avis). Ne jamais les générer depuis le catalogue de démonstration."
+    },
+    "AggregateOffer": {
+      "required": ["lowPrice", "highPrice", "priceCurrency", "offerCount"],
+      "recommended": ["offers"],
+      "forbidden": []
+    },
+    "Offer": {
+      "required": ["price", "priceCurrency", "url"],
+      "recommended": ["availability", "itemCondition", "seller"],
+      "forbidden": [],
+      "$comment": "itemCondition et availability sont omis quand la source ne les fournit pas : on ne devine jamais un état ni une disponibilité."
+    },
+    "Article": {
+      "required": [
+        "@id",
+        "headline",
+        "datePublished",
+        "author",
+        "publisher",
+        "mainEntityOfPage",
+        "inLanguage"
+      ],
+      "recommended": ["description", "image", "dateModified", "keywords"],
+      "forbidden": []
+    },
+    "Question": {
+      "required": ["name", "acceptedAnswer"],
+      "recommended": [],
+      "forbidden": []
+    },
+    "Answer": {
+      "required": ["text"],
+      "recommended": [],
+      "forbidden": []
+    },
+    "DefinedTermSet": {
+      "required": ["@id", "name", "hasDefinedTerm"],
+      "recommended": ["description", "url"],
+      "forbidden": []
+    },
+    "DefinedTerm": {
+      "required": ["@id", "name", "description", "inDefinedTermSet"],
+      "recommended": [],
+      "forbidden": []
+    },
+    "Dataset": {
+      "status": "prévu",
+      "required": [
+        "@id",
+        "name",
+        "description",
+        "url",
+        "creator",
+        "license",
+        "temporalCoverage",
+        "variableMeasured"
+      ],
+      "recommended": ["distribution", "dateModified", "spatialCoverage", "isAccessibleForFree"],
+      "forbidden": [],
+      "$comment": "Pour le futur baromètre mensuel des prix du reconditionné. Ne pas émettre avant que la page existe."
+    }
+  },
+  "vocabularies": {
+    "itemCondition": {
+      "new": "https://schema.org/NewCondition",
+      "refurbished": "https://schema.org/RefurbishedCondition",
+      "used": "https://schema.org/UsedCondition"
+    },
+    "availability": {
+      "in_stock": "https://schema.org/InStock",
+      "out_of_stock": "https://schema.org/OutOfStock"
+    },
+    "refurbishedGrades": {
+      "slug": "grades",
+      "name": "Grades de reconditionnement",
+      "description": "Échelle d'aspect extérieur la plus répandue chez les vendeurs de produits reconditionnés en France. Aucune norme légale ne l'encadre : chaque vendeur définit la sienne. Le grade ne renseigne ni sur la batterie, ni sur les pièces remplacées, ni sur la garantie.",
+      "pagePath": "/blog/grades-reconditionnement-expliques",
+      "terms": [
+        {
+          "slug": "parfait-etat",
+          "name": "Parfait état",
+          "description": "Aucune trace d'usage visible, même en inspectant l'appareil de près."
+        },
+        {
+          "slug": "tres-bon-etat",
+          "name": "Très bon état",
+          "description": "Micro-rayures visibles uniquement sous un certain angle ou à la lumière directe ; écran généralement irréprochable."
+        },
+        {
+          "slug": "bon-etat",
+          "name": "Bon état",
+          "description": "Rayures visibles à l'œil nu sur la coque ou les tranches, écran sans impact majeur."
+        },
+        {
+          "slug": "etat-correct",
+          "name": "État correct",
+          "description": "Marques d'usage nettes, éventuels impacts sur la coque, parfois une micro-rayure sur l'écran."
+        }
+      ]
+    }
+  },
+  "rules": [
+    "Ne baliser que ce qui est visible sur la page, avec les mêmes valeurs.",
+    "Aucune donnée structurée produit, offre ou avis tant que le catalogue de démonstration est actif.",
+    "Ne jamais émettre une propriété sans donnée réelle : pas de valeur par défaut, pas d'état deviné.",
+    "Une entité = un @id stable ; les autres blocs y renvoient par référence.",
+    "Les valeurs d'énumération utilisent les URI officielles schema.org ; les notions sans équivalent (grades) passent par un DefinedTermSet publié sur une page visible.",
+    "JSON-LD uniquement, échappé contre l'injection (< devient \\u003c)."
+  ]
+}

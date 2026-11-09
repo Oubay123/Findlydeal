@@ -7,8 +7,9 @@ import { DEFAULT_UI_LOCALE, PUBLIC_UI_LOCALES, UI_LOCALES } from "@/i18n/config"
  * `middleware` is the deprecated name for this file in this version of
  * Next.js; the convention is `proxy.ts` at the same level as `app/`.
  *
- * The locale is picked from `Accept-Language`, falling back to French. It is a
- * redirect rather than a rewrite on purpose: one URL per language is what
+ * The locale is picked from `Accept-Language`, falling back to French. Only
+ * French is published today, so every visitor and crawler lands on `/fr`. It
+ * is a redirect rather than a rewrite on purpose: one URL per language is what
  * makes `hreflang`, canonicals and sharing behave, and a rewrite would serve
  * two languages from the same address.
  *
@@ -50,7 +51,12 @@ export function proxy(request: NextRequest) {
 
   const url = request.nextUrl.clone();
   url.pathname = `/${preferredLocale(request)}${pathname === "/" ? "" : pathname}`;
-  return NextResponse.redirect(url);
+  // With a single published locale the target never varies: 308, so search
+  // engines consolidate the locale-less URL onto it. Once a second locale is
+  // public the target depends on the visitor, and a permanent redirect would
+  // stay cached in browsers: back to a temporary 307.
+  const status = PUBLIC_UI_LOCALES.length > 1 ? 307 : 308;
+  return NextResponse.redirect(url, status);
 }
 
 export const config = {

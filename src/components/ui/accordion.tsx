@@ -79,7 +79,12 @@ function AccordionContent({
   return (
     <AccordionPrimitive.Content
       data-slot="accordion-content"
-      className="overflow-hidden text-sm data-open:animate-accordion-down data-closed:animate-accordion-up"
+      className={cn(
+        "overflow-hidden text-sm data-open:animate-accordion-down data-closed:animate-accordion-up",
+        // A force-mounted panel stays in the DOM (so its text is in the served
+        // HTML) and Radix then never sets `hidden`: fold it with CSS instead.
+        props.forceMount && "data-[state=closed]:hidden",
+      )}
       {...props}
     >
       <div

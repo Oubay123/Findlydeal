@@ -1,0 +1,43 @@
+/**
+ * Cloudflare Workers configuration for Findlydeal (Next.js via OpenNext).
+ *
+ * Both build triggers in the Cloudflare dashboard run `npm run build`, which
+ * produces `.open-next/`, then either `npx wrangler deploy` (branch `main`) or
+ * `npx wrangler versions upload` (every other branch, as a preview). Without
+ * this file the preview command had no entry point and failed.
+ *
+ * Secrets (eBay keys) are NOT set here: add them in the dashboard
+ * (Workers & Pages > findlydeal > Settings > Variables and Secrets) or with
+ * `npx wrangler secret put EBAY_CLIENT_SECRET`.
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "findlydeal",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-08-28",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "services": [
+    {
+      // Self-reference used by OpenNext for caching; must match "name".
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "findlydeal",
+    },
+  ],
+  // next/image optimisation through Cloudflare Images.
+  "images": {
+    "binding": "IMAGES",
+  },
+  // Non-secret settings. `keep_vars` stops a deploy from wiping the
+  // variables added in the dashboard (EBAY_CAMPAIGN_ID, etc.).
+  "vars": {
+    "EBAY_MARKETPLACE_ID": "EBAY_FR",
+  },
+  "keep_vars": true,
+  "observability": {
+    "enabled": true,
+  },
+}
