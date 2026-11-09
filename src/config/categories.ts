@@ -19,7 +19,7 @@ export const categories: Category[] = [
     name: "Tech & Électronique",
     description: "Smartphones, ordinateurs, consoles et accessoires.",
     metaDescription:
-      "Comparez les prix des smartphones, ordinateurs, consoles et casques sur plusieurs marketplaces à la fois : neuf, reconditionné et occasion, remises vérifiées.",
+      "Comparez les prix des smartphones, ordinateurs, consoles et casques entre de nombreux vendeurs : neuf, reconditionné et occasion, bonnes affaires signalées.",
     icon: "Smartphone",
     image: unsplash("photo-1531297484001-80022131f5a1", 700),
     sources: ["ebay", "backmarket"],
@@ -30,7 +30,7 @@ export const categories: Category[] = [
     name: "Électroménager",
     description: "Gros et petit électroménager pour toute la maison.",
     metaDescription:
-      "Comparez les prix de l'électroménager sur plusieurs marketplaces : aspirateurs, machines à café et petit électroménager, avec les vraies remises signalées.",
+      "Comparez les prix de l'électroménager entre de nombreux vendeurs : aspirateurs, machines à café et petit électroménager, avec les bonnes affaires signalées.",
     icon: "WashingMachine",
     image: unsplash("photo-1556909212-d5b604d0c90d", 700),
     sources: ["ebay"],
@@ -41,7 +41,7 @@ export const categories: Category[] = [
     name: "Meubles & Déco",
     description: "Canapés, tables, rangements et décoration.",
     metaDescription:
-      "Comparez les prix des meubles et de la déco sur plusieurs marketplaces : canapés, chaises, luminaires et rangements, avec les vraies remises signalées.",
+      "Comparez les prix des meubles et de la déco entre de nombreux vendeurs : canapés, chaises, luminaires et rangements, avec les bonnes affaires signalées.",
     icon: "Armchair",
     image: unsplash("photo-1567016432779-094069958ea5", 700),
     sources: ["wayfair"],
@@ -52,7 +52,7 @@ export const categories: Category[] = [
     name: "Montres & Bijoux",
     description: "Montres connectées, montres classiques et bijoux.",
     metaDescription:
-      "Comparez les prix des montres et bijoux sur plusieurs marketplaces : montres automatiques, chronographes, montres connectées et bijoux en argent ou plaqué or.",
+      "Comparez les prix des montres et bijoux entre de nombreux vendeurs : montres automatiques, chronographes, montres connectées et bijoux en argent ou plaqué or.",
     icon: "Watch",
     image: unsplash("photo-1509941943102-10c232535736", 700),
     sources: ["ebay", "creationwatches"],
@@ -63,7 +63,7 @@ export const categories: Category[] = [
     name: "Reconditionné",
     description: "Du matériel testé, remis en état et garanti, à prix réduit.",
     metaDescription:
-      "Comparez les prix du matériel reconditionné sur plusieurs marketplaces : smartphones, ordinateurs et montres testés, remis en état et garantis, à prix réduit.",
+      "Comparez les prix du matériel reconditionné entre de nombreux vendeurs : smartphones, ordinateurs et montres remis en état et vendus moins cher que le neuf.",
     icon: "RefreshCcw",
     image: unsplash("photo-1588508065123-287b28e013da", 700),
     sources: ["backmarket"],
@@ -74,7 +74,7 @@ export const categories: Category[] = [
     name: "Mode",
     description: "Vêtements, chaussures et accessoires.",
     metaDescription:
-      "Comparez les prix de la mode sur plusieurs marketplaces : vêtements, chaussures et accessoires, en neuf comme en seconde main, avec les remises vérifiées.",
+      "Comparez les prix de la mode entre de nombreux vendeurs : vêtements, chaussures et accessoires, en neuf comme en seconde main, avec les bonnes affaires signalées.",
     icon: "Shirt",
     image: unsplash("photo-1523381210434-271e8be1f52b", 700),
     sources: ["ebay"],
@@ -85,7 +85,7 @@ export const categories: Category[] = [
     name: "Occasion",
     description: "Les bonnes affaires de seconde main, toutes catégories.",
     metaDescription:
-      "Comparez les prix des produits d'occasion sur plusieurs marketplaces : tech, mobilier, montres et mode de seconde main, avec les vraies remises signalées.",
+      "Comparez les prix des produits d'occasion entre de nombreux vendeurs : tech, mobilier, montres et mode de seconde main, avec les bonnes affaires signalées.",
     icon: "Recycle",
     image: unsplash("photo-1556742049-0cfed4f6a45d", 700),
     sources: ["ebay", "backmarket"],
@@ -96,7 +96,7 @@ export const categories: Category[] = [
     name: "Loisirs",
     description: "Sport, jeux, instruments et matériel de plein air.",
     metaDescription:
-      "Comparez les prix des articles de loisirs sur plusieurs marketplaces : vélos, instruments de musique et matériel de plein air, remises vérifiées à l'appui.",
+      "Comparez les prix des articles de loisirs entre de nombreux vendeurs : vélos, instruments de musique et matériel de plein air, bonnes affaires signalées.",
     icon: "Bike",
     image: unsplash("photo-1461896836934-ffe607ba8211", 700),
     sources: ["ebay"],

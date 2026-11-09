@@ -1,28 +1,34 @@
-import { Bell, Globe, Search, Zap } from "lucide-react";
+import { Layers, Scale, ShieldCheck, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Container } from "@/components/common/container";
 
+/**
+ * Only what the site does today. Price history and price alerts are planned
+ * (they need stored prices) and must not be announced before they exist.
+ */
 const FEATURES: { icon: LucideIcon; title: string; description: string }[] = [
   {
-    icon: Search,
-    title: "Comparaison multi-plateformes",
-    description: "Des dizaines de marketplaces comparées en une seule recherche.",
-  },
-  {
-    icon: Globe,
-    title: "Historique des prix",
-    description: "Suivez l'évolution du prix d'un produit dans le temps et achetez au bon moment.",
-  },
-  {
-    icon: Bell,
-    title: "Alertes de baisse de prix",
+    icon: Scale,
+    title: "Prix total comparé",
     description:
-      "Recevez une notification dès que le prix d'un produit suivi passe sous votre seuil.",
+      "Le prix de l'objet et les frais de port, du moins cher au plus cher, chez de nombreux vendeurs.",
+  },
+  {
+    icon: Layers,
+    title: "Neuf, reconditionné, occasion",
+    description: "Chaque offre affiche son état, et une affaire se mesure toujours à état égal.",
   },
   {
     icon: Zap,
-    title: "Bonnes affaires auto-détectées",
-    description: "Notre algorithme repère les vraies économies et les met en avant pour vous.",
+    title: "Bonnes affaires vérifiées",
+    description:
+      "Signalées seulement nettement sous la médiane ; un prix trop bas pour être vrai est marqué « à vérifier ».",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Classement indépendant",
+    description:
+      "Aucune position n'est payante : la commission d'affiliation n'entre jamais dans le classement.",
   },
 ];
 

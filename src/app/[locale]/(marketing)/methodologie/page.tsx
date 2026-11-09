@@ -98,7 +98,7 @@ export default async function MethodologyPage({
       <SectionTitle
         as="h1"
         title={TITLE}
-        description={`${siteConfig.name} compare le prix total des offres de plusieurs marketplaces partenaires. Aucune position n'est payante, et une commission ne change jamais l'ordre des offres.`}
+        description={`${siteConfig.name} compare le prix total des offres des marketplaces partenaires. Aucune position n'est payante, et une commission ne change jamais l'ordre des offres.`}
       />
 
       <div className="space-y-10 text-sm leading-relaxed text-muted-foreground [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground">

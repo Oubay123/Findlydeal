@@ -153,7 +153,7 @@ function EmptyState({ query }: { query: SearchQuery }) {
       <Placeholder
         icon={<PackageSearch className="size-6" aria-hidden />}
         title="Lancez une recherche"
-        description="Tapez ce que vous cherchez et Findlydeal compare plusieurs plateformes en une fois."
+        description="Tapez ce que vous cherchez et Findlydeal compare les offres de nombreux vendeurs en une fois."
       />
     );
   }

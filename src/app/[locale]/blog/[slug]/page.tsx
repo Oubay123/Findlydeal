@@ -153,7 +153,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <aside className="mx-auto mt-14 max-w-[68ch] space-y-3 rounded-2xl bg-cream p-8 text-center">
           <h2 className="font-display text-xl font-bold">Passez de la théorie à la pratique</h2>
           <p className="text-sm text-muted-foreground">
-            Comparez le prix d&apos;un produit sur plusieurs plateformes en une seule recherche.
+            Comparez le prix d&apos;un produit chez de nombreux vendeurs en une seule recherche.
           </p>
           <Button asChild size="md" className="mt-2">
             <LocaleLink href="/search">Lancer une comparaison</LocaleLink>

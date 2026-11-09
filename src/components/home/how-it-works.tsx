@@ -15,15 +15,15 @@ export const HOW_IT_WORKS_STEPS: { icon: LucideIcon; title: string; description:
   },
   {
     icon: Scale,
-    title: "Comparez les prix partout",
+    title: "Comparez les offres",
     description:
-      "Findlydeal interroge simultanément des dizaines de marketplaces pour vous, en temps réel.",
+      "Findlydeal relève les offres des marketplaces partenaires et les classe au prix total, livraison comprise.",
   },
   {
     icon: ThumbsUp,
     title: "Trouvez la meilleure affaire",
     description:
-      "Les meilleures offres sont mises en avant automatiquement. Cliquez, achetez, économisez.",
+      "Les offres nettement sous la médiane sont signalées. Vous achetez directement chez le vendeur.",
   },
 ];
 

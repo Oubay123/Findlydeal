@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import { Container } from "@/components/common/container";
 import { SectionTitle } from "@/components/common/section-title";
 import { siteConfig } from "@/config/site";
+import { isDemoCatalogueActive } from "@/lib/mock";
+import { describeLiveSources } from "@/lib/sources/describe";
 
 export async function generateMetadata({
   params,
@@ -16,11 +18,15 @@ export async function generateMetadata({
     alternates: localeAlternates(locale, "/about"),
     title: "À propos",
     description:
-      "À propos de Findlydeal : un comparateur de prix indépendant qui agrège plusieurs marketplaces, détecte les vraies remises et vit de commissions d'affiliation.",
+      "À propos de Findlydeal : un comparateur de prix indépendant qui agrège les offres des marketplaces partenaires, détecte les vraies remises et vit de commissions d'affiliation.",
   };
 }
 
+/** What the page says about the sources depends on the runtime keys. */
+export const dynamic = "force-dynamic";
+
 export default function AboutPage() {
+  const isDemo = isDemoCatalogueActive();
   return (
     <Container className="max-w-3xl space-y-8 py-16">
       <Breadcrumbs items={[{ name: "À propos" }]} />
@@ -38,22 +44,32 @@ export default function AboutPage() {
           n&apos;incluent pas la livraison, et de ne jamais savoir si la remise affichée est réelle.
         </p>
         <p>
-          Nous agrégeons plusieurs marketplaces en même temps, nous normalisons leurs offres dans un
-          format comparable, et nous évaluons chacune d&apos;elles par rapport au prix constaté,
-          pour qu&apos;un badge « bonne affaire » veuille enfin dire quelque chose.
+          Nous relevons les offres des marketplaces partenaires, nous les ramenons à un format
+          comparable (prix total, état, vendeur), et nous évaluons chacune d&apos;elles par rapport
+          aux offres du même produit dans le même état, pour qu&apos;un badge « bonne affaire »
+          veuille enfin dire quelque chose.
         </p>
         <p>
           {siteConfig.name} est gratuit et le restera. Nous sommes rémunérés par les marketplaces
           via des commissions d&apos;affiliation, ce qui n&apos;influence jamais le classement des
           offres.
         </p>
-        <p>
-          <strong className="text-foreground">Le service est en préparation.</strong> Nos
-          partenariats marchands sont en cours de validation : les produits, prix et avis
-          actuellement visibles sur le site sont des exemples de démonstration, destinés à illustrer
-          le fonctionnement du comparateur. Ils seront remplacés par des relevés en temps réel dès
-          l&apos;activation des sources.
-        </p>
+        {isDemo ? (
+          <p>
+            <strong className="text-foreground">Le service est en préparation.</strong> Nos
+            partenariats marchands sont en cours de validation : les produits, prix et avis
+            actuellement visibles sur le site sont des exemples de démonstration, destinés à
+            illustrer le fonctionnement du comparateur. Ils seront remplacés par des relevés en
+            temps réel dès l&apos;activation des sources.
+          </p>
+        ) : (
+          <p>
+            Aujourd&apos;hui, les offres viennent de{" "}
+            <strong className="text-foreground">{describeLiveSources()}</strong>, livrables en
+            France. D&apos;autres marketplaces seront ajoutées à mesure que leurs programmes
+            d&apos;affiliation sont validés.
+          </p>
+        )}
         <p>
           Une question, une remarque :{" "}
           <a

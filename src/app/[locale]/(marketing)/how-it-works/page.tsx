@@ -20,7 +20,7 @@ export async function generateMetadata({
     alternates: localeAlternates(locale, "/how-it-works"),
     title: "Comment ça marche",
     description:
-      "Comment marche Findlydeal : une seule recherche interroge plusieurs marketplaces, normalise leurs offres dans un format comparable et note les vraies bonnes affaires.",
+      "Comment marche Findlydeal : une seule recherche interroge les marketplaces partenaires, normalise leurs offres dans un format comparable et note les vraies bonnes affaires.",
   };
 }
 

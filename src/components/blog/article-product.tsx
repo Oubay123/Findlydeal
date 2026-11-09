@@ -34,7 +34,7 @@ export function ArticleProduct({ slug, fallbackTerm }: ArticleProductProps) {
     return (
       <div className="my-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-5">
         <p className="text-sm text-muted-foreground">
-          Comparez les prix de ce produit sur plusieurs plateformes.
+          Comparez les prix de ce produit chez de nombreux vendeurs.
         </p>
         <Button asChild size="md" variant="outline-brand">
           <LocaleLink href={`/search?q=${encodeURIComponent(term)}`}>

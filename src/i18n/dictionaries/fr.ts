@@ -27,7 +27,7 @@ export const fr = {
 
   search: {
     title: "Comparateur de prix",
-    subtitle: "Une recherche, plusieurs plateformes, les vraies bonnes affaires signalées.",
+    subtitle: "Une recherche, de nombreux vendeurs, les vraies bonnes affaires signalées.",
     placeholder: "Rechercher un produit",
     filters: "Filtres",
     reset: "Réinitialiser",
@@ -50,7 +50,7 @@ export const fr = {
   emptyState: {
     startTitle: "Lancez une recherche",
     startBody:
-      "Tapez ce que vous cherchez et Findlydeal compare plusieurs plateformes en une fois.",
+      "Tapez ce que vous cherchez et Findlydeal compare les offres de nombreux vendeurs en une fois.",
     noMatchTitle: "Aucune offre trouvée",
     noMatchBody: "Essayez un terme plus large, ou une autre orthographe.",
     filteredTitle: "Aucun produit ne passe ces filtres",
@@ -111,7 +111,7 @@ export const fr = {
 
   footer: {
     tagline:
-      "Le comparateur malin qui trouve les meilleures offres à votre place, sur plusieurs plateformes.",
+      "Le comparateur malin qui trouve les meilleures offres à votre place, chez de nombreux vendeurs.",
     legal: "Légal",
   },
 

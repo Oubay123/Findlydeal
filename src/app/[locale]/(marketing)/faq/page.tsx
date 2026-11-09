@@ -6,7 +6,7 @@ import { Container } from "@/components/common/container";
 import { JsonLd } from "@/components/common/json-ld";
 import { FaqAccordion } from "@/components/common/faq-accordion";
 import { SectionTitle } from "@/components/common/section-title";
-import { faqItems } from "@/config/faq";
+import { getFaqItems } from "@/config/faq";
 import { buildGraph, faqEntities, pageUrl, webPageNode } from "@/lib/seo/json-ld";
 
 export async function generateMetadata({
@@ -23,8 +23,12 @@ export async function generateMetadata({
   };
 }
 
+/** The marketplace answer names the sources connected at runtime. */
+export const dynamic = "force-dynamic";
+
 export default async function FaqPage({ params }: { params: Promise<{ locale: UiLocale }> }) {
   const { locale } = await params;
+  const faqItems = getFaqItems();
   const url = pageUrl(locale, "/faq");
 
   return (

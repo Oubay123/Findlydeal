@@ -1,7 +1,7 @@
 import { Container } from "@/components/common/container";
 import { SectionTitle } from "@/components/common/section-title";
 import { FaqAccordion } from "@/components/common/faq-accordion";
-import { faqItems } from "@/config/faq";
+import { getFaqItems } from "@/config/faq";
 
 interface FaqSectionProps {
   /** Landing page shows a subset; the `/faq` page shows everything. */
@@ -9,6 +9,7 @@ interface FaqSectionProps {
 }
 
 export function FaqSection({ limit }: FaqSectionProps) {
+  const faqItems = getFaqItems();
   return (
     <section className="py-20">
       <Container className="space-y-10">

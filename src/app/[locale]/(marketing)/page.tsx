@@ -26,7 +26,7 @@ export async function generateMetadata({
   return {
     title: { absolute: "Findlydeal : comparateur neuf, reconditionné et occasion" },
     description:
-      "Comparez en une recherche les prix de plusieurs marketplaces, en neuf, en reconditionné et en occasion, avec les offres nettement sous le prix médian signalées.",
+      "Comparez en une recherche les prix de nombreux vendeurs, en neuf, en reconditionné et en occasion, avec les offres nettement sous le prix médian signalées.",
     alternates: localeAlternates(locale, "/"),
   };
 }
