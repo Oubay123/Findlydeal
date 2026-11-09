@@ -57,10 +57,8 @@ const withMDX = createMDX({
   },
 });
 
-// Deployment target: Cloudflare Workers via @opennextjs/cloudflare.
-// Nothing to configure yet - the adapter is added later with:
-//   npm i -D @opennextjs/cloudflare wrangler
-//   npx @opennextjs/cloudflare  (generates open-next.config.ts + wrangler.jsonc)
-// Until then, keep server code runtime-agnostic: no `fs`, no `path`, no
-// Node-only globals outside of build scripts.
+// Deployment target: Cloudflare Workers via @opennextjs/cloudflare
+// (see open-next.config.ts and wrangler.jsonc). Keep server code
+// runtime-agnostic: no `fs`, no `path`, no Node-only globals outside of build
+// scripts.
 export default withMDX(nextConfig);
