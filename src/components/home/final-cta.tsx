@@ -11,7 +11,7 @@ export function FinalCta() {
           Prêt à dénicher votre prochaine bonne affaire ?
         </h2>
         <p className="max-w-xl text-white/85">
-          Des milliers d&apos;offres vous attendent. Comparez en quelques secondes.
+          Neuf, reconditionné ou occasion : comparez les offres en quelques secondes.
         </p>
         <Button
           asChild

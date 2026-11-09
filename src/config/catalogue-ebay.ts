@@ -164,7 +164,8 @@ export const catalogueEbayEntries: CatalogueEbayEntry[] = [
     slug: "apple-watch-series-9-45mm",
     query: "Apple Watch Series 9 45 mm GPS",
     require: [["series 9"], ["45"]],
-    exclude: ["41", "41mm"],
+    // The GPS-only model: the cellular one is another, dearer product.
+    exclude: ["41", "41mm", "cellular", "4g", "lte", "ultra"],
     minPrice: 150,
     maxPrice: 550,
   },
