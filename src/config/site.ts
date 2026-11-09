@@ -46,9 +46,15 @@ function resolveSiteUrl(): string {
  */
 export const siteConfig = {
   name: "Findlydeal",
-  tagline: "Le comparateur de prix multi-plateformes",
+  tagline: "Le comparateur de prix du neuf, du reconditionné et de l'occasion",
+  /**
+   * The one sentence that describes the brand everywhere: meta description,
+   * Organization and WebSite markup, hero. Answer engines piece an entity
+   * together from such sentences, so it stays factual (no "dozens of
+   * marketplaces" while there are four) and identical on every surface.
+   */
   description:
-    "Findlydeal compare les prix sur des dizaines de marketplaces, dans toutes les langues, pour vous faire économiser sans effort.",
+    "Findlydeal compare les prix du neuf, du reconditionné et de l'occasion sur plusieurs marketplaces, en une seule recherche, et signale les offres nettement sous le prix médian.",
   url: resolveSiteUrl(),
   locale: "fr",
   contactEmail: "contact@findlydeal.com",
@@ -71,6 +77,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { title: "Toutes les catégories", href: "/categories" },
       { title: "À propos", href: "/about" },
       { title: "Comment ça marche", href: "/how-it-works" },
+      { title: "Méthodologie et classement", href: "/methodologie" },
       { title: "FAQ", href: "/faq" },
       { title: "Blog", href: "/blog" },
       { title: "Contact", href: `mailto:${siteConfig.contactEmail}`, external: true },

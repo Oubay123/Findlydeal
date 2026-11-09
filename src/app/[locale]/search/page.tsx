@@ -13,6 +13,7 @@ import { SearchFilters } from "@/components/search/search-filters";
 import { SearchResults, SearchResultsSkeleton } from "@/components/search/search-results";
 import { ViewToggle } from "@/components/search/view-toggle";
 import { SEARCH_PARAM_KEYS, type ResultsView } from "@/lib/constants";
+import { isDemoCatalogueActive } from "@/lib/mock";
 import { parseSearchParams, searchAllSources } from "@/lib/search";
 import { getServerDictionary } from "@/i18n/server";
 import { getAllSources } from "@/lib/sources";
@@ -21,15 +22,26 @@ import type { SearchQuery } from "@/types";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: UiLocale }>;
+  searchParams: Promise<RawSearchParams>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
+  /**
+   * A results page for a typed query or a filter combination is a near
+   * duplicate of thousands of others: crawlable, so its links are followed,
+   * but never indexed. Product and category pages carry the queries instead.
+   * The bare comparator page stays indexable once real offers are live.
+   */
+  const isQueryPage = Object.keys(query).length > 0;
+
   return {
     title: "Comparateur de prix",
     description:
-      "Recherchez un produit et comparez son prix sur toutes les plateformes : filtres par catégorie, budget, état et plateforme, tri par meilleure affaire.",
+      "Recherchez un produit et comparez son prix sur plusieurs plateformes : filtres par catégorie, budget, état et plateforme, tri par meilleure affaire.",
     alternates: localeAlternates(locale, "/search"),
+    ...(isQueryPage || isDemoCatalogueActive() ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

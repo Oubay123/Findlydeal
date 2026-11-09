@@ -1,7 +1,7 @@
 import type { UiLocale } from "@/i18n";
 import { localeAlternates } from "@/lib/seo/locale";
 import type { Metadata } from "next";
-import { LocaleLink } from "@/components/common/locale-link";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Breadcrumbs } from "@/components/common/breadcrumbs";
 import { Container } from "@/components/common/container";
@@ -17,14 +17,13 @@ import { ProductSpecs } from "@/components/product/product-specs";
 import { VideoReview } from "@/components/product/video-review";
 import { CompareBar } from "@/components/search/compare-bar";
 import { CompareToggle } from "@/components/search/compare-toggle";
-import { Button } from "@/components/ui/button";
 import { getCategoryBySlug } from "@/config/categories";
 import { getSourcePresentation } from "@/config/sources";
 import { getDictionary } from "@/i18n";
-import { getMockProducts } from "@/lib/mock";
+import { getMockProducts, isDemoCatalogueActive } from "@/lib/mock";
 import { getProductById } from "@/lib/products";
 import { getDiscoveryProducts, getSimilarProducts } from "@/lib/products/related";
-import { buildProductSchema } from "@/lib/seo/json-ld";
+import { buildGraph, pageUrl, productNode, schemaIds, webPageNode } from "@/lib/seo/json-ld";
 
 interface ProductPageProps {
   params: Promise<{ locale: UiLocale; id: string }>;
@@ -53,6 +52,12 @@ export const dynamicParams = true;
  */
 export const revalidate = 3600;
 
+/** Title shown in search results: the model plus the intent, within ~60 characters. */
+function productTitle(title: string): string {
+  const withIntent = `${title} : comparer les prix`;
+  return withIntent.length <= 60 ? withIntent : title;
+}
+
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { locale, id } = await params;
   const product = await getProductById(decodeURIComponent(id));
@@ -68,9 +73,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
      * query the brand suffix earns nothing and pushed 24 titles past the ~60
      * characters Google displays, truncating the model name instead.
      */
-    title: { absolute: product.title },
+    title: { absolute: productTitle(product.title) },
     description,
     alternates: localeAlternates(locale, `/product/${encodeURIComponent(product.id)}`),
+    // Example prices must never be indexed as if they were real offers.
+    ...(isDemoCatalogueActive() ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: "website",
       title: product.title,
@@ -85,28 +92,19 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 /**
  * Price comparison page for a single product.
  *
- * Not a 404 when the product is missing: an offer id can expire between the
- * search and the click, and a dead end here would waste the visit.
+ * A missing product renders the not-found page, which Next marks `noindex`.
+ * It used to answer with an "unavailable" message instead: with live
+ * marketplace data, every expired listing would have become an indexable empty
+ * page. The HTTP status stays 200 because this route has a `loading.tsx` and
+ * streams before the lookup ends; a real 404 status needs the existence check
+ * to run before streaming (see the model-page plan in docs/donnees-structurees.md).
  */
 export default async function ProductPage({ params }: ProductPageProps) {
   const { locale, id } = await params;
   const product = await getProductById(decodeURIComponent(id));
   const t = getDictionary(locale);
 
-  if (!product) {
-    return (
-      <Container className="max-w-2xl space-y-4 py-20 text-center">
-        <h1 className="text-2xl font-bold">{t.product.unavailableTitle}</h1>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          L&apos;offre a peut-être expiré, ou aucune source n&apos;est encore connectée. Essayez de
-          le rechercher à nouveau.
-        </p>
-        <Button asChild size="md">
-          <LocaleLink href="/search">Retour à la recherche</LocaleLink>
-        </Button>
-      </Container>
-    );
-  }
+  if (!product) notFound();
 
   // Both shelves read the same in-memory pool, so one await for the pair.
   const [similar, discovery] = await Promise.all([
@@ -116,14 +114,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const category = product.categorySlug ? getCategoryBySlug(product.categorySlug) : undefined;
   const { bestOffer } = product;
+  const path = `/product/${encodeURIComponent(product.id)}`;
+  const url = pageUrl(locale, path);
+  // No Product, Offer or Review markup for example prices: see the schema profile.
+  const isDemo = isDemoCatalogueActive();
 
   return (
     <>
       <DemoBanner />
-      <JsonLd data={buildProductSchema(product)} />
+      <JsonLd
+        data={buildGraph(
+          webPageNode({
+            url,
+            name: product.title,
+            description: product.description,
+            type: "ItemPage",
+            about: isDemo ? undefined : schemaIds.product(url),
+            mainEntity: isDemo ? undefined : schemaIds.product(url),
+            hasBreadcrumb: true,
+          }),
+          !isDemo && productNode(product, url, category?.name),
+        )}
+      />
 
       <Container className="max-w-6xl space-y-10 py-10">
         <Breadcrumbs
+          path={path}
           items={[
             { name: "Comparateur", href: "/search" },
             ...(category ? [{ name: category.name, href: `/category/${category.slug}` }] : []),

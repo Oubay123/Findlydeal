@@ -1,9 +1,8 @@
 import { LocaleLink } from "@/components/common/locale-link";
 import { ChevronRight } from "lucide-react";
 import { JsonLd } from "@/components/common/json-ld";
-import { localePath } from "@/i18n";
 import { getServerDictionary, getUiLocale } from "@/i18n/server";
-import { buildBreadcrumbSchema } from "@/lib/seo/json-ld";
+import { breadcrumbNode, buildGraph, pageUrl } from "@/lib/seo/json-ld";
 import { cn } from "@/lib/utils";
 
 export interface Crumb {
@@ -14,6 +13,11 @@ export interface Crumb {
 
 interface BreadcrumbsProps {
   items: Crumb[];
+  /**
+   * Route of the current page, without locale (`/product/abc`). When set, the
+   * BreadcrumbList gets the stable `@id` the page's WebPage node points at.
+   */
+  path?: string;
   className?: string;
 }
 
@@ -24,7 +28,7 @@ interface BreadcrumbsProps {
  * thing to visitors and another to crawlers is a bug waiting to happen.
  * "Accueil" is prepended automatically.
  */
-export async function Breadcrumbs({ items, className }: BreadcrumbsProps) {
+export async function Breadcrumbs({ items, path, className }: BreadcrumbsProps) {
   const [locale, dictionary] = await Promise.all([getUiLocale(), getServerDictionary()]);
   const trail: Crumb[] = [{ name: dictionary.nav.home, href: "/" }, ...items];
 
@@ -63,12 +67,7 @@ export async function Breadcrumbs({ items, className }: BreadcrumbsProps) {
         BreadcrumbList pointing at the wrong one is worse than none.
       */}
       <JsonLd
-        data={buildBreadcrumbSchema(
-          trail.map((crumb) => ({
-            ...crumb,
-            href: crumb.href ? localePath(locale, crumb.href) : undefined,
-          })),
-        )}
+        data={buildGraph(breadcrumbNode(locale, trail, path ? pageUrl(locale, path) : undefined))}
       />
     </>
   );

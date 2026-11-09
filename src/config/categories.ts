@@ -15,6 +15,7 @@ import type { Category, CategorySlug } from "@/types";
 export const categories: Category[] = [
   {
     slug: "tech",
+    seoTitle: "Tech et électronique : prix neuf, reconditionné, occasion",
     name: "Tech & Électronique",
     description: "Smartphones, ordinateurs, consoles et accessoires.",
     metaDescription:
@@ -25,6 +26,7 @@ export const categories: Category[] = [
   },
   {
     slug: "home-appliances",
+    seoTitle: "Électroménager : comparer les prix neuf et reconditionné",
     name: "Électroménager",
     description: "Gros et petit électroménager pour toute la maison.",
     metaDescription:
@@ -35,6 +37,7 @@ export const categories: Category[] = [
   },
   {
     slug: "furniture",
+    seoTitle: "Meubles et déco : comparer les prix neuf et occasion",
     name: "Meubles & Déco",
     description: "Canapés, tables, rangements et décoration.",
     metaDescription:
@@ -45,6 +48,7 @@ export const categories: Category[] = [
   },
   {
     slug: "watches-jewelry",
+    seoTitle: "Montres et bijoux : comparer les prix neuf et occasion",
     name: "Montres & Bijoux",
     description: "Montres connectées, montres classiques et bijoux.",
     metaDescription:
@@ -55,16 +59,18 @@ export const categories: Category[] = [
   },
   {
     slug: "refurbished",
+    seoTitle: "Reconditionné : comparer les prix et les garanties",
     name: "Reconditionné",
-    description: "Du matériel remis à neuf, garanti, à prix réduit.",
+    description: "Du matériel testé, remis en état et garanti, à prix réduit.",
     metaDescription:
-      "Comparez les prix du matériel reconditionné sur plusieurs marketplaces : smartphones, ordinateurs et montres remis à neuf, garantis et vendus à prix réduit.",
+      "Comparez les prix du matériel reconditionné sur plusieurs marketplaces : smartphones, ordinateurs et montres testés, remis en état et garantis, à prix réduit.",
     icon: "RefreshCcw",
     image: unsplash("photo-1588508065123-287b28e013da", 700),
     sources: ["backmarket"],
   },
   {
     slug: "fashion",
+    seoTitle: "Mode : comparer les prix du neuf et de la seconde main",
     name: "Mode",
     description: "Vêtements, chaussures et accessoires.",
     metaDescription:
@@ -75,6 +81,7 @@ export const categories: Category[] = [
   },
   {
     slug: "second-hand",
+    seoTitle: "Occasion : comparer les prix de la seconde main",
     name: "Occasion",
     description: "Les bonnes affaires de seconde main, toutes catégories.",
     metaDescription:
@@ -85,6 +92,7 @@ export const categories: Category[] = [
   },
   {
     slug: "leisure",
+    seoTitle: "Loisirs : comparer les prix neuf et occasion",
     name: "Loisirs",
     description: "Sport, jeux, instruments et matériel de plein air.",
     metaDescription:

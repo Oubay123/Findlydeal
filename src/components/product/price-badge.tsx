@@ -3,7 +3,11 @@ import { cn, formatPrice } from "@/lib/utils";
 
 interface PriceBadgeProps {
   price: Money;
-  /** Struck-through reference price shown next to the current one. */
+  /**
+   * Median price of the other offers, shown next to the current one when the
+   * offer is below it. Deliberately not struck through: a crossed-out price
+   * reads as the seller's former price, which this is not.
+   */
   comparedTo?: Money;
   size?: "sm" | "lg";
   className?: string;
@@ -25,8 +29,8 @@ export function PriceBadge({ price, comparedTo, size = "sm", className }: PriceB
         {formatPrice(price)}
       </span>
       {isDiscounted ? (
-        <span className="text-sm text-muted-foreground line-through">
-          {formatPrice(comparedTo!)}
+        <span className="text-xs text-muted-foreground">
+          médiane&nbsp;{formatPrice(comparedTo!)}
         </span>
       ) : null}
     </span>

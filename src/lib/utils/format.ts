@@ -15,7 +15,20 @@ export function formatPrice(money: Money, locale: string = "fr-FR"): string {
   }).format(money.amount / 100);
 }
 
-/** `formatDiscount(18.4)` -> "-18%" */
+/**
+ * `formatBelowMedian(18.4)` -> "18 % sous la médiane".
+ *
+ * How a deal is labelled. The gap is measured against the median of the other
+ * offers found, not against the seller's own earlier price, so it must read as
+ * a comparison and never as a discount: under French law (art. L112-1-1 of the
+ * Code de la consommation) a discount's reference is the seller's lowest price
+ * over the previous 30 days.
+ */
+export function formatBelowMedian(percent: number): string {
+  return `${Math.round(percent)}\u00a0% sous la médiane`;
+}
+
+/** `formatDiscount(18.4)` -> "-18%". Reserved for genuine seller discounts. */
 export function formatDiscount(percent: number): string {
   return `-${Math.round(percent)}%`;
 }

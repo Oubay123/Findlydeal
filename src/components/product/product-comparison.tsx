@@ -1,4 +1,5 @@
 import { DemoFootnote } from "@/components/common/demo-notice";
+import { LocaleLink } from "@/components/common/locale-link";
 import { OfferRow } from "@/components/product/offer-row";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
@@ -33,6 +34,16 @@ export function ProductComparison({ product }: ProductComparisonProps) {
           </p>
         ) : null}
       </div>
+
+      {/* Ranking and affiliation, stated where the offers are (art. D111-7). */}
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Offres classées par prix total, livraison comprise, de la moins chère à la plus chère. Liste
+        non exhaustive ; aucune position payante. Les liens vers les marchands sont affiliés :
+        Findlydeal peut percevoir une commission, sans effet sur le prix ni sur l&apos;ordre.{" "}
+        <LocaleLink href="/methodologie" className="underline underline-offset-2">
+          Notre méthode
+        </LocaleLink>
+      </p>
 
       {offers.length > 0 ? (
         <ul className="space-y-3">

@@ -5,7 +5,7 @@ import { ProductCard } from "@/components/product/product-card";
 import { ProductListRow } from "@/components/product/product-list-row";
 import { CompareToggle } from "@/components/search/compare-toggle";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ResultsView } from "@/lib/constants";
+import { SORT_OPTIONS, type ResultsView } from "@/lib/constants";
 import type { SearchFilters, SearchQuery, SearchResult } from "@/types";
 
 interface SearchResultsProps {
@@ -53,6 +53,8 @@ export function SearchResults({
 
       {products.length > 0 ? (
         <>
+          <RankingNotice sort={query.filters.sort} />
+
           <p className="text-sm text-muted-foreground" aria-live="polite">
             {result.totalCount} produit{result.totalCount > 1 ? "s" : ""}
             {label ? (
@@ -102,6 +104,27 @@ export function SearchResults({
   );
 }
 
+/**
+ * What a French price comparator must state above every results list
+ * (art. D111-7 of the Code de la consommation): the ranking applied, whether
+ * the list is exhaustive, and whether any position is paid for. The full
+ * method lives on `/methodologie`, linked from here and from the footer.
+ */
+function RankingNotice({ sort }: { sort: SearchFilters["sort"] }) {
+  const label = SORT_OPTIONS.find((option) => option.value === sort)?.label ?? "Pertinence";
+
+  return (
+    <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+      Classement : <span className="font-medium text-foreground">{label}</span>. Liste non
+      exhaustive : seules les marketplaces partenaires sont interrogées. Aucune position n&apos;est
+      payante ; nos liens sont affiliés.{" "}
+      <LocaleLink href="/methodologie" className="underline underline-offset-2">
+        Comment nous classons les offres
+      </LocaleLink>
+    </p>
+  );
+}
+
 /** Any filter beyond the sort order, which is always set. */
 function hasActiveFilters(filters: SearchFilters): boolean {
   return Boolean(
@@ -130,7 +153,7 @@ function EmptyState({ query }: { query: SearchQuery }) {
       <Placeholder
         icon={<PackageSearch className="size-6" aria-hidden />}
         title="Lancez une recherche"
-        description="Tapez ce que vous cherchez et Findlydeal compare toutes les plateformes en une fois."
+        description="Tapez ce que vous cherchez et Findlydeal compare plusieurs plateformes en une fois."
       />
     );
   }

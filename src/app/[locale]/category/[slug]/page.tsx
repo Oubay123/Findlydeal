@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Breadcrumbs } from "@/components/common/breadcrumbs";
+import { JsonLd } from "@/components/common/json-ld";
 import { Container } from "@/components/common/container";
 import { DemoBanner } from "@/components/common/demo-notice";
 import { SectionTitle } from "@/components/common/section-title";
@@ -11,7 +12,9 @@ import { SearchBar } from "@/components/search/search-bar";
 import { SearchResults } from "@/components/search/search-results";
 import { getCategoryBySlug, getCategorySlugs } from "@/config/categories";
 import { DEFAULT_FILTERS, DEFAULT_LOCALE, RESULTS_PER_PAGE } from "@/lib/constants";
+import { isDemoCatalogueActive } from "@/lib/mock";
 import { searchAllSources } from "@/lib/search";
+import { buildGraph, itemListNode, pageUrl, schemaIds, webPageNode } from "@/lib/seo/json-ld";
 
 interface CategoryPageProps {
   params: Promise<{ locale: UiLocale; slug: string }>;
@@ -31,14 +34,16 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   if (!category) return {};
 
   return {
-    title: category.name,
+    title: { absolute: category.seoTitle ?? category.name },
     description: category.metaDescription ?? category.description,
     alternates: localeAlternates(locale, `/category/${category.slug}`),
+    // A listing of example prices is not a page worth indexing yet.
+    ...(isDemoCatalogueActive() ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const category = getCategoryBySlug(slug);
   if (!category) notFound();
 
@@ -52,12 +57,41 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     filters: { ...DEFAULT_FILTERS, sort: "deal_score", categorySlug: category.slug },
   });
 
+  const path = `/category/${category.slug}`;
+  const url = pageUrl(locale, path);
+  const isDemo = isDemoCatalogueActive();
+
   return (
     <>
       <DemoBanner />
+      <JsonLd
+        data={buildGraph(
+          webPageNode({
+            url,
+            name: category.seoTitle ?? category.name,
+            description: category.metaDescription ?? category.description,
+            type: "CollectionPage",
+            mainEntity: isDemo ? undefined : schemaIds.itemList(url),
+            hasBreadcrumb: true,
+          }),
+          // The list points at real product pages only, never at example offers.
+          !isDemo &&
+            result.products.length > 0 &&
+            itemListNode(
+              url,
+              result.products.map((product) => ({
+                name: product.title,
+                url: pageUrl(locale, `/product/${encodeURIComponent(product.id)}`),
+              })),
+            ),
+        )}
+      />
 
       <Container className="space-y-8 py-10">
-        <Breadcrumbs items={[{ name: "Comparateur", href: "/search" }, { name: category.name }]} />
+        <Breadcrumbs
+          path={path}
+          items={[{ name: "Comparateur", href: "/search" }, { name: category.name }]}
+        />
 
         <SectionTitle
           as="h1"

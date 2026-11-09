@@ -1,6 +1,8 @@
+import type { JsonLdGraph } from "@/lib/seo/json-ld";
+
 interface JsonLdProps {
-  /** A schema.org object built by `@/lib/seo/json-ld`. */
-  data: object;
+  /** A graph built by `buildGraph()` in `@/lib/seo/json-ld`. */
+  data: JsonLdGraph;
 }
 
 /**

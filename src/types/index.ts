@@ -211,6 +211,12 @@ export interface Category {
    * length search engines actually display. Falls back to `description`.
    */
   metaDescription?: string;
+  /**
+   * `<title>` of the category page, at most 60 characters, carrying the
+   * search intent ("comparer les prix", the conditions covered). Falls back to
+   * `name`. The H1 stays the shorter on-page heading.
+   */
+  seoTitle?: string;
   /** Lucide icon name, used by the header menus. */
   icon: string;
   /**

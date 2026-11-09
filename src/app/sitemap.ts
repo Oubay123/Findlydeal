@@ -3,7 +3,7 @@ import { categories } from "@/config/categories";
 import { siteConfig } from "@/config/site";
 import { blogArticles, getBlogTags, tagSlug } from "@/content/blog";
 import { DEFAULT_UI_LOCALE, UI_LOCALE_HREFLANG, getPublishedLocales, localePath } from "@/i18n";
-import { getMockProducts } from "@/lib/mock";
+import { getMockProducts, isDemoCatalogueActive } from "@/lib/mock";
 
 /**
  * Sitemap, assembled from the same sources the pages read.
@@ -12,6 +12,9 @@ import { getMockProducts } from "@/lib/mock";
  * it appear here automatically. Excluded on purpose:
  * - `/compare` — a personal, ephemeral selection, also marked `noindex`;
  * - filtered `/search?…` URLs — near-duplicates of each other;
+ * - every page that shows product data (comparator, categories, products)
+ *   while the demonstration catalogue is active: they are `noindex` until real
+ *   offers are live, and the sitemap must never list a noindexed URL;
  * - any locale whose dictionary is not finished. `getPublishedLocales()` is
  *   the same check that marks such a locale `noindex`, so the sitemap and the
  *   robots directive can never disagree.
@@ -34,12 +37,13 @@ interface Route {
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url.replace(/\/$/, "");
   const locales = getPublishedLocales();
+  const showsRealOffers = !isDemoCatalogueActive();
 
   const routes: Route[] = [
     { path: "/", changeFrequency: "daily", priority: 1 },
-    { path: "/search", changeFrequency: "daily", priority: 0.9 },
     { path: "/blog", changeFrequency: "weekly", priority: 0.8 },
     { path: "/how-it-works", changeFrequency: "monthly", priority: 0.6 },
+    { path: "/methodologie", changeFrequency: "monthly", priority: 0.6 },
     { path: "/faq", changeFrequency: "monthly", priority: 0.6 },
     { path: "/categories", changeFrequency: "weekly", priority: 0.7 },
     { path: "/about", changeFrequency: "yearly", priority: 0.4 },
@@ -48,12 +52,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/legal/cookies", changeFrequency: "yearly", priority: 0.2 },
     { path: "/legal/legal-notice", changeFrequency: "yearly", priority: 0.2 },
     { path: "/legal/affiliate-disclosure", changeFrequency: "yearly", priority: 0.3 },
-
-    ...categories.map((category) => ({
-      path: `/category/${category.slug}`,
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-    })),
 
     ...blogArticles.map((article) => ({
       path: `/blog/${article.slug}`,
@@ -68,11 +66,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     })),
 
-    ...getMockProducts().map((product) => ({
-      path: `/product/${encodeURIComponent(product.id)}`,
-      changeFrequency: "daily" as const,
-      priority: 0.7,
-    })),
+    ...(showsRealOffers
+      ? [
+          { path: "/search", changeFrequency: "daily" as const, priority: 0.9 },
+          ...categories.map((category) => ({
+            path: `/category/${category.slug}`,
+            changeFrequency: "daily" as const,
+            priority: 0.8,
+          })),
+          // Swap for the real product listing when the live pipeline lands.
+          ...getMockProducts().map((product) => ({
+            path: `/product/${encodeURIComponent(product.id)}`,
+            changeFrequency: "daily" as const,
+            priority: 0.7,
+          })),
+        ]
+      : []),
   ];
 
   return routes.flatMap((route) =>
