@@ -42,9 +42,15 @@ pas pendant le build.
 
 - **Catalogue.** Les fiches listées dans `src/config/catalogue-ebay.ts`
   gardent leur description. Elles sont tarifées par les annonces eBay
-  correspondantes (filtres de titre, prix minimum, état). Le catalogue entier
-  est reconstruit au plus une fois toutes les 3 h par centre de données
-  Cloudflare (Cache API), soit une recherche eBay par fiche.
+  correspondantes (filtres de titre, prix minimum et maximum, état). Le
+  catalogue entier est stocké dans **Workers KV** (binding `CATALOGUE`, créé
+  automatiquement par Wrangler au premier déploiement) et reconstruit toutes
+  les 3 h par une **tâche planifiée** (`triggers.crons` dans `wrangler.jsonc`,
+  gérée par `cloudflare/worker.js`), soit une recherche eBay par fiche. Un
+  catalogue périmé reste affiché pendant sa reconstruction en arrière-plan.
+- **Bonnes affaires.** La médiane est calculée par état (neuf, reconditionné,
+  occasion), sans les prix aberrants. Une offre à plus de 45 % sous la
+  médiane est marquée « Prix inhabituel, à vérifier ».
 - **Recherche.** La recherche interroge eBay en direct. Les réponses sont
   mises en cache 1 h.
 - **Liens.** Les liens sont les `itemAffiliateWebUrl` renvoyés par eBay grâce
@@ -64,12 +70,13 @@ répond pas 200, qui porte `noindex`, ou dont le JSON-LD sort du profil
 
 ## Limites connues
 
-- La recherche eBay plafonne autour de 40 fiches dans la limite gratuite de
-  50 sous-requêtes par visite. Au-delà, il faut reconstruire le catalogue
-  par une tâche planifiée (Cron Trigger) qui écrit dans une base
-  (Supabase prévu).
-- Les frais de Protection des acheteurs eBay chez les vendeurs particuliers
-  ne sont pas inclus dans le prix total : ils sont signalés sur la ligne
-  de l'offre.
+- Une reconstruction fait environ 25 sous-requêtes, sous la limite gratuite
+  de 50. Au-delà d'environ 40 fiches, il faudra la découper en lots.
+- Une modification de `catalogue-ebay.ts` ne s'applique qu'à la
+  reconstruction suivante (au plus 3 h). Pour forcer : changer `STORE_KEY`
+  dans `src/lib/catalogue/index.ts`.
+- Les frais de Protection des acheteurs eBay (vendeurs particuliers) sont
+  estimés sous l'offre selon le barème eBay France, sans être ajoutés au
+  total : l'API ne dit pas si le prix renvoyé les inclut.
 - La correspondance annonce ↔ fiche repose sur les titres : à surveiller et
   ajuster dans `catalogue-ebay.ts`.
