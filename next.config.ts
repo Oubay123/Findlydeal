@@ -34,8 +34,13 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        // eBay listing photos, as returned by the Browse API.
+        protocol: "https",
+        hostname: "i.ebayimg.com",
+        pathname: "/**",
+      },
       // Add one entry per marketplace CDN as its adapter goes live:
-      // { protocol: "https", hostname: "i.ebayimg.com" },
       // { protocol: "https", hostname: "d1eh9yux7w8iql.cloudfront.net" }, // Back Market
       // { protocol: "https", hostname: "secure.img1-fg.wfcdn.com" },      // Wayfair
     ],

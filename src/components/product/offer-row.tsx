@@ -49,6 +49,16 @@ export async function OfferRow({ offer, isBest }: OfferRowProps) {
         {offer.shippingPrice ? (
           <p className="text-xs text-muted-foreground">{t.product.shippingIncluded}</p>
         ) : null}
+        {offer.shippingUnknown ? (
+          <p className="text-xs text-muted-foreground">Frais de port à vérifier</p>
+        ) : null}
+        {offer.source === "ebay" && offer.sellerType === "individual" ? (
+          // Charged by eBay at checkout on private sellers' items, not part
+          // of the listing price the API returns.
+          <p className="text-xs text-muted-foreground">
+            Vendeur particulier : frais de Protection des acheteurs eBay en sus
+          </p>
+        ) : null}
         {offer.deal ? <DealBadge deal={offer.deal} /> : null}
       </div>
 
