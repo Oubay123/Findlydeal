@@ -11,6 +11,7 @@ import {
   DEAL_SCORE_THRESHOLDS,
   MIN_OFFERS_FOR_REFERENCE_PRICE,
   SORT_OPTIONS,
+  SUSPICIOUS_DISCOUNT_PERCENT,
 } from "@/lib/constants";
 import { isDemoCatalogueActive } from "@/lib/mock";
 import { CATALOGUE_TTL_SECONDS } from "@/lib/catalogue";
@@ -39,7 +40,9 @@ const TITLE = "Méthodologie : comment nous comparons et classons les offres";
  * A score threshold expressed as the gap below the median it takes. The score
  * is the gap scaled so that 50 % below the median scores 100 (`lib/deals`).
  */
-const gapFor = (score: number) => `${(score / 2).toLocaleString("fr-FR")}\u00a0%`;
+/** Discount at which a score threshold is reached (the scale saturates at SUSPICIOUS_DISCOUNT_PERCENT). */
+const gapFor = (score: number) =>
+  `${Math.round((score / 100) * SUSPICIOUS_DISCOUNT_PERCENT).toLocaleString("fr-FR")}\u00a0%`;
 
 const SORT_EXPLANATIONS: Record<SortOption, string> = {
   relevance:
@@ -114,9 +117,12 @@ export default async function MethodologyPage({
             Le prix affiché est le <strong className="text-foreground">prix total</strong> : prix de
             l&apos;article et frais de livraison communiqués par le marchand. Quand le marchand ne
             communique pas ses frais de port, l&apos;offre l&apos;indique. Sur eBay, un achat auprès
-            d&apos;un vendeur particulier peut entraîner des frais de Protection des acheteurs,
-            facturés par eBay au paiement et absents du prix de l&apos;annonce. Vérifiez toujours le
-            montant final sur le site du marchand avant de payer.
+            d&apos;un vendeur particulier entraîne des frais de Protection des acheteurs
+            (0,10&nbsp;€ par objet, plus 7&nbsp;% du prix jusqu&apos;à 20&nbsp;€, 4&nbsp;% de 20 à
+            300&nbsp;€ et 2&nbsp;% au-delà, selon le barème annoncé par eBay le 1er septembre 2026).
+            Nous en affichons une estimation sous l&apos;offre, sans l&apos;ajouter au total : eBay
+            les indique sur l&apos;annonce elle-même. Vérifiez toujours le montant final sur le site
+            du marchand avant de payer.
           </p>
           <p>
             Les prix des fiches produit sont relevés au plus toutes les{" "}
@@ -159,15 +165,30 @@ export default async function MethodologyPage({
           <h2>Comment une bonne affaire est repérée</h2>
           <p>
             Pour chaque produit, nous calculons le{" "}
-            <strong className="text-foreground">prix médian</strong> des offres trouvées, dès
-            qu&apos;il y en a au moins {MIN_OFFERS_FOR_REFERENCE_PRICE}. En dessous de ce nombre,
-            aucune offre n&apos;est signalée : l&apos;échantillon est trop mince pour juger.
+            <strong className="text-foreground">prix médian</strong> des offres{" "}
+            <strong className="text-foreground">dans le même état</strong> : une occasion est
+            comparée aux autres occasions, jamais au neuf. Il faut au moins{" "}
+            {MIN_OFFERS_FOR_REFERENCE_PRICE} offres dans cet état ; en dessous, aucune offre
+            n&apos;est signalée, l&apos;échantillon est trop mince pour juger.
+          </p>
+          <p>
+            Les prix très éloignés du groupe (méthode des quartiles : plus d&apos;une fois et demie
+            l&apos;écart interquartile au-delà du premier ou du troisième quartile) sont écartés du
+            calcul de la médiane, pour qu&apos;une annonce isolée ne la fausse pas.
           </p>
           <p>
             Une offre est signalée selon son écart avec cette médiane : « Bonne affaire » à partir
             d&apos;environ {gapFor(DEAL_SCORE_THRESHOLDS.good)} sous la médiane, « Très bonne
             affaire » à partir d&apos;environ {gapFor(DEAL_SCORE_THRESHOLDS.great)}, « Affaire
             exceptionnelle » à partir d&apos;environ {gapFor(DEAL_SCORE_THRESHOLDS.exceptional)}.
+          </p>
+          <p>
+            Au-delà de {SUSPICIOUS_DISCOUNT_PERCENT}&nbsp;% sous la médiane, ou très en dessous du
+            groupe, une offre n&apos;est <strong className="text-foreground">pas</strong> présentée
+            comme une affaire : elle porte la mention « Prix inhabituel, à vérifier ». Sur une
+            marketplace, un prix trop beau est plus souvent une annonce mal décrite qu&apos;une
+            aubaine. Elle reste dans le comparatif, mais n&apos;est jamais affichée comme le prix «
+            dès » du produit.
           </p>
           <p>
             Cet écart est une <strong className="text-foreground">comparaison</strong> avec les

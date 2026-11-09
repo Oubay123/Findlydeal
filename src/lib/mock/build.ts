@@ -1,4 +1,4 @@
-import { annotateOffersWithDeals } from "@/lib/deals";
+import { annotateOffersWithDeals, summarizeOffers } from "@/lib/deals";
 import { buildStoreSearchUrl } from "@/lib/sources/creationwatches";
 import { fromMajorUnits } from "@/lib/utils";
 import type {
@@ -120,9 +120,6 @@ export function buildMockProduct(seed: MockProductSeed): Product {
     seed.offers.map((offer, index) => toOffer(seed, offer, index)),
   ).sort((a, b) => a.totalPrice.amount - b.totalPrice.amount);
 
-  const cheapest = offers[0];
-  const dearest = offers[offers.length - 1];
-
   return {
     id: seed.slug,
     title: seed.title,
@@ -142,8 +139,6 @@ export function buildMockProduct(seed: MockProductSeed): Product {
       id: `${seed.slug}-review-${index + 1}`,
     })),
     offers,
-    bestOffer: cheapest,
-    priceRange:
-      cheapest && dearest ? { min: cheapest.totalPrice, max: dearest.totalPrice } : undefined,
+    ...summarizeOffers(offers),
   };
 }

@@ -1,6 +1,7 @@
 import { DemoFootnote } from "@/components/common/demo-notice";
 import { LocaleLink } from "@/components/common/locale-link";
 import { OfferRow } from "@/components/product/offer-row";
+import { typicalOffers } from "@/lib/deals";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
@@ -14,9 +15,13 @@ interface ProductComparisonProps {
  */
 export function ProductComparison({ product }: ProductComparisonProps) {
   const offers = [...product.offers].sort((a, b) => a.totalPrice.amount - b.totalPrice.amount);
-  const cheapest = offers[0];
-  const dearest = offers[offers.length - 1];
+  // The gap is measured between offers priced like the others: one listing
+  // at three times the price, or a doubtful one, would make it meaningless.
+  const typical = typicalOffers(offers);
+  const cheapest = typical[0];
+  const dearest = typical[typical.length - 1];
   const saving = cheapest && dearest ? dearest.totalPrice.amount - cheapest.totalPrice.amount : 0;
+  const best = product.bestOffer ?? offers[0];
 
   return (
     <section className="space-y-5">
@@ -48,7 +53,7 @@ export function ProductComparison({ product }: ProductComparisonProps) {
       {offers.length > 0 ? (
         <ul className="space-y-3">
           {offers.map((offer) => (
-            <OfferRow key={offer.id} offer={offer} isBest={offer.id === cheapest?.id} />
+            <OfferRow key={offer.id} offer={offer} isBest={offer.id === best?.id} />
           ))}
         </ul>
       ) : (

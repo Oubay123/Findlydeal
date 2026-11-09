@@ -4,7 +4,7 @@ import {
   catalogueEbayEntries,
   type CatalogueEbayEntry,
 } from "@/config/catalogue-ebay";
-import { annotateOffersWithDeals } from "@/lib/deals";
+import { annotateOffersWithDeals, summarizeOffers, typicalOffers } from "@/lib/deals";
 import { cached } from "@/lib/ebay/cache";
 import { getEbayConfig } from "@/lib/ebay/config";
 import { EbayApiError, getAccessToken, searchItems } from "@/lib/ebay/client";
@@ -78,6 +78,7 @@ async function findOffers(entry: CatalogueEbayEntry): Promise<Offer[]> {
   const response = await searchItems({
     query: entry.query,
     minPrice: entry.minPrice,
+    maxPrice: entry.maxPrice,
     limit: 50,
     // The catalogue is cached as a whole: caching each search on top would
     // double the subrequests of a rebuild for nothing.
@@ -87,20 +88,25 @@ async function findOffers(entry: CatalogueEbayEntry): Promise<Offer[]> {
   const offers = (response.itemSummaries ?? [])
     .filter((item) => item.title && matchesEntry(item.title, entry))
     .map((item) => toOffer(item))
-    .filter((offer): offer is Offer => offer !== null && offer.condition !== "unknown")
+    .filter((offer): offer is Offer => offer !== null && offer.condition !== "unknown");
+
+  // Medians are computed on every matched listing, then the cheapest are
+  // kept for display: keeping the cheapest first would bias the median low.
+  return annotateOffersWithDeals(offers)
     .sort((a, b) => a.totalPrice.amount - b.totalPrice.amount)
     .slice(0, MAX_OFFERS_PER_PRODUCT);
-
-  return annotateOffersWithDeals(offers).sort((a, b) => a.totalPrice.amount - b.totalPrice.amount);
 }
 
 function buildLiveProduct(seed: MockProductSeed, entry: CatalogueEbayEntry, offers: Offer[]) {
-  const images = [...new Set(offers.map((offer) => offer.imageUrl).filter(Boolean))].slice(
-    0,
-    3,
-  ) as string[];
-  const cheapest = offers[0];
-  const dearest = offers[offers.length - 1];
+  // Photos from listings priced like the others: a doubtful listing's photo
+  // may not even show the product.
+  const images = [
+    ...new Set(
+      typicalOffers(offers)
+        .map((offer) => offer.imageUrl)
+        .filter(Boolean),
+    ),
+  ].slice(0, 3) as string[];
 
   const product: Product = {
     id: seed.slug,
@@ -116,9 +122,7 @@ function buildLiveProduct(seed: MockProductSeed, entry: CatalogueEbayEntry, offe
     description: entry.description ?? seed.description,
     specs: seed.specs,
     offers,
-    bestOffer: cheapest,
-    priceRange:
-      cheapest && dearest ? { min: cheapest.totalPrice, max: dearest.totalPrice } : undefined,
+    ...summarizeOffers(offers),
   };
   return product;
 }

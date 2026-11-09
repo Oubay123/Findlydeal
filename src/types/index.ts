@@ -64,6 +64,11 @@ export interface DealSignal {
   discountPercent?: number;
   /** Baseline the discount was computed against. */
   referencePrice?: Money;
+  /**
+   * Too far below the comparable offers to be taken at face value: shown as
+   * "à vérifier", never as a deal, never as the product's headline price.
+   */
+  suspicious?: boolean;
 }
 
 /**
@@ -100,6 +105,8 @@ export interface Offer {
   /** ISO 8601 timestamp of when the offer was fetched. */
   fetchedAt: string;
   deal?: DealSignal;
+  /** Price far outside the offers in the same condition (Tukey fences). */
+  priceOutlier?: "low" | "high";
 }
 
 /** One key/value line of a product spec sheet. */

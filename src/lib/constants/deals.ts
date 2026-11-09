@@ -14,8 +14,18 @@ export const DEAL_SCORE_THRESHOLDS: Record<Exclude<DealLevel, "none">, number> =
 /** Below this discount an offer is not worth flagging as a deal at all. */
 export const MIN_DISCOUNT_PERCENT = 10;
 
-/** A price sample smaller than this is too thin to compute a reference price. */
-export const MIN_OFFERS_FOR_REFERENCE_PRICE = 3;
+/**
+ * A price sample smaller than this is too thin to compute a reference price.
+ * Counted per condition (new, refurbished, used): four is the smallest sample
+ * whose quartiles say something.
+ */
+export const MIN_OFFERS_FOR_REFERENCE_PRICE = 4;
+
+/**
+ * From this far below the median, an offer is flagged "à vérifier" instead of
+ * being sold as a deal. The deal scale saturates here.
+ */
+export const SUSPICIOUS_DISCOUNT_PERCENT = 45;
 
 export const DEAL_LEVEL_LABELS: Record<DealLevel, string> = {
   none: "",
