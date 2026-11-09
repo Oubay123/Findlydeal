@@ -6,6 +6,9 @@
  * `npx wrangler versions upload` (every other branch, as a preview). Without
  * this file the preview command had no entry point and failed.
  *
+ * `main` is `cloudflare/worker.js`, which wraps the OpenNext output
+ * (`.open-next/worker.js`) to add the scheduled catalogue refresh.
+ *
  * Secrets (eBay keys) are NOT set here: add them in the dashboard
  * (Workers & Pages > findlydeal > Settings > Variables and Secrets) or with
  * `npx wrangler secret put EBAY_CLIENT_SECRET`.
@@ -13,7 +16,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "findlydeal",
-  "main": ".open-next/worker.js",
+  "main": "cloudflare/worker.js",
   "compatibility_date": "2026-08-28",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
@@ -30,6 +33,18 @@
   // next/image optimisation through Cloudflare Images.
   "images": {
     "binding": "IMAGES",
+  },
+  // The eBay-priced catalogue, shared by every data centre. No id on
+  // purpose: Wrangler creates the namespace on the first deploy and reuses
+  // it afterwards.
+  "kv_namespaces": [
+    {
+      "binding": "CATALOGUE",
+    },
+  ],
+  // Rebuilds the catalogue every three hours (UTC), at minute 7.
+  "triggers": {
+    "crons": ["7 */3 * * *"],
   },
   // Non-secret settings. `keep_vars` stops a deploy from wiping the
   // variables added in the dashboard (EBAY_CAMPAIGN_ID, etc.).

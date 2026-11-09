@@ -12,6 +12,7 @@ import type { MockProductSeed } from "@/lib/mock/build";
 import { catalogueSeeds } from "@/lib/mock";
 import { normalizeTerm } from "@/lib/search/normalize";
 import { toOffer } from "@/lib/sources/ebay";
+import { getCatalogueRuntime, type CatalogueKv, type CatalogueRuntime } from "./store";
 import type { Offer, Product } from "@/types";
 
 /**
@@ -22,11 +23,11 @@ import type { Offer, Product } from "@/types";
  * match it as offers. Ratings and reviews of the demonstration catalogue are
  * dropped: they were examples, and nothing here may pass them off as real.
  *
- * The whole catalogue is rebuilt at most once per `CATALOGUE_TTL_SECONDS` per
- * Cloudflare data centre and kept as a single cache entry. A rebuild costs one
- * eBay search per product, which stays under the 50-subrequest limit of a
- * Worker on the free plan (about 25 products today). Past ~40 products, move
- * the rebuild to a scheduled job writing to a database (Supabase, planned).
+ * The whole catalogue is rebuilt every `CATALOGUE_TTL_SECONDS` by a scheduled
+ * job and kept as a single Workers KV entry shared by every data centre (see
+ * `loadFromKv`). A rebuild costs one eBay search per product, which stays
+ * under the 50-subrequest limit of a Worker on the free plan (about 25
+ * products today). Past ~40 products, split the rebuild in batches.
  */
 
 /** How long one priced catalogue is reused: prices shown are at most this old. */
@@ -188,23 +189,121 @@ async function buildLiveCatalogue(): Promise<LiveCatalogue> {
 const describe = (error: unknown) =>
   error instanceof EbayApiError || error instanceof Error ? error.message : String(error);
 
+interface StoredCatalogue extends LiveCatalogue {
+  /** Epoch milliseconds of the rebuild. */
+  builtAt: number;
+}
+
+/** Bump when the stored shape or the offer logic changes. */
+const STORE_KEY = "catalogue:ebay:v3";
+/** Set while a rebuild runs; expires on its own (KV minimum: 60 s). */
+const LOCK_KEY = `${STORE_KEY}:lock`;
+const LOCK_TTL_SECONDS = 120;
+/** How long an isolate reuses what it read from KV before reading again. */
+const MEMORY_TTL_MS = 5 * 60 * 1000;
+
+function ttlSecondsFor({ products, failures }: LiveCatalogue): number {
+  if (failures === 0) return CATALOGUE_TTL_SECONDS;
+  return failures < products.length ? PARTIAL_TTL_SECONDS : FAILED_TTL_SECONDS;
+}
+
+const ageMs = (catalogue: StoredCatalogue) => Date.now() - catalogue.builtAt;
+const isFresh = (catalogue: StoredCatalogue) => ageMs(catalogue) < ttlSecondsFor(catalogue) * 1000;
+
+let memory: { catalogue: StoredCatalogue; readAt: number } | null = null;
+let rebuilding: Promise<StoredCatalogue> | null = null;
+
+/**
+ * Rebuilds the catalogue and stores it. A rebuild where eBay refused
+ * everything never replaces a good catalogue: visitors keep seeing the last
+ * prices (with their date) rather than an empty site.
+ */
+function rebuild(kv: CatalogueKv | undefined, previous: StoredCatalogue | null) {
+  rebuilding ??= (async () => {
+    const built = await buildLiveCatalogue();
+    const failedEntirely = built.failures > 0 && built.failures >= built.products.length;
+    if (failedEntirely && previous && previous.products.length > 0) return previous;
+
+    const stored: StoredCatalogue = { ...built, builtAt: Date.now() };
+    memory = { catalogue: stored, readAt: Date.now() };
+    await kv?.put(STORE_KEY, JSON.stringify(stored));
+    return stored;
+  })().finally(() => {
+    rebuilding = null;
+  });
+  return rebuilding;
+}
+
+async function readStored(kv: CatalogueKv): Promise<StoredCatalogue | null> {
+  if (memory && Date.now() - memory.readAt < MEMORY_TTL_MS && isFresh(memory.catalogue)) {
+    return memory.catalogue;
+  }
+  const stored = (await kv.get(STORE_KEY, { type: "json" })) as StoredCatalogue | null;
+  if (stored) memory = { catalogue: stored, readAt: Date.now() };
+  return stored;
+}
+
+/**
+ * The stored catalogue, refreshed when due.
+ *
+ * - fresh: served as is;
+ * - stale: served as is, and rebuilt in the background by one request only
+ *   (a KV lock), so visitors never wait for eBay;
+ * - missing (first deploy): built now.
+ *
+ * A Cron Trigger (`cloudflare/worker.js`) also calls `refreshCatalogue()`
+ * every three hours, so a visitor rarely meets a stale catalogue at all.
+ */
+async function loadFromKv(kv: CatalogueKv, waitUntil?: CatalogueRuntime["waitUntil"]) {
+  const stored = await readStored(kv);
+  if (stored && isFresh(stored)) return stored;
+  if (rebuilding) return stored ?? rebuilding;
+
+  const locked = await kv.get(LOCK_KEY);
+  if (locked && stored) return stored;
+  await kv.put(LOCK_KEY, "1", { expirationTtl: LOCK_TTL_SECONDS });
+
+  const job = rebuild(kv, stored);
+  if (!stored) return job;
+  waitUntil?.(job.catch((error) => console.error(`[ebay] catalogue: ${describe(error)}`)));
+  return stored;
+}
+
+/**
+ * Rebuilds the catalogue if it is older than `minAgeSeconds` (or incomplete).
+ * Used by the scheduled refresh; harmless if called more often, since a
+ * recent catalogue is left alone.
+ */
+export async function refreshCatalogue(minAgeSeconds: number) {
+  if (!getEbayConfig()) return { rebuilt: false, reason: "ebay-not-configured" as const };
+  const { kv } = getCatalogueRuntime();
+  if (!kv) return { rebuilt: false, reason: "no-kv" as const };
+
+  const stored = (await kv.get(STORE_KEY, { type: "json" })) as StoredCatalogue | null;
+  if (stored && stored.failures === 0 && ageMs(stored) < minAgeSeconds * 1000) {
+    return { rebuilt: false, reason: "recent" as const, builtAt: stored.builtAt };
+  }
+  await kv.put(LOCK_KEY, "1", { expirationTtl: LOCK_TTL_SECONDS });
+  const catalogue = await rebuild(kv, stored);
+  return {
+    rebuilt: true,
+    builtAt: catalogue.builtAt,
+    priced: catalogue.products.filter((product) => product.offers.length > 0).length,
+    failures: catalogue.failures,
+  };
+}
+
 /**
  * Every live catalogue product, including those with no offer right now
- * (their page stays reachable, without being indexed). Memoised per request,
- * cached across requests.
+ * (their page stays reachable, without being indexed). Memoised per request.
  */
 export const getLiveCatalogue = cache(async function getLiveCatalogue(): Promise<Product[]> {
   if (!getEbayConfig()) return [];
-  const catalogue = await cached(
-    "catalogue:ebay:v2",
-    ({ products, failures }) =>
-      failures === 0
-        ? CATALOGUE_TTL_SECONDS
-        : failures < products.length
-          ? PARTIAL_TTL_SECONDS
-          : FAILED_TTL_SECONDS,
-    buildLiveCatalogue,
-  );
+  const { kv, waitUntil } = getCatalogueRuntime();
+  if (kv) return (await loadFromKv(kv, waitUntil)).products;
+
+  // No KV (local server, tests): the per-isolate cache is enough.
+  const catalogue = await cached(STORE_KEY, ttlSecondsFor, buildLiveCatalogue);
   return catalogue.products;
 });
 
