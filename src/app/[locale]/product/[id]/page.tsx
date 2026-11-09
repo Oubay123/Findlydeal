@@ -20,7 +20,7 @@ import { CompareToggle } from "@/components/search/compare-toggle";
 import { getCategoryBySlug } from "@/config/categories";
 import { getSourcePresentation } from "@/config/sources";
 import { getDictionary } from "@/i18n";
-import { getMockProducts, isDemoCatalogueActive } from "@/lib/mock";
+import { isDemoCatalogueActive } from "@/lib/mock";
 import { getProductById } from "@/lib/products";
 import { getDiscoveryProducts, getSimilarProducts } from "@/lib/products/related";
 import { buildGraph, pageUrl, productNode, schemaIds, webPageNode } from "@/lib/seo/json-ld";
@@ -30,27 +30,24 @@ interface ProductPageProps {
 }
 
 /**
- * Prerender every product we already know about, so a visit is served from
- * cache instead of re-rendering the page.
- *
- * `dynamicParams` stays true: once a real source is connected, ids that did
- * not exist at build time must still render on demand rather than 404.
+ * Rendered on each request, never at build time: whether prices come from
+ * the demonstration catalogue or from live eBay offers depends on the
+ * Worker's runtime secrets, which the build machine does not have. Live
+ * marketplace answers are cached by the adapters (src/lib/ebay/cache.ts).
  */
-export function generateStaticParams() {
-  return getMockProducts().map((product) => ({ id: product.id }));
-}
-
-export const dynamicParams = true;
+export const dynamic = "force-dynamic";
 
 /**
- * Rebuild a product page at most once an hour.
- *
- * No effect today — the demonstration catalogue is a compiled constant and
- * cannot change between builds. It is here as the shape the real pipeline
- * needs: when adapters start returning live prices, this is the knob that
- * decides how stale a displayed price may be.
+ * Only catalogue products with real offers are worth indexing. Not indexed:
+ * example prices (demonstration catalogue), a product with no offer right
+ * now, and a single marketplace listing (`ebay:…`), which expires within
+ * days and duplicates the listing itself.
  */
-export const revalidate = 3600;
+function isIndexable(product: { id: string; offers: unknown[] }): boolean {
+  if (isDemoCatalogueActive()) return false;
+  if (product.id.includes(":")) return false;
+  return product.offers.length > 0;
+}
 
 /** Title shown in search results: the model plus the intent, within ~60 characters. */
 function productTitle(title: string): string {
@@ -76,8 +73,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     title: { absolute: productTitle(product.title) },
     description,
     alternates: localeAlternates(locale, `/product/${encodeURIComponent(product.id)}`),
-    // Example prices must never be indexed as if they were real offers.
-    ...(isDemoCatalogueActive() ? { robots: { index: false, follow: true } } : {}),
+    ...(isIndexable(product) ? {} : { robots: { index: false, follow: true } }),
     openGraph: {
       type: "website",
       title: product.title,

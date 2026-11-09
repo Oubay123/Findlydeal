@@ -1,8 +1,7 @@
 import { cache } from "react";
 import { getConfiguredSources } from "@/lib/sources";
 import { getMockProducts } from "@/lib/mock";
-import { searchAllSources } from "@/lib/search/aggregate";
-import { DEFAULT_LOCALE } from "@/lib/constants";
+import { getPricedCatalogue } from "@/lib/catalogue";
 import type { CategorySlug, Product, ProductCondition } from "@/types";
 
 /**
@@ -24,14 +23,9 @@ import type { CategorySlug, Product, ProductCondition } from "@/types";
 const getPool = cache(async function getPool(): Promise<Product[]> {
   if (getConfiguredSources().length === 0) return getMockProducts();
 
-  const { products } = await searchAllSources({
-    term: "",
-    locale: DEFAULT_LOCALE,
-    filters: { sort: "relevance" },
-    page: 1,
-    perPage: 48,
-  });
-  return products;
+  // Live: the catalogue products that currently have offers. A keyword-less
+  // marketplace search would return arbitrary listings, not a shelf.
+  return getPricedCatalogue();
 });
 
 /** Sorts a copy of the pool and takes the head. */

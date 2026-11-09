@@ -82,6 +82,16 @@ export interface Offer {
   shippingPrice?: Money;
   /** price + shipping, precomputed so sorting never has to guess. */
   totalPrice: Money;
+  /**
+   * The source did not say what shipping costs: `totalPrice` is then the item
+   * price alone, and the offer says so rather than claiming "port inclus".
+   */
+  shippingUnknown?: boolean;
+  /**
+   * Professional or private seller, when the source says. On eBay a private
+   * seller's listing can carry an extra buyer-protection fee at checkout.
+   */
+  sellerType?: "business" | "individual";
   condition: ProductCondition;
   availability: Availability;
   seller?: Merchant;

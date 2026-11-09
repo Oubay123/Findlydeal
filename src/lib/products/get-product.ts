@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { annotateOffersWithDeals } from "@/lib/deals";
 import { getConfiguredSources, getSource } from "@/lib/sources";
+import { getLiveCatalogue, isCatalogueSlug } from "@/lib/catalogue";
 import { getMockProductById } from "@/lib/mock";
 import { DEFAULT_LOCALE } from "@/lib/constants";
 import type { Locale, Product, SourceId } from "@/types";
@@ -8,9 +9,11 @@ import type { Locale, Product, SourceId } from "@/types";
 /**
  * Product retrieval for the comparison page.
  *
- * A product id is currently an offer id (`<source>:<externalId>`), because no
- * cross-source product identity exists yet. Once `groupOffersIntoProducts()`
- * produces real product ids, only this module has to change.
+ * Two kinds of ids, once a source is configured:
+ * - a catalogue slug (`apple-iphone-13-128go-minuit`): our product page,
+ *   priced by every matching live offer (`src/lib/catalogue`);
+ * - an offer id (`<source>:<externalId>`): a single listing found by search,
+ *   with no cross-source product identity yet.
  */
 
 /** Split `"ebay:123456"` into its source and its source-local id. */
@@ -52,6 +55,12 @@ export const getProductById = cache(async function getProductById(
     return getMockProductById(id) ?? null;
   }
 
+  // A catalogue product: our description, priced by live offers.
+  if (isCatalogueSlug(id)) {
+    return (await getLiveCatalogue()).find((product) => product.id === id) ?? null;
+  }
+
+  // Otherwise a single marketplace listing (`ebay:v1|123|0`), found by search.
   const parsed = parseProductId(id);
   if (!parsed) return null;
 

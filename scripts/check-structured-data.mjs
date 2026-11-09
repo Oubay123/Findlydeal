@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 /**
- * Structured data check, run after `next build`: `npm run check:schema`.
+ * Structured data check.
  *
- * Reads every prerendered page in `.next/server/app`, extracts its JSON-LD and
- * checks it against `src/lib/seo/schema/profile.json`, the same profile the
- * builders in `src/lib/seo/json-ld.ts` follow:
+ * - `npm run check:schema` reads every prerendered page in `.next/server/app`
+ *   after `next build`;
+ * - `npm run check:schema -- --base https://findlydeal.com` (or a local
+ *   server) fetches every URL of the live sitemap instead, which covers the
+ *   pages rendered on demand (products, categories) with their real data.
+ *
+ * Each page's JSON-LD is checked against `src/lib/seo/schema/profile.json`,
+ * the same profile the builders in `src/lib/seo/json-ld.ts` follow:
  *
  * - every block parses as JSON and declares the schema.org context;
  * - every typed node has the properties the profile marks as required, and
@@ -25,7 +30,10 @@ const profile = JSON.parse(
   readFileSync(join(root, "src", "lib", "seo", "schema", "profile.json"), "utf8"),
 );
 
-if (!existsSync(appDir)) {
+const baseArg = process.argv.indexOf("--base");
+const base = baseArg > -1 ? process.argv[baseArg + 1]?.replace(/\/$/, "") : undefined;
+
+if (!base && !existsSync(appDir)) {
   console.error("No build found in .next/server/app: run `npm run build` first.");
   process.exit(1);
 }
@@ -63,16 +71,9 @@ function walk(value, visit, key = null) {
 const errors = [];
 const summary = [];
 
-for (const file of htmlFiles(appDir)) {
-  const page =
-    "/" +
-    relative(appDir, file)
-      .split(sep)
-      .join("/")
-      .replace(/\.html$/, "");
-  const html = readFileSync(file, "utf8");
+function checkPage(page, html) {
   const blocks = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)];
-  if (blocks.length === 0) continue;
+  if (blocks.length === 0) return;
 
   const nodes = [];
   for (const [, raw] of blocks) {
@@ -130,20 +131,47 @@ for (const file of htmlFiles(appDir)) {
   });
 }
 
-// The sitemap must only list indexable pages.
-const sitemapFile = join(appDir, "sitemap.xml.body");
-if (existsSync(sitemapFile)) {
-  const urls = [...readFileSync(sitemapFile, "utf8").matchAll(/<loc>(.*?)<\/loc>/g)].map(
-    ([, loc]) => new URL(loc).pathname,
-  );
+if (base) {
+  // Live mode: every page listed in the sitemap, as served right now.
+  const sitemap = await (await fetch(`${base}/sitemap.xml`)).text();
+  const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(([, loc]) => new URL(loc).pathname);
   for (const path of urls) {
-    const file = join(appDir, `${path}.html`);
-    if (!existsSync(file)) continue; // rendered on demand: checked at runtime only
-    if (isNoindex(readFileSync(file, "utf8"))) {
-      errors.push(`sitemap: ${path} est listé mais porte noindex`);
+    const response = await fetch(`${base}${path}`, { redirect: "manual" });
+    if (response.status !== 200) {
+      errors.push(`sitemap: ${path} répond ${response.status}`);
+      continue;
     }
+    const html = await response.text();
+    if (isNoindex(html)) errors.push(`sitemap: ${path} est listé mais porte noindex`);
+    checkPage(path, html);
   }
   summary.push({ page: "(sitemap)", noindex: false, types: `${urls.length} URL` });
+} else {
+  for (const file of htmlFiles(appDir)) {
+    const page =
+      "/" +
+      relative(appDir, file)
+        .split(sep)
+        .join("/")
+        .replace(/\.html$/, "");
+    checkPage(page, readFileSync(file, "utf8"));
+  }
+
+  // The sitemap must only list indexable pages.
+  const sitemapFile = join(appDir, "sitemap.xml.body");
+  if (existsSync(sitemapFile)) {
+    const urls = [...readFileSync(sitemapFile, "utf8").matchAll(/<loc>(.*?)<\/loc>/g)].map(
+      ([, loc]) => new URL(loc).pathname,
+    );
+    for (const path of urls) {
+      const file = join(appDir, `${path}.html`);
+      if (!existsSync(file)) continue; // rendered on demand: use --base to check it
+      if (isNoindex(readFileSync(file, "utf8"))) {
+        errors.push(`sitemap: ${path} est listé mais porte noindex`);
+      }
+    }
+    summary.push({ page: "(sitemap)", noindex: false, types: `${urls.length} URL` });
+  }
 }
 
 for (const row of summary.sort((a, b) => a.page.localeCompare(b.page))) {

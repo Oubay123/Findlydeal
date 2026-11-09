@@ -3,7 +3,11 @@ import { categories } from "@/config/categories";
 import { siteConfig } from "@/config/site";
 import { blogArticles, getBlogTags, tagSlug } from "@/content/blog";
 import { DEFAULT_UI_LOCALE, UI_LOCALE_HREFLANG, getPublishedLocales, localePath } from "@/i18n";
-import { getMockProducts, isDemoCatalogueActive } from "@/lib/mock";
+import { getPricedCatalogue } from "@/lib/catalogue";
+import { DEFAULT_LOCALE } from "@/lib/constants";
+import { isDemoCatalogueActive } from "@/lib/mock";
+import { filterProducts } from "@/lib/search/filter";
+import type { CategorySlug } from "@/types";
 
 /**
  * Sitemap, assembled from the same sources the pages read.
@@ -23,9 +27,13 @@ import { getMockProducts, isDemoCatalogueActive } from "@/lib/mock";
  * `/sitemap.xml` is the address crawlers look for by convention, and it
  * carries every language through `alternates.languages`.
  *
- * When real sources replace the demonstration catalogue, swap
- * `getMockProducts()` for the real product listing; the rest stands.
+ * Products listed are the catalogue products that currently have live
+ * offers; single marketplace listings are never listed (they are `noindex`).
+ * Generated on request, like the pages it lists, so it reflects the Worker's
+ * runtime configuration rather than the build machine's.
  */
+
+export const dynamic = "force-dynamic";
 
 interface Route {
   path: string;
@@ -34,10 +42,19 @@ interface Route {
   lastModified?: Date;
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url.replace(/\/$/, "");
   const locales = getPublishedLocales();
   const showsRealOffers = !isDemoCatalogueActive();
+  const pricedProducts = showsRealOffers ? await getPricedCatalogue() : [];
+  const hasProducts = (categorySlug: CategorySlug) =>
+    filterProducts(pricedProducts, {
+      term: "",
+      locale: DEFAULT_LOCALE,
+      page: 1,
+      perPage: 1,
+      filters: { sort: "relevance", categorySlug },
+    }).length > 0;
 
   const routes: Route[] = [
     { path: "/", changeFrequency: "daily", priority: 1 },
@@ -69,16 +86,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...(showsRealOffers
       ? [
           { path: "/search", changeFrequency: "daily" as const, priority: 0.9 },
-          ...categories.map((category) => ({
-            path: `/category/${category.slug}`,
-            changeFrequency: "daily" as const,
-            priority: 0.8,
-          })),
-          // Swap for the real product listing when the live pipeline lands.
-          ...getMockProducts().map((product) => ({
+          // Only categories with live offers: an empty one is `noindex`.
+          ...categories
+            .filter((category) => hasProducts(category.slug))
+            .map((category) => ({
+              path: `/category/${category.slug}`,
+              changeFrequency: "daily" as const,
+              priority: 0.8,
+            })),
+          ...pricedProducts.map((product) => ({
             path: `/product/${encodeURIComponent(product.id)}`,
             changeFrequency: "daily" as const,
             priority: 0.7,
+            // When its prices were last fetched: the date a crawler can trust.
+            lastModified: product.bestOffer ? new Date(product.bestOffer.fetchedAt) : undefined,
           })),
         ]
       : []),

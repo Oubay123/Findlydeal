@@ -1,12 +1,8 @@
-import { SourceLogo } from "@/components/common/source-logo";
 import { LocaleLink } from "@/components/common/locale-link";
 import { ArrowRight, Search } from "lucide-react";
-import { DemoBadge } from "@/components/common/demo-notice";
-import { RatingStars } from "@/components/common/rating-stars";
-import { SmartImage } from "@/components/common/smart-image";
 import { Button } from "@/components/ui/button";
+import { isCatalogueSlug } from "@/lib/catalogue";
 import { getMockProductById } from "@/lib/mock";
-import { formatPrice } from "@/lib/utils";
 
 interface ArticleProductProps {
   /** Product id, as used by `/product/[id]`. */
@@ -16,24 +12,22 @@ interface ArticleProductProps {
 }
 
 /**
- * An inline price block inside an article.
+ * An inline comparison block inside an article.
  *
- * This is the one thing a price comparison blog can do that a generic blog
- * cannot: turn an editorial point into a live comparison, three lines below
- * where the reader had the thought. It also carries real internal linking
- * weight, which is what a young site lacks most.
+ * It turns an editorial point into a comparison, three lines below where the
+ * reader had the thought, and carries internal-link weight a young site needs.
  *
- * **Degrades on purpose.** If the id is unknown — because the demonstration
- * catalogue was deleted, or a product was retired — the component renders a
- * search link instead of disappearing. An article must never end up with a
- * hole where a product used to be.
+ * **No price in it, on purpose.** Articles are generated at build time, while
+ * live prices depend on the Worker's runtime secrets: a price printed here
+ * would be a frozen demonstration figure. The block names the product and
+ * links to its comparison page, where prices are live.
  *
- * Integration point: swap `getMockProductById` for the real product lookup
- * when adapters go live. It stays synchronous here because MDX bodies render
- * on the server.
+ * Links to the product page only for catalogue products that have live offers
+ * once eBay is configured (`src/config/catalogue-ebay.ts`); any other id falls
+ * back to a search, so an article never links to a page that may not exist.
  */
 export function ArticleProduct({ slug, fallbackTerm }: ArticleProductProps) {
-  const product = getMockProductById(slug);
+  const product = isCatalogueSlug(slug) ? getMockProductById(slug) : undefined;
 
   if (!product) {
     const term = fallbackTerm ?? slug.replace(/-/g, " ");
@@ -52,59 +46,26 @@ export function ArticleProduct({ slug, fallbackTerm }: ArticleProductProps) {
     );
   }
 
-  const offers = [...product.offers].sort((a, b) => a.totalPrice.amount - b.totalPrice.amount);
   const href = `/product/${encodeURIComponent(product.id)}`;
 
   return (
-    <aside className="my-8 overflow-hidden rounded-2xl border">
-      <div className="flex flex-wrap items-start gap-4 p-5">
-        <LocaleLink href={href} className="shrink-0">
-          <span className="relative block size-24 overflow-hidden rounded-xl bg-muted">
-            {product.imageUrl ? (
-              <SmartImage
-                src={product.imageUrl}
-                alt={product.imageAlt ?? product.title}
-                fill
-                context="thumbnail"
-                className="object-cover"
-              />
-            ) : null}
-            <DemoBadge className="absolute bottom-1 left-1 scale-90" />
-          </span>
-        </LocaleLink>
-
-        <div className="min-w-40 flex-1 space-y-1.5">
-          <h3 className="text-sm leading-snug font-semibold">
-            <LocaleLink href={href} className="transition-colors hover:text-primary">
-              {product.title}
-            </LocaleLink>
-          </h3>
-          {product.rating ? (
-            <RatingStars
-              value={product.rating.value}
-              count={product.rating.count}
-              variant="compact"
-            />
-          ) : null}
-          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            {offers.slice(0, 3).map((offer, index) => (
-              <li key={offer.id} className="flex items-center gap-1.5">
-                <SourceLogo source={offer.source} />
-                <span className={index === 0 ? "font-semibold text-deal" : "font-medium"}>
-                  {formatPrice(offer.totalPrice)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <Button asChild size="md" className="w-full sm:w-auto">
-          <LocaleLink href={href}>
-            Voir les {product.offers.length} prix
-            <ArrowRight data-icon="inline-end" aria-hidden />
+    <aside className="my-8 flex flex-wrap items-center gap-4 rounded-2xl border p-5">
+      <div className="min-w-40 flex-1 space-y-1">
+        <h3 className="text-sm leading-snug font-semibold">
+          <LocaleLink href={href} className="transition-colors hover:text-primary">
+            {product.title}
           </LocaleLink>
-        </Button>
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          Offres neuves, reconditionnées et d&apos;occasion, comparées au prix total.
+        </p>
       </div>
+      <Button asChild size="md" className="w-full sm:w-auto">
+        <LocaleLink href={href}>
+          Comparer les prix
+          <ArrowRight data-icon="inline-end" aria-hidden />
+        </LocaleLink>
+      </Button>
     </aside>
   );
 }

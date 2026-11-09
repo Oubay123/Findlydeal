@@ -13,7 +13,9 @@ import {
   SORT_OPTIONS,
 } from "@/lib/constants";
 import { isDemoCatalogueActive } from "@/lib/mock";
-import { getAllSources } from "@/lib/sources";
+import { CATALOGUE_TTL_SECONDS } from "@/lib/catalogue";
+import { SEARCH_TTL_SECONDS } from "@/lib/ebay/client";
+import { getAllSources, getConfiguredSources } from "@/lib/sources";
 import { buildGraph, pageUrl, schemaIds, webPageNode } from "@/lib/seo/json-ld";
 import type { SortOption } from "@/types";
 
@@ -50,6 +52,9 @@ const SORT_EXPLANATIONS: Record<SortOption, string> = {
   newest: "la date de mise sur le marché du produit, du plus récent au plus ancien.",
 };
 
+/** Runtime: the demonstration notice depends on the Worker's secrets. */
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -71,8 +76,9 @@ export default async function MethodologyPage({
 }) {
   const { locale } = await params;
   const url = pageUrl(locale, PATH);
-  const sources = getAllSources().map((source) => source.label);
   const isDemo = isDemoCatalogueActive();
+  // Live: only the marketplaces actually queried. Demo: the planned ones.
+  const sources = (isDemo ? getAllSources() : getConfiguredSources()).map((source) => source.label);
 
   return (
     <Container className="max-w-3xl space-y-10 py-16">
@@ -106,8 +112,19 @@ export default async function MethodologyPage({
           </p>
           <p>
             Le prix affiché est le <strong className="text-foreground">prix total</strong> : prix de
-            l&apos;article et frais de livraison communiqués par le marchand. Vérifiez toujours le
+            l&apos;article et frais de livraison communiqués par le marchand. Quand le marchand ne
+            communique pas ses frais de port, l&apos;offre l&apos;indique. Sur eBay, un achat auprès
+            d&apos;un vendeur particulier peut entraîner des frais de Protection des acheteurs,
+            facturés par eBay au paiement et absents du prix de l&apos;annonce. Vérifiez toujours le
             montant final sur le site du marchand avant de payer.
+          </p>
+          <p>
+            Les prix des fiches produit sont relevés au plus toutes les{" "}
+            {CATALOGUE_TTL_SECONDS / 3600}&nbsp;heures, ceux des recherches au plus toutes les{" "}
+            {SEARCH_TTL_SECONDS / 3600}&nbsp;heure : chaque offre affiche l&apos;heure de son
+            relevé. Une annonce n&apos;est rattachée à une fiche que si son titre désigne exactement
+            le même modèle (même capacité, même référence) ; les appareils vendus pour pièces,
+            bloqués ou défectueux sont écartés.
           </p>
           {isDemo ? (
             <p className="rounded-lg bg-cream p-4 text-foreground">

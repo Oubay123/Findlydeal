@@ -1,6 +1,8 @@
 import { getConfiguredSources } from "@/lib/sources";
 import { SourceError as SourceAdapterError } from "@/lib/sources/types";
+import { getPricedCatalogue } from "@/lib/catalogue";
 import { searchMockProducts } from "@/lib/mock";
+import { filterProducts } from "@/lib/search/filter";
 import { sortProducts } from "@/lib/search/sort";
 import type { Offer, Product, SearchQuery, SearchResult, SourceError, SourceId } from "@/types";
 
@@ -38,6 +40,13 @@ export async function searchAllSources(query: SearchQuery): Promise<SearchResult
   const errors: SourceError[] = [];
   const offers: Offer[] = [];
 
+  // Catalogue products priced by live offers come first: they carry a full
+  // description and every matching offer, where a raw listing carries one.
+  const catalogue = filterProducts(await getPricedCatalogue(), query);
+  const catalogueOfferIds = new Set(
+    catalogue.flatMap((product) => product.offers.map((offer) => offer.id)),
+  );
+
   const responses = await Promise.allSettled(
     sources.map((source) =>
       source.search({
@@ -69,7 +78,11 @@ export async function searchAllSources(query: SearchQuery): Promise<SearchResult
     });
   });
 
-  const products = sortProducts(groupOffersIntoProducts(offers), query);
+  // Raw listings already shown inside a catalogue product are not repeated.
+  const listings = groupOffersIntoProducts(
+    offers.filter((offer) => !catalogueOfferIds.has(offer.id)),
+  );
+  const products = sortProducts([...catalogue, ...listings], query);
 
   return {
     query,

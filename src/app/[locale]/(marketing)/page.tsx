@@ -9,6 +9,14 @@ import { ProductShelves } from "@/components/home/product-shelves";
 import { DemoBanner } from "@/components/common/demo-notice";
 import type { Metadata } from "next";
 
+/**
+ * Rendered on each request, never at build time: whether prices come from
+ * the demonstration catalogue or from live eBay offers depends on the
+ * Worker's runtime secrets, which the build machine does not have. Live
+ * marketplace answers are cached by the adapters (src/lib/ebay/cache.ts).
+ */
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

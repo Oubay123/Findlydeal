@@ -11,7 +11,9 @@ import { defineCloudflareConfig } from "@opennextjs/cloudflare";
  * live prices render on demand, and the marketplace responses they use are
  * cached by the source adapters themselves.
  */
-export default {
+const config = {
   ...defineCloudflareConfig(),
   buildCommand: "npm run build:next",
 };
+
+export default config;
