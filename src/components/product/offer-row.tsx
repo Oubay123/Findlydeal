@@ -5,17 +5,21 @@ import { PriceBadge } from "@/components/product/price-badge";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS } from "@/lib/constants";
 import { getServerDictionary } from "@/i18n/server";
-import { formatRelativeTime } from "@/lib/utils";
+import { estimateBuyerProtectionFee } from "@/lib/sources/ebay-fees";
+import { formatPrice, formatRelativeTime } from "@/lib/utils";
 import type { Offer } from "@/types";
 
 interface OfferRowProps {
   offer: Offer;
-  /** Highlights the cheapest row of a comparison table. */
+  /** Highlights the product's headline offer (cheapest, not doubtful). */
   isBest?: boolean;
 }
 
 /**
  * One source's offer inside the comparison table.
+ *
+ * The listing's own title comes first: it is what tells a visitor whether
+ * this is exactly the product (storage, model, bundle). The seller follows.
  *
  * Outbound links carry `rel="sponsored nofollow noopener"`: required by the
  * affiliate programmes and by search engine guidelines.
@@ -31,16 +35,31 @@ export async function OfferRow({ offer, isBest }: OfferRowProps) {
       <div className="min-w-40 flex-1 space-y-1.5">
         <div className="flex flex-wrap items-center gap-2">
           <SourceLogo source={offer.source} size="md" />
-          <span className="text-xs text-muted-foreground">{CONDITION_LABELS[offer.condition]}</span>
+          <span className="rounded-md bg-cream px-2 py-0.5 text-xs font-medium text-foreground">
+            {CONDITION_LABELS[offer.condition]}
+          </span>
           {isBest ? (
             <span className="rounded-md bg-deal-soft px-2 py-0.5 text-xs font-semibold text-white">
               {t.product.cheapest}
             </span>
           ) : null}
         </div>
-        <p className="text-sm">{offer.seller?.name ?? offer.title}</p>
+        <p className="line-clamp-2 text-sm font-medium" title={offer.title}>
+          {offer.title}
+        </p>
         <p className="text-xs text-muted-foreground">
-          Mis à jour {formatRelativeTime(offer.fetchedAt)}
+          {offer.seller?.name ? (
+            <>
+              Vendu par {offer.seller.name}
+              {offer.sellerType === "individual"
+                ? " (particulier)"
+                : offer.sellerType === "business"
+                  ? " (professionnel)"
+                  : ""}
+              {" · "}
+            </>
+          ) : null}
+          mis à jour {formatRelativeTime(offer.fetchedAt)}
         </p>
       </div>
 
@@ -56,7 +75,8 @@ export async function OfferRow({ offer, isBest }: OfferRowProps) {
           // Charged by eBay at checkout on private sellers' items, not part
           // of the listing price the API returns.
           <p className="text-xs text-muted-foreground">
-            Vendeur particulier : frais de Protection des acheteurs eBay en sus
+            + frais de Protection des acheteurs eBay estimés à{" "}
+            {formatPrice(estimateBuyerProtectionFee(offer.price))}
           </p>
         ) : null}
         {offer.deal ? <DealBadge deal={offer.deal} /> : null}
