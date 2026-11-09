@@ -23,23 +23,53 @@ export class EbayApiError extends Error {
   constructor(
     readonly status: number,
     message: string,
+    /** True when the keys themselves were refused: retrying is pointless. */
+    readonly auth = false,
   ) {
     super(message);
     this.name = "EbayApiError";
   }
 }
 
+/**
+ * eBay's own explanation of a failure ("invalid_client", "Insufficient
+ * permissions"…), for the Worker logs. Never contains a credential.
+ */
+async function describeFailure(response: Response): Promise<string> {
+  try {
+    const body = (await response.json()) as {
+      error?: string;
+      error_description?: string;
+      errors?: { errorId?: number; message?: string; longMessage?: string }[];
+    };
+    if (body.error) return [body.error, body.error_description].filter(Boolean).join(": ");
+    const first = body.errors?.[0];
+    if (first) return `${first.errorId ?? ""} ${first.longMessage ?? first.message ?? ""}`.trim();
+  } catch {
+    // Not JSON: the status says enough.
+  }
+  return "";
+}
+
 // --- Application token ------------------------------------------------------
 
 let token: { value: string; expiresAt: number } | null = null;
+/** A token request in flight, shared by the searches that start together. */
+let pendingToken: Promise<string> | null = null;
 
 /**
  * Kept in this isolate's memory only (never in a shared cache): it is a
  * credential. eBay issues it for two hours; it is renewed five minutes early.
  */
-async function getAccessToken(config: EbayConfig): Promise<string> {
+export async function getAccessToken(config: EbayConfig): Promise<string> {
   if (token && token.expiresAt > Date.now()) return token.value;
+  pendingToken ??= requestToken(config).finally(() => {
+    pendingToken = null;
+  });
+  return pendingToken;
+}
 
+async function requestToken(config: EbayConfig): Promise<string> {
   const response = await fetch(`${config.apiBaseUrl}/identity/v1/oauth2/token`, {
     method: "POST",
     headers: {
@@ -53,7 +83,12 @@ async function getAccessToken(config: EbayConfig): Promise<string> {
   });
 
   if (!response.ok) {
-    throw new EbayApiError(response.status, `eBay token request failed (${response.status})`);
+    const reason = await describeFailure(response);
+    throw new EbayApiError(
+      response.status,
+      `eBay token request failed (${response.status}${reason ? `, ${reason}` : ""})`,
+      response.status === 400 || response.status === 401,
+    );
   }
   const data = (await response.json()) as EbayTokenResponse;
   if (!data.access_token) throw new EbayApiError(502, "eBay token response without access_token");
@@ -94,7 +129,12 @@ async function browseGet<T>(config: EbayConfig, path: string): Promise<T> {
 
   if (response.status === 401) token = null; // expired early: renew next time
   if (!response.ok) {
-    throw new EbayApiError(response.status, `eBay Browse API error ${response.status} on ${path}`);
+    const reason = await describeFailure(response);
+    throw new EbayApiError(
+      response.status,
+      `eBay Browse API error ${response.status}${reason ? ` (${reason})` : ""} on ${path.split("?")[0]}`,
+      response.status === 401 || response.status === 403,
+    );
   }
   return (await response.json()) as T;
 }

@@ -6,8 +6,8 @@ import {
 } from "@/config/catalogue-ebay";
 import { annotateOffersWithDeals } from "@/lib/deals";
 import { cached } from "@/lib/ebay/cache";
-import { isEbayConfigured } from "@/lib/ebay/config";
-import { searchItems } from "@/lib/ebay/client";
+import { getEbayConfig } from "@/lib/ebay/config";
+import { EbayApiError, getAccessToken, searchItems } from "@/lib/ebay/client";
 import type { MockProductSeed } from "@/lib/mock/build";
 import { catalogueSeeds } from "@/lib/mock";
 import { normalizeTerm } from "@/lib/search/normalize";
@@ -37,6 +37,19 @@ const MAX_OFFERS_PER_PRODUCT = 24;
 
 /** eBay searches run at once during a rebuild. */
 const CONCURRENCY = 6;
+
+/**
+ * A rebuild where some searches failed is kept 15 minutes, so the missing
+ * products come back soon; one where eBay refused everything, 2 minutes, so
+ * a fixed key is picked up quickly without calling eBay on every visit.
+ */
+const PARTIAL_TTL_SECONDS = 15 * 60;
+const FAILED_TTL_SECONDS = 2 * 60;
+
+interface LiveCatalogue {
+  products: Product[];
+  failures: number;
+}
 
 /** Lowercase, accents and punctuation folded: "GA-2100" -> "ga2100". */
 const squash = (text: string) => normalizeTerm(text).replace(/[^a-z0-9]/g, "");
@@ -128,17 +141,48 @@ async function mapWithConcurrency<T, R>(
   return results;
 }
 
-async function buildLiveCatalogue(): Promise<Product[]> {
+async function buildLiveCatalogue(): Promise<LiveCatalogue> {
   const seedsBySlug = new Map(catalogueSeeds.map((seed) => [seed.slug, seed]));
   const entries = catalogueEbayEntries.filter((entry) => seedsBySlug.has(entry.slug));
+  const config = getEbayConfig();
+  if (!config) return { products: [], failures: 0 };
+  const empty = (entry: CatalogueEbayEntry) =>
+    buildLiveProduct(seedsBySlug.get(entry.slug) as MockProductSeed, entry, []);
 
-  return mapWithConcurrency(entries, CONCURRENCY, async (entry) => {
-    const seed = seedsBySlug.get(entry.slug) as MockProductSeed;
-    // One product failing (timeout, quota) must not empty the whole site.
-    const offers = await findOffers(entry).catch(() => [] as Offer[]);
-    return buildLiveProduct(seed, entry, offers);
+  // One token for the whole rebuild; if eBay refuses the keys, stop there
+  // instead of failing the same way once per product.
+  try {
+    await getAccessToken(config);
+  } catch (error) {
+    console.error(`[ebay] catalogue: ${describe(error)}`);
+    return { products: entries.map(empty), failures: entries.length };
+  }
+
+  let failures = 0;
+  const products = await mapWithConcurrency(entries, CONCURRENCY, async (entry) => {
+    try {
+      return buildLiveProduct(
+        seedsBySlug.get(entry.slug) as MockProductSeed,
+        entry,
+        await findOffers(entry),
+      );
+    } catch (error) {
+      // One product failing (timeout, quota) must not empty the whole site.
+      failures++;
+      console.error(`[ebay] catalogue ${entry.slug}: ${describe(error)}`);
+      return empty(entry);
+    }
   });
+
+  const priced = products.filter((product) => product.offers.length > 0).length;
+  console.log(
+    `[ebay] catalogue rebuilt: ${priced}/${entries.length} products priced, ${failures} failed`,
+  );
+  return { products, failures };
 }
+
+const describe = (error: unknown) =>
+  error instanceof EbayApiError || error instanceof Error ? error.message : String(error);
 
 /**
  * Every live catalogue product, including those with no offer right now
@@ -146,8 +190,18 @@ async function buildLiveCatalogue(): Promise<Product[]> {
  * cached across requests.
  */
 export const getLiveCatalogue = cache(async function getLiveCatalogue(): Promise<Product[]> {
-  if (!isEbayConfigured()) return [];
-  return cached("catalogue:ebay:v1", CATALOGUE_TTL_SECONDS, buildLiveCatalogue);
+  if (!getEbayConfig()) return [];
+  const catalogue = await cached(
+    "catalogue:ebay:v2",
+    ({ products, failures }) =>
+      failures === 0
+        ? CATALOGUE_TTL_SECONDS
+        : failures < products.length
+          ? PARTIAL_TTL_SECONDS
+          : FAILED_TTL_SECONDS,
+    buildLiveCatalogue,
+  );
+  return catalogue.products;
 });
 
 /** Live catalogue products that currently have at least one offer. */

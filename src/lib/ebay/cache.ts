@@ -10,6 +10,8 @@
  * - elsewhere (local `next start`, tests), in this isolate's memory.
  *
  * Only successful loads are cached; a failure is retried on the next request.
+ * `ttl` may depend on the value: a partial result can be kept briefly,
+ * and a TTL of 0 means "serve it, but do not keep it".
  */
 
 type Entry = { value: unknown; expiresAt: number };
@@ -27,7 +29,7 @@ function getEdgeCache(): Cache | undefined {
 
 export async function cached<T>(
   key: string,
-  ttlSeconds: number,
+  ttl: number | ((value: T) => number),
   load: () => Promise<T>,
 ): Promise<T> {
   const now = Date.now();
@@ -42,7 +44,8 @@ export async function cached<T>(
       const response = await edge.match(request);
       if (response) {
         const value = (await response.json()) as T;
-        remember(key, value, now + ttlSeconds * 1000);
+        const remaining = Number(response.headers.get("x-findlydeal-expires")) - now;
+        remember(key, value, now + (remaining > 0 ? remaining : 60_000));
         return value;
       }
     } catch {
@@ -51,6 +54,8 @@ export async function cached<T>(
   }
 
   const value = await load();
+  const ttlSeconds = typeof ttl === "function" ? ttl(value) : ttl;
+  if (ttlSeconds <= 0) return value;
   remember(key, value, now + ttlSeconds * 1000);
 
   if (edge) {
@@ -61,6 +66,7 @@ export async function cached<T>(
           headers: {
             "content-type": "application/json",
             "cache-control": `public, max-age=${ttlSeconds}`,
+            "x-findlydeal-expires": String(now + ttlSeconds * 1000),
           },
         }),
       );

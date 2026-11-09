@@ -130,6 +130,7 @@ export const ebaySource: SourceAdapter = {
         hasMore: Boolean(response.next),
       };
     } catch (error) {
+      console.error(`[ebay] search: ${error instanceof Error ? error.message : String(error)}`);
       throw new SourceError("ebay", "eBay est momentanément indisponible.", error);
     }
   },
