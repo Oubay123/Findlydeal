@@ -6,7 +6,7 @@ import { ChevronRight, Menu } from "lucide-react";
 import { CategoryIcon } from "@/components/category/category-icon";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { categories } from "@/config/categories";
+import { listedCategories as categories } from "@/config/categories";
 import { browseMenuGroups } from "@/config/menu";
 import { mainNav, siteConfig } from "@/config/site";
 import { useLocalePath } from "@/i18n/use-locale";

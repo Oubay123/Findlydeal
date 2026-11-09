@@ -174,8 +174,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   comparedTo={bestOffer.deal?.referencePrice}
                 />
                 <p className="text-xs text-muted-foreground">
-                  sur {getSourcePresentation(bestOffer.source).label} · {product.offers.length}{" "}
-                  offres comparées
+                  sur {getSourcePresentation(bestOffer.source).label} ·{" "}
+                  {product.offerCount ?? product.offers.length} offres comparées
                 </p>
               </div>
             ) : null}

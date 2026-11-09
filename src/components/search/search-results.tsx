@@ -147,6 +147,30 @@ function hasActiveFilters(filters: SearchFilters): boolean {
  */
 function EmptyState({ query }: { query: SearchQuery }) {
   const filtered = hasActiveFilters(query.filters);
+  const { categorySlug, ...otherFilters } = query.filters;
+  const categoryOnly =
+    Boolean(categorySlug) &&
+    !query.term &&
+    !hasActiveFilters({ ...otherFilters, sort: "relevance" });
+
+  // A category page with nothing in it: no filter of the visitor's to blame.
+  if (categoryOnly) {
+    return (
+      <Placeholder
+        icon={<PackageSearch className="size-6" aria-hidden />}
+        title="Pas encore d'offres dans cette catégorie"
+        description="Ses produits arriveront avec nos prochaines marketplaces partenaires. En attendant, parcourez les catégories déjà couvertes."
+        action={
+          <LocaleLink
+            href="/categories"
+            className="rounded-md font-medium text-primary underline-offset-4 hover:underline focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none"
+          >
+            Voir les catégories
+          </LocaleLink>
+        }
+      />
+    );
+  }
 
   if (!query.term && !filtered) {
     return (

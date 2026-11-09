@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/common/container";
 import { Logo } from "@/components/common/logo";
-import { categories } from "@/config/categories";
+import { listedCategories as categories } from "@/config/categories";
 import { footerNav, siteConfig } from "@/config/site";
 import {
   PUBLIC_UI_LOCALES,
@@ -25,7 +25,7 @@ export function Footer({ locale }: { locale: UiLocale }) {
 
         <FooterColumn title={dictionary.nav.categories}>
           {/*
-          Every category, not a slice: the mega-menu that also links them lives
+          Every advertised category (`listedCategories`), not a slice: the mega-menu that also links them lives
           in a Radix portal and never reaches the served HTML, so the footer is
           what actually makes each category crawlable from every page. Three of
           them had a single inbound link before this.

@@ -94,7 +94,7 @@ export async function ProductCard({
 
         {otherOffers > 0 ? (
           <p className="text-xs text-muted-foreground">
-            Meilleur prix sur {product.offers.length} offres comparées
+            Meilleur prix sur {product.offerCount ?? product.offers.length} offres comparées
           </p>
         ) : null}
 

@@ -11,7 +11,7 @@ import {
   getNewestProducts,
   getProductsInCategory,
 } from "@/lib/products/collections";
-import type { CategorySlug } from "@/types";
+import type { CategorySlug, Product } from "@/types";
 
 /**
  * The product shelves of the home page: three editorial rows, then three
@@ -33,7 +33,29 @@ import type { CategorySlug } from "@/types";
  */
 
 /** The three universes shelved on the landing page, in display order. */
-const FEATURED_CATEGORIES: CategorySlug[] = ["tech", "watches-jewelry", "furniture"];
+const FEATURED_CATEGORIES: CategorySlug[] = ["tech", "watches-jewelry", "home-appliances"];
+
+/** Shelves never show fewer cards than this, even if it means a repeat. */
+const MIN_CARDS_PER_SHELF = 3;
+
+/**
+ * Takes `limit` products from `candidates` that no earlier shelf has shown,
+ * so the same product does not fill three shelves in a row. With a small
+ * catalogue, a shelf is topped up with already shown products rather than
+ * left nearly empty.
+ */
+function pickUnseen(candidates: Product[], limit: number, shown: Set<string>): Product[] {
+  const fresh = candidates.filter((product) => !shown.has(product.id)).slice(0, limit);
+  const picked =
+    fresh.length >= MIN_CARDS_PER_SHELF
+      ? fresh
+      : [...fresh, ...candidates.filter((product) => !fresh.includes(product))].slice(
+          0,
+          Math.min(limit, Math.max(MIN_CARDS_PER_SHELF, fresh.length)),
+        );
+  for (const product of picked) shown.add(product.id);
+  return picked;
+}
 
 export async function ProductShelves() {
   const t = await getServerDictionary();
@@ -41,12 +63,19 @@ export async function ProductShelves() {
   // Six and five rather than eight. Six shelves already sit close to the DOM
   // budget Lighthouse starts penalising, and a shelf scrolls, so the cards
   // past the fourth are an arrow click away either way.
-  const [newest, bestDeals, mostReviewed, ...byCategory] = await Promise.all([
-    getNewestProducts(6),
-    getBestDeals(6),
-    getMostReviewed(6),
-    ...FEATURED_CATEGORIES.map((slug) => getProductsInCategory(slug, 5)),
+  const [newestPool, bestDealsPool, mostReviewedPool, ...byCategoryPool] = await Promise.all([
+    getNewestProducts(30),
+    getBestDeals(30),
+    getMostReviewed(30),
+    ...FEATURED_CATEGORIES.map((slug) => getProductsInCategory(slug, 30)),
   ]);
+
+  // Deals first: they are the reason to come back, so they get first pick.
+  const shown = new Set<string>();
+  const bestDeals = pickUnseen(bestDealsPool, 6, shown);
+  const newest = pickUnseen(newestPool, 6, shown);
+  const mostReviewed = pickUnseen(mostReviewedPool, 6, shown);
+  const byCategory = byCategoryPool.map((pool) => pickUnseen(pool, 5, shown));
 
   return (
     <section className="py-20">

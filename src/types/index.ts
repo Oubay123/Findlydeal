@@ -150,7 +150,12 @@ export interface Product {
    */
   imageAlt?: string;
   offers: Offer[];
-  /** Cheapest offer by `totalPrice`. */
+  /**
+   * Listings compared for this product. Can exceed `offers.length`: only the
+   * cheapest are kept for display, the median uses them all.
+   */
+  offerCount?: number;
+  /** Cheapest offer by `totalPrice` that is not flagged as suspicious. */
   bestOffer?: Offer;
   priceRange?: { min: Money; max: Money };
 

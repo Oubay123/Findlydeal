@@ -12,7 +12,7 @@ import { SourceLogo } from "@/components/common/source-logo";
 import { FilterPill } from "@/components/search/filter-pill";
 import { getSourcePresentation } from "@/config/sources";
 import { PriceRangeFilter } from "@/components/search/price-range-filter";
-import { categories } from "@/config/categories";
+import { listedCategories as categories } from "@/config/categories";
 import {
   CONDITION_LABELS,
   CONDITION_OPTIONS,

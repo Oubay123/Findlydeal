@@ -75,7 +75,7 @@ export function matchesEntry(title: string, entry: CatalogueEbayEntry): boolean 
   );
 }
 
-async function findOffers(entry: CatalogueEbayEntry): Promise<Offer[]> {
+async function findOffers(entry: CatalogueEbayEntry): Promise<{ offers: Offer[]; total: number }> {
   const response = await searchItems({
     query: entry.query,
     minPrice: entry.minPrice,
@@ -93,12 +93,20 @@ async function findOffers(entry: CatalogueEbayEntry): Promise<Offer[]> {
 
   // Medians are computed on every matched listing, then the cheapest are
   // kept for display: keeping the cheapest first would bias the median low.
-  return annotateOffersWithDeals(offers)
-    .sort((a, b) => a.totalPrice.amount - b.totalPrice.amount)
-    .slice(0, MAX_OFFERS_PER_PRODUCT);
+  return {
+    offers: annotateOffersWithDeals(offers)
+      .sort((a, b) => a.totalPrice.amount - b.totalPrice.amount)
+      .slice(0, MAX_OFFERS_PER_PRODUCT),
+    total: offers.length,
+  };
 }
 
-function buildLiveProduct(seed: MockProductSeed, entry: CatalogueEbayEntry, offers: Offer[]) {
+function buildLiveProduct(
+  seed: MockProductSeed,
+  entry: CatalogueEbayEntry,
+  offers: Offer[],
+  offerCount = offers.length,
+) {
   // Photos from listings priced like the others: a doubtful listing's photo
   // may not even show the product.
   const images = [
@@ -123,6 +131,7 @@ function buildLiveProduct(seed: MockProductSeed, entry: CatalogueEbayEntry, offe
     description: entry.description ?? seed.description,
     specs: seed.specs,
     offers,
+    offerCount,
     ...summarizeOffers(offers),
   };
   return product;
@@ -166,11 +175,8 @@ async function buildLiveCatalogue(): Promise<LiveCatalogue> {
   let failures = 0;
   const products = await mapWithConcurrency(entries, CONCURRENCY, async (entry) => {
     try {
-      return buildLiveProduct(
-        seedsBySlug.get(entry.slug) as MockProductSeed,
-        entry,
-        await findOffers(entry),
-      );
+      const { offers, total } = await findOffers(entry);
+      return buildLiveProduct(seedsBySlug.get(entry.slug) as MockProductSeed, entry, offers, total);
     } catch (error) {
       // One product failing (timeout, quota) must not empty the whole site.
       failures++;

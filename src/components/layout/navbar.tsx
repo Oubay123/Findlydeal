@@ -8,7 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { categories } from "@/config/categories";
+import { listedCategories as categories } from "@/config/categories";
 import { browseMenuGroups } from "@/config/menu";
 import { mainNav } from "@/config/site";
 import { useLocalePath, useUnprefixedPathname } from "@/i18n/use-locale";

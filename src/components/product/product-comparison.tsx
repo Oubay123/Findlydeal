@@ -29,7 +29,9 @@ export function ProductComparison({ product }: ProductComparisonProps) {
         <h2 className="text-xl font-semibold">
           Comparatif des prix
           <span className="ml-2 text-sm font-normal text-muted-foreground">
-            {offers.length} offre{offers.length > 1 ? "s" : ""}
+            {offers.length < (product.offerCount ?? 0)
+              ? `${offers.length} offres les moins chères sur ${product.offerCount}`
+              : `${offers.length} offre${offers.length > 1 ? "s" : ""}`}
           </span>
         </h2>
         {saving > 0 ? (
