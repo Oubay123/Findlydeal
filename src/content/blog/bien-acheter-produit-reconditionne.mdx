@@ -3,6 +3,7 @@ export const meta = {
   description:
     "Garantie, batterie, grade, vendeur : les six points à vérifier avant de valider un panier sur un produit reconditionné, et les pièges classiques à éviter.",
   date: "2026-07-28",
+  updatedAt: "2026-11-10",
   authorId: "equipe",
   cover: {
     src: "https://images.unsplash.com/photo-1512418490979-92798cec1380?auto=format&fit=crop&w=1200&q=80",
@@ -10,12 +11,60 @@ export const meta = {
   },
   tags: ["Reconditionné", "Guide d'achat"],
   readingMinutes: 6,
+  outline: [
+    "1. La garantie, avant tout le reste",
+    "2. L'état de la batterie, pour tout ce qui est nomade",
+    "3. Le grade esthétique n'est pas le grade technique",
+    "4. Le prix de référence affiché",
+    "5. La réputation du vendeur, lue correctement",
+    "6. Les accessoires et le contenu de la boîte",
+    "En résumé",
+  ],
+  sources: [
+    {
+      title: "Achat d'un produit : garantie légale de conformité",
+      publisher: "Service-Public.gouv.fr",
+      url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F11094",
+    },
+    {
+      title: "Vente de produits reconditionnés",
+      publisher: "Justice.fr",
+      url: "https://www.justice.fr/fiche/vente-produits-reconditionnes",
+    },
+    {
+      title: "Pourquoi préférer un smartphone reconditionné ? (infographie, février 2022)",
+      publisher: "ADEME",
+      url: "https://librairie.ademe.fr/ged/5311/transcription-infographie-preferer-smartphone-reconditionne.pdf",
+    },
+  ],
+  faq: [
+    {
+      question: "Un produit reconditionné est-il garanti deux ans ?",
+      answer:
+        "Oui, s'il est vendu par un professionnel : la garantie légale de conformité dure deux ans à compter de la livraison, comme pour un produit neuf. Pour un bien d'occasion ou reconditionné, le défaut est présumé exister à la livraison pendant les douze premiers mois.",
+    },
+    {
+      question: "Quelle capacité de batterie exiger sur un smartphone reconditionné ?",
+      answer:
+        "Les vendeurs sérieux annoncent une capacité minimale garantie, en général 80 ou 85 % de la capacité d'origine. Une annonce qui n'en dit rien sur un appareil de plusieurs années est incomplète.",
+    },
+    {
+      question: "Le grade indique-t-il l'état technique de l'appareil ?",
+      answer:
+        "Non. Le grade décrit l'aspect extérieur. L'état de la batterie, les pièces remplacées et la garantie sont des informations séparées, à vérifier une par une.",
+    },
+    {
+      question: "Qu'a-t-on le droit d'appeler « reconditionné » en France ?",
+      answer:
+        "Un produit d'occasion qui a subi des tests portant sur toutes ses fonctionnalités et, si nécessaire, une remise en état, effacement des données compris. Les mentions « état neuf », « comme neuf » ou « à neuf » sont interdites.",
+    },
+  ],
 };
 
-Le reconditionné n'est plus un marché de niche. Il représente aujourd'hui une part significative
-des ventes de smartphones en France, et la qualité moyenne s'est nettement améliorée depuis que les
-grandes plateformes imposent un cahier des charges à leurs vendeurs. Reste que d'un vendeur à
-l'autre, le mot « reconditionné » ne recouvre pas du tout la même réalité.
+Le reconditionné n'est plus un marché de niche, et le mot lui-même est encadré : en France, un
+vendeur ne peut l'employer que pour un produit d'occasion qui a subi des tests portant sur toutes
+ses fonctionnalités et, si nécessaire, une remise en état. Reste que d'un vendeur à l'autre, le
+soin apporté à ce travail varie beaucoup.
 
 <ArticleSummary
   points={[
@@ -33,8 +82,10 @@ Voici ce qu'il faut regarder, dans l'ordre.
 
 C'est le critère qui sépare un vendeur sérieux d'un revendeur opportuniste. En France, un produit
 reconditionné vendu par un professionnel est couvert par la garantie légale de conformité de deux
-ans, comme un produit neuf. Beaucoup de vendeurs affichent en plus une garantie commerciale de
-douze ou vingt-quatre mois.
+ans, comme un produit neuf. Pendant les douze premiers mois, c'est au vendeur de prouver que le
+défaut n'existait pas à la livraison. Beaucoup de vendeurs affichent en plus une garantie
+commerciale de douze ou vingt-quatre mois. Le détail est dans notre article sur
+[la garantie d'un produit reconditionné](/blog/garantie-produit-reconditionne).
 
 > Un vendeur qui annonce « garantie 3 mois » sur un produit reconditionné vous informe surtout
 > qu'il ignore, ou espère que vous ignorez, la garantie légale de deux ans.
@@ -67,7 +118,8 @@ trois ans plus tôt. Un iPhone 13 affiché « -45 % » par rapport à son prix d
 affaire : c'est simplement le prix du marché en 2026.
 
 La seule comparaison utile est celle avec **les autres offres du même produit, au même moment**.
-C'est exactement ce que fait Findlydeal.
+C'est ce que fait Findlydeal : chaque offre est comparée à la médiane des offres du même produit
+dans le même état.
 
 ## 5. La réputation du vendeur, lue correctement
 

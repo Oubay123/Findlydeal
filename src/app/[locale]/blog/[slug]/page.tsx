@@ -20,7 +20,8 @@ import {
   schemaIds,
   webPageNode,
 } from "@/lib/seo/json-ld";
-import { formatArticleDate } from "@/lib/utils";
+import { siteConfig } from "@/config/site";
+import { formatArticleDate, slugify } from "@/lib/utils";
 
 interface ArticlePageProps {
   params: Promise<{ locale: UiLocale; slug: string }>;
@@ -120,7 +121,18 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t pt-4 text-sm text-muted-foreground">
             <span className="font-medium text-foreground">{article.author.name}</span>
             <span aria-hidden>·</span>
-            <time dateTime={article.date}>{formatArticleDate(article.date)}</time>
+            <span>
+              Publié le <time dateTime={article.date}>{formatArticleDate(article.date)}</time>
+            </span>
+            {article.updatedAt && article.updatedAt !== article.date ? (
+              <>
+                <span aria-hidden>·</span>
+                <span>
+                  Mis à jour le{" "}
+                  <time dateTime={article.updatedAt}>{formatArticleDate(article.updatedAt)}</time>
+                </span>
+              </>
+            ) : null}
             <span aria-hidden>·</span>
             <span className="inline-flex items-center gap-1">
               <Clock className="size-4" aria-hidden />
@@ -146,9 +158,94 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           photo can breathe, but running text past ~75 characters makes the eye
           lose the start of the next line.
         */}
+        {article.outline.length > 2 ? (
+          <nav
+            aria-labelledby="article-toc"
+            className="mx-auto mb-8 max-w-[68ch] rounded-2xl border bg-white px-6 py-5"
+          >
+            <h2
+              id="article-toc"
+              className="font-display text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+            >
+              Dans cet article
+            </h2>
+            <ol className="mt-3 space-y-1.5 text-sm">
+              {article.outline.map((heading) => (
+                <li key={heading}>
+                  <a
+                    href={`#${slugify(heading)}`}
+                    className="text-foreground/80 underline-offset-4 hover:text-primary hover:underline"
+                  >
+                    {heading}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        ) : null}
+
         <div className="mx-auto max-w-[68ch] text-base">
           <Content />
         </div>
+
+        {article.faq?.length ? (
+          <section aria-labelledby="article-faq" className="mx-auto mt-12 max-w-[68ch]">
+            <h2 id="article-faq" className="font-display text-2xl leading-tight font-bold">
+              Questions fréquentes
+            </h2>
+            <dl className="mt-4 divide-y rounded-2xl border bg-white">
+              {article.faq.map((item) => (
+                <div key={item.question} className="px-6 py-4">
+                  <dt className="font-display text-base font-semibold">{item.question}</dt>
+                  <dd className="mt-1.5 text-sm leading-relaxed text-foreground/80">
+                    {item.answer}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        ) : null}
+
+        {article.sources?.length ? (
+          <section aria-labelledby="article-sources" className="mx-auto mt-12 max-w-[68ch]">
+            <h2 id="article-sources" className="font-display text-xl font-bold">
+              Sources
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Les règles de droit, dates et chiffres de cet article viennent des documents suivants,
+              consultés le {formatArticleDate(article.updatedAt ?? article.date)}.
+            </p>
+            <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm marker:text-muted-foreground">
+              {article.sources.map((source) => (
+                <li key={source.url}>
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-words text-primary underline underline-offset-4"
+                  >
+                    {source.title}
+                  </a>
+                  <span className="text-muted-foreground">, {source.publisher}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ) : null}
+
+        <p className="mx-auto mt-10 max-w-[68ch] border-t pt-5 text-xs leading-relaxed text-muted-foreground">
+          Article rédigé par {article.author.name}. Findlydeal ne vend aucun produit et aucun
+          marchand ne paie pour être cité dans nos guides ; les liens vers le comparateur mènent à
+          des offres dont les liens sont affiliés, selon les règles décrites dans notre{" "}
+          <LocaleLink href="/methodologie" className="underline underline-offset-2">
+            méthodologie
+          </LocaleLink>
+          . Une erreur ? Écrivez à{" "}
+          <a href={`mailto:${siteConfig.contactEmail}`} className="underline underline-offset-2">
+            {siteConfig.contactEmail}
+          </a>
+          .
+        </p>
 
         <aside className="mx-auto mt-14 max-w-[68ch] space-y-3 rounded-2xl bg-cream p-8 text-center">
           <h2 className="font-display text-xl font-bold">Passez de la théorie à la pratique</h2>

@@ -1,5 +1,7 @@
 import { LocaleLink } from "@/components/common/locale-link";
 import type { MDXComponents } from "mdx/types";
+import { isValidElement, type ReactNode } from "react";
+import { slugify } from "@/lib/utils";
 import { ArticleFigure } from "@/components/blog/article-figure";
 import { ArticleProduct } from "@/components/blog/article-product";
 import { ArticleSummary } from "@/components/blog/article-summary";
@@ -20,9 +22,22 @@ import { SmartImage } from "@/components/common/smart-image";
  * Vertical rhythm, kept deliberately regular:
  *   h2 mt-12 · h3 mt-8 · h4 mt-6 · everything else my-4/my-6
  */
+/** Plain text of a heading's children ("Le **prix** livré" -> "Le prix livré"). */
+function textOf(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textOf).join("");
+  if (isValidElement<{ children?: ReactNode }>(node)) return textOf(node.props.children);
+  return "";
+}
+
 const components: MDXComponents = {
+  // The id matches `slugify(heading)`, which is what the article page's table
+  // of contents links to.
   h2: ({ children }) => (
-    <h2 className="mt-12 mb-4 scroll-mt-24 font-display text-2xl leading-tight font-bold">
+    <h2
+      id={slugify(textOf(children))}
+      className="mt-12 mb-4 scroll-mt-24 font-display text-2xl leading-tight font-bold"
+    >
       {children}
     </h2>
   ),

@@ -3,7 +3,7 @@ export const meta = {
   description:
     "Parfait, Très bon état, Bon état, Correct : ce que chaque grade recouvre réellement, ce qu'il ne dit pas, et lequel choisir selon votre usage.",
   date: "2026-08-18",
-  updatedAt: "2026-11-09",
+  updatedAt: "2026-11-10",
   authorId: "equipe",
   cover: {
     src: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?auto=format&fit=crop&w=1200&q=80",
@@ -11,6 +11,41 @@ export const meta = {
   },
   tags: ["Reconditionné", "Guide d'achat"],
   readingMinutes: 5,
+  outline: [
+    "Les quatre grades courants",
+    "Ce qu'aucun grade ne vous dit",
+    "Le tableau de correspondance",
+    "Notre recommandation",
+  ],
+  sources: [
+    {
+      title: "Vente de produits reconditionnés",
+      publisher: "Justice.fr",
+      url: "https://www.justice.fr/fiche/vente-produits-reconditionnes",
+    },
+    {
+      title: "Achat d'un produit : garantie légale de conformité",
+      publisher: "Service-Public.gouv.fr",
+      url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F11094",
+    },
+  ],
+  faq: [
+    {
+      question: "Les grades de reconditionnement sont-ils définis par la loi ?",
+      answer:
+        "Non. Aucune norme légale ne définit « Très bon état » ou « Bon état » : chaque plateforme a sa propre échelle. La loi encadre seulement le mot « reconditionné » et interdit les mentions « état neuf », « comme neuf » et « à neuf ».",
+    },
+    {
+      question: "Quel grade choisir pour un smartphone ?",
+      answer:
+        "Pour un appareil qui vivra sous une coque, « Très bon état » est le point d'équilibre : les micro-rayures ne se voient plus et l'écart de prix avec le grade supérieur est rarement justifié.",
+    },
+    {
+      question: "Un grade « Parfait état » garantit-il une bonne batterie ?",
+      answer:
+        "Non. Le grade ne dit rien de la batterie. Vérifiez la capacité minimale garantie, annoncée séparément en pourcentage.",
+    },
+  ],
 };
 
 Les grades de reconditionnement décrivent l'**aspect extérieur** d'un produit, et rien d'autre. Ce
@@ -35,8 +70,8 @@ définition donnée par le vendeur.
 ### Parfait état
 
 Aucune trace d'usage visible, même en inspectant l'appareil de près. Ce grade remplace l'ancien
-« comme neuf » : depuis le décret n° 2022-190 du 17 février 2022, les mentions « état neuf »,
-« comme neuf » ou « à neuf » sont interdites pour un produit reconditionné. C'est le grade le plus cher,
+« comme neuf » : depuis 2022, les mentions « état neuf », « comme neuf », « à neuf » ou toute
+mention équivalente sont interdites pour un produit vendu comme reconditionné. C'est le grade le plus cher,
 souvent à seulement 10 % en dessous du grade inférieur, pour une différence que vous ne verrez
 plus une fois la coque posée.
 

@@ -270,6 +270,13 @@ export function articleNode(article: BlogArticle, url: string): JsonLdNode {
     publisher: ref(schemaIds.organization()),
     mainEntityOfPage: ref(schemaIds.webPage(url)),
     keywords: article.tags.join(", "),
+    // The documents the article's claims come from.
+    citation: article.sources?.map((source) => ({
+      "@type": "CreativeWork",
+      name: source.title,
+      url: source.url,
+      publisher: { "@type": "Organization", name: source.publisher },
+    })),
   });
 }
 

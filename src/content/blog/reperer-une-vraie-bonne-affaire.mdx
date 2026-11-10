@@ -3,22 +3,62 @@ export const meta = {
   description:
     "Prix barré trompeur, faux compte à rebours, frais de port qui effacent la remise : comment distinguer une remise réelle d'une remise mise en scène.",
   date: "2026-08-11",
+  updatedAt: "2026-11-10",
   authorId: "equipe",
   cover: {
     src: "https://images.unsplash.com/photo-1607083206325-caf1edba7a0f?auto=format&fit=crop&w=1200&q=80",
     alt: "Étiquettes de soldes Black Friday suspendues sur un fond rouge",
   },
   tags: ["Bons plans", "Guide d'achat"],
-  readingMinutes: 4,
+  readingMinutes: 5,
+  outline: [
+    "1. Ignorez le prix barré, regardez le prix médian",
+    "2. Comparez toujours le prix livré",
+    "3. Méfiez-vous des compteurs et des stocks « limités »",
+    "4. Regardez l'historique, pas l'instant",
+    "5. Vérifiez que c'est bien le même produit",
+    "Et quand le prix est trop beau ?",
+    "La question à se poser",
+  ],
+  sources: [
+    {
+      title:
+        "Directive Omnibus : un nouvel encadrement des annonces de réduction de prix (article L. 112-1-1 du Code de la consommation)",
+      publisher: "Deloitte Société d'Avocats",
+      url: "https://blog.avocats.deloitte.fr/directive-omnibus-un-nouvel-encadrement-des-annonces-de-reduction-de-prix-pour-lutter-contre-les-pratiques-commerciales-trompeuses/",
+    },
+    {
+      title: "Achat d'un produit : garantie légale de conformité",
+      publisher: "Service-Public.gouv.fr",
+      url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F11094",
+    },
+  ],
+  faq: [
+    {
+      question: "Un marchand peut-il barrer n'importe quel prix ?",
+      answer:
+        "Non. Depuis le 28 mai 2022, une annonce de réduction de prix doit se référer au prix le plus bas pratiqué par ce marchand au cours des trente derniers jours. En revanche, cette règle ne couvre pas la comparaison avec les prix d'autres professionnels, comme un « prix conseillé ».",
+    },
+    {
+      question: "Comment savoir si une remise est réelle ?",
+      answer:
+        "Comparez le prix livré à celui des autres vendeurs pour exactement la même référence, dans le même état. Une offre nettement sous le prix médian du moment est une vraie remise ; un pourcentage calculé sur un prix de lancement n'en est pas une.",
+    },
+    {
+      question: "Un prix très inférieur aux autres est-il une bonne affaire ?",
+      answer:
+        "Pas forcément. Sur une marketplace, un prix très en dessous du marché correspond plus souvent à une annonce mal décrite, un produit incomplet ou une tentative de fraude. Findlydeal marque ces offres « Prix inhabituel, à vérifier ».",
+    },
+  ],
 };
 
-Une remise affichée n'est pas une remise. C'est un argument de vente, et rien n'oblige un marchand
-à le calculer sur un prix qui a réellement existé récemment. Voici cinq réflexes qui coûtent trente
-secondes et évitent la plupart des mauvaises surprises.
+Une remise affichée n'est pas toujours une remise. La loi encadre le prix barré d'un marchand, mais
+pas la comparaison avec un « prix conseillé » ou un prix de lancement. Voici cinq réflexes qui
+coûtent trente secondes et évitent la plupart des mauvaises surprises.
 
 <ArticleSummary
   points={[
-    "Le prix barré est presque toujours un prix conseillé, pas un prix pratiqué.",
+    "Un prix barré doit être le plus bas des 30 derniers jours ; un « prix conseillé » n'obéit pas à cette règle.",
     "Comparez le prix livraison comprise : c'est le seul chiffre qui compte.",
     "Compteurs et stocks limités sont des éléments d'interface, pas des faits.",
     "Un prix exceptionnel en octobre est souvent le prix normal de décembre.",
@@ -28,13 +68,17 @@ secondes et évitent la plupart des mauvaises surprises.
 
 ## 1. Ignorez le prix barré, regardez le prix médian
 
-Le prix barré est presque toujours le prix conseillé par le fabricant, parfois vieux de plusieurs
-années. Ce qui compte est ailleurs : **combien coûte ce produit, aujourd'hui, chez les autres
-vendeurs ?**
+Depuis le 28 mai 2022, un marchand qui annonce une réduction doit indiquer comme prix antérieur
+**le prix le plus bas qu'il a pratiqué au cours des trente derniers jours** (article L. 112-1-1 du
+Code de la consommation). C'est une vraie protection, avec une limite : elle ne s'applique pas
+quand le marchand compare son prix à celui d'autres professionnels. Le « prix conseillé » du
+fabricant, parfois vieux de plusieurs années, reste donc un affichage légal.
+
+Ce qui compte est ailleurs : **combien coûte ce produit, aujourd'hui, chez les autres vendeurs ?**
 
 C'est le principe de calcul que nous appliquons : une offre n'est signalée comme bonne affaire que
-si elle est significativement en dessous du prix médian des offres concurrentes relevées au même
-moment. Pas en dessous d'un prix de lancement oublié.
+si elle est nettement en dessous du prix médian des offres du même produit, dans le même état,
+relevées au même moment. Pas en dessous d'un prix de lancement oublié.
 
 ## 2. Comparez toujours le prix livré
 
@@ -70,6 +114,18 @@ garantie, ou la présence d'accessoires.
 
 Avant de conclure qu'une offre est 80 € moins chère, vérifiez la ligne de la fiche technique qui
 change tout. Sur un smartphone, c'est presque toujours le stockage.
+
+## Et quand le prix est trop beau ?
+
+Un prix très inférieur à tous les autres n'est pas une meilleure affaire, c'est un signal. Sur une
+marketplace, il correspond le plus souvent à une annonce mal rangée (un accessoire, un lot, un
+appareil pour pièces), à un produit incomplet ou à une tentative de fraude.
+
+Trois vérifications avant de payer : le **type de vendeur** (un particulier n'offre pas la
+[garantie légale de conformité](/blog/garantie-produit-reconditionne)), son **historique
+d'évaluations**, et la **description complète** de l'annonce, pas seulement son titre. Sur
+Findlydeal, une offre très en dessous de la médiane porte la mention « Prix inhabituel, à
+vérifier » au lieu d'un badge de bonne affaire.
 
 ## La question à se poser
 

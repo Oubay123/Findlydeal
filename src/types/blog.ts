@@ -30,6 +30,26 @@ export interface BlogArticleMeta {
   tags: string[];
   /** Estimated reading time in minutes, written by hand at publication. */
   readingMinutes: number;
+  /**
+   * The article's `## ` headings, in order, exactly as written. Feeds the
+   * table of contents; `npm run check:blog` fails when it drifts from the body.
+   */
+  outline: string[];
+  /**
+   * Where the article's factual claims come from: official texts and public
+   * bodies first. Every legal rule, date or figure in the body must be
+   * traceable to one of these.
+   */
+  sources?: BlogSource[];
+  /** Short questions readers ask, answered from the article's own content. */
+  faq?: { question: string; answer: string }[];
+}
+
+export interface BlogSource {
+  title: string;
+  /** Who publishes it: "Service-Public.fr", "ADEME"… */
+  publisher: string;
+  url: string;
 }
 
 /** An article once its slug and rendered body have been attached. */
