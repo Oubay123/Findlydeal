@@ -34,7 +34,7 @@ export function MobileMenu() {
           variant="ghost"
           size="icon"
           aria-label="Ouvrir le menu"
-          className="text-foreground/80 hover:bg-transparent hover:text-primary"
+          className="text-foreground/80 hover:bg-transparent hover:text-primary lg:hidden"
         >
           <Menu className="size-6" strokeWidth={2} />
         </Button>

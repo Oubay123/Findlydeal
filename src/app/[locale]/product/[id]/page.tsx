@@ -1,3 +1,4 @@
+import { CONDITION_LABELS } from "@/lib/constants";
 import type { UiLocale } from "@/i18n";
 import { localeAlternates } from "@/lib/seo/locale";
 import type { Metadata } from "next";
@@ -9,6 +10,7 @@ import { DemoBanner } from "@/components/common/demo-notice";
 import { JsonLd } from "@/components/common/json-ld";
 import { RatingStars } from "@/components/common/rating-stars";
 import { PriceBadge } from "@/components/product/price-badge";
+import { ConditionPrices } from "@/components/product/condition-prices";
 import { ProductComparison } from "@/components/product/product-comparison";
 import { ProductRow } from "@/components/product/product-row";
 import { ProductGallery } from "@/components/product/product-gallery";
@@ -174,11 +176,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   comparedTo={bestOffer.deal?.referencePrice}
                 />
                 <p className="text-xs text-muted-foreground">
-                  sur {getSourcePresentation(bestOffer.source).label} ·{" "}
+                  {CONDITION_LABELS[bestOffer.condition]} · sur{" "}
+                  {getSourcePresentation(bestOffer.source).label} ·{" "}
                   {product.offerCount ?? product.offers.length} offres comparées
                 </p>
               </div>
             ) : null}
+
+            <ConditionPrices offers={product.offers} />
 
             {product.description ? (
               <p className="text-sm leading-relaxed text-muted-foreground">{product.description}</p>

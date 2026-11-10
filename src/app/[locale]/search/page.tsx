@@ -16,7 +16,7 @@ import { SEARCH_PARAM_KEYS, type ResultsView } from "@/lib/constants";
 import { isDemoCatalogueActive } from "@/lib/mock";
 import { parseSearchParams, searchAllSources } from "@/lib/search";
 import { getServerDictionary } from "@/i18n/server";
-import { getAllSources } from "@/lib/sources";
+import { getAllSources, getConfiguredSources } from "@/lib/sources";
 import type { RawSearchParams } from "@/lib/search/params";
 import type { SearchQuery } from "@/types";
 
@@ -63,7 +63,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const view: ResultsView = first(params[SEARCH_PARAM_KEYS.view]) === "list" ? "list" : "grid";
 
   // Two labels, not the adapters themselves — see `SearchFilters`.
-  const sourceIds = getAllSources().map((source) => source.id);
+  // Only the marketplaces actually connected: a filter for a source with no
+  // offers would always return nothing. All of them in demonstration mode.
+  const connected = getConfiguredSources();
+  const sourceIds = (connected.length > 0 ? connected : getAllSources()).map((source) => source.id);
 
   return (
     <>

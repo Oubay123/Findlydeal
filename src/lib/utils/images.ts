@@ -59,3 +59,17 @@ export const IMAGE_SIZES: Record<ImageContext, string> = {
  */
 export const IMAGE_BLUR_DATA_URL =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAGCAIAAABxZ0isAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAEUlEQVQI12N48+wBVsQwkBIA7CGBYZf4YrwAAAAASUVORK5CYII=";
+
+/**
+ * A photo taken by a marketplace seller (today: eBay). These are shown whole
+ * on a white background: cropping one to fill a card can cut the product
+ * itself out of the frame. Editorial photos fill their slot instead.
+ */
+export function isListingPhoto(url: string | undefined): boolean {
+  return Boolean(url && /^https:\/\/i\.ebayimg\.com\//.test(url));
+}
+
+/** Tailwind classes for a product image, according to where it comes from. */
+export function productImageFit(url: string | undefined): string {
+  return isListingPhoto(url) ? "object-contain bg-white p-2" : "object-cover";
+}

@@ -60,6 +60,12 @@ const spaced = (text: string) =>
     .replace(/[^a-z0-9]+/g, " ")
     .trim()} `;
 
+/** Broken, locked, counterfeit or bundled: never shown, wherever it comes from. */
+export function isExcludedListing(title: string): boolean {
+  const words = spaced(title);
+  return GLOBAL_EXCLUDED_WORDS.some((excluded) => words.includes(spaced(excluded)));
+}
+
 /** Does an eBay listing title describe this catalogue product? */
 export function matchesEntry(title: string, entry: CatalogueEbayEntry): boolean {
   const compact = squash(title);

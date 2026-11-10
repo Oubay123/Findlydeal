@@ -1,6 +1,7 @@
 import { ImageOff } from "lucide-react";
 import { DemoBadge } from "@/components/common/demo-notice";
 import { SmartImage } from "@/components/common/smart-image";
+import { isListingPhoto, productImageFit } from "@/lib/utils/images";
 
 interface ProductGalleryProps {
   /** Product title, used as the alt fallback. */
@@ -37,7 +38,7 @@ export function ProductGallery({ title, alt, images }: ProductGalleryProps) {
           fill
           priority
           context="productHero"
-          className="object-cover"
+          className={productImageFit(primary)}
         />
         <DemoBadge className="absolute bottom-3 left-3" />
       </div>
@@ -54,11 +55,17 @@ export function ProductGallery({ title, alt, images }: ProductGalleryProps) {
                 alt={`${label}, photo ${index + 2} sur ${Math.min(images.length, 5)}`}
                 fill
                 context="thumbnail"
-                className="object-cover"
+                className={productImageFit(image)}
               />
             </li>
           ))}
         </ul>
+      ) : null}
+      {isListingPhoto(primary) ? (
+        <p className="text-xs text-muted-foreground">
+          Photos issues d&apos;annonces de vendeurs : l&apos;article et ses accessoires peuvent
+          différer d&apos;une offre à l&apos;autre.
+        </p>
       ) : null}
     </div>
   );

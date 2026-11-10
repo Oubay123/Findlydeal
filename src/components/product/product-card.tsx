@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { LocaleLink } from "@/components/common/locale-link";
 import { ImageOff } from "lucide-react";
 import { DemoBadge } from "@/components/common/demo-notice";
@@ -8,7 +9,7 @@ import { PriceBadge } from "@/components/product/price-badge";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS } from "@/lib/constants";
 import { getServerDictionary } from "@/i18n/server";
-import type { ImageContext } from "@/lib/utils/images";
+import { productImageFit, type ImageContext } from "@/lib/utils/images";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -36,6 +37,8 @@ export async function ProductCard({
   const { bestOffer } = product;
   const href = `/product/${encodeURIComponent(product.id)}`;
   const otherOffers = product.offers.length - 1;
+  // A single marketplace listing, not a model compared across sellers.
+  const isSingleListing = product.id.includes(":");
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border bg-white transition-shadow hover:shadow-lg hover:shadow-black/5">
@@ -47,7 +50,10 @@ export async function ProductCard({
               alt={product.imageAlt ?? product.title}
               fill
               context={imageContext}
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className={cn(
+                productImageFit(product.imageUrl),
+                "transition-transform duration-500 group-hover:scale-105",
+              )}
             />
           ) : (
             <span className="absolute inset-0 flex items-center justify-center text-muted-foreground">
@@ -101,7 +107,9 @@ export async function ProductCard({
         <div className="mt-auto space-y-2 pt-1">
           {action}
           <Button asChild className="h-11 w-full rounded-lg">
-            <LocaleLink href={href}>{t.product.compareOffers}</LocaleLink>
+            <LocaleLink href={href}>
+              {isSingleListing ? "Voir cette offre" : t.product.compareOffers}
+            </LocaleLink>
           </Button>
         </div>
       </div>

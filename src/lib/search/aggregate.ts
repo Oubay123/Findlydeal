@@ -1,6 +1,6 @@
 import { getConfiguredSources } from "@/lib/sources";
 import { SourceError as SourceAdapterError } from "@/lib/sources/types";
-import { getPricedCatalogue } from "@/lib/catalogue";
+import { getPricedCatalogue, isExcludedListing } from "@/lib/catalogue";
 import { searchMockProducts } from "@/lib/mock";
 import { filterProducts } from "@/lib/search/filter";
 import { sortProducts } from "@/lib/search/sort";
@@ -78,9 +78,10 @@ export async function searchAllSources(query: SearchQuery): Promise<SearchResult
     });
   });
 
-  // Raw listings already shown inside a catalogue product are not repeated.
+  // Raw listings already shown inside a catalogue product are not repeated,
+  // and broken, locked or counterfeit items are left out as in the catalogue.
   const listings = groupOffersIntoProducts(
-    offers.filter((offer) => !catalogueOfferIds.has(offer.id)),
+    offers.filter((offer) => !catalogueOfferIds.has(offer.id) && !isExcludedListing(offer.title)),
   );
   const products = sortProducts([...catalogue, ...listings], query);
 

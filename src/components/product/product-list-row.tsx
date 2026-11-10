@@ -1,8 +1,10 @@
+import { cn } from "@/lib/utils";
 import { SourceLogo } from "@/components/common/source-logo";
 import { LocaleLink } from "@/components/common/locale-link";
 import { ImageOff } from "lucide-react";
 import { DemoBadge } from "@/components/common/demo-notice";
 import { RatingStars } from "@/components/common/rating-stars";
+import { productImageFit } from "@/lib/utils/images";
 import { SmartImage } from "@/components/common/smart-image";
 import { DealBadge } from "@/components/product/deal-badge";
 import { PriceBadge } from "@/components/product/price-badge";
@@ -39,7 +41,10 @@ export function ProductListRow({ product, action }: ProductListRowProps) {
               alt={product.imageAlt ?? product.title}
               fill
               context="productCardList"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className={cn(
+                productImageFit(product.imageUrl),
+                "transition-transform duration-500 group-hover:scale-105",
+              )}
             />
           ) : (
             <span className="absolute inset-0 flex items-center justify-center text-muted-foreground">
