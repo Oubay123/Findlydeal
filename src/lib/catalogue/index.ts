@@ -167,6 +167,7 @@ function buildLiveProduct(
     images,
     videoReviewId: identity.videoReviewId,
     releasedAt: identity.releasedAt,
+    subject: identity.subject || undefined,
     description: identity.description,
     specs: identity.specs,
     offers,

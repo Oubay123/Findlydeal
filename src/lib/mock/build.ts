@@ -131,6 +131,7 @@ export function buildMockProduct(seed: MockProductSeed): Product {
     images: [...seed.images],
     videoReviewId: seed.videoReviewId,
     releasedAt: seed.releasedAt,
+    subject: seed.imageSubject,
     description: seed.description,
     rating: seed.rating,
     specs: seed.specs,

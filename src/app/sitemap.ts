@@ -1,3 +1,4 @@
+import { seasonalSelections } from "@/config/selections";
 import type { MetadataRoute } from "next";
 import { categories } from "@/config/categories";
 import { siteConfig } from "@/config/site";
@@ -63,7 +64,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/methodologie", changeFrequency: "monthly", priority: 0.6 },
     ...(!showsRealOffers
       ? []
-      : [{ path: "/barometre-des-prix", changeFrequency: "daily" as const, priority: 0.7 }]),
+      : [
+          { path: "/barometre-des-prix", changeFrequency: "daily" as const, priority: 0.7 },
+          ...seasonalSelections.map((selection) => ({
+            path: `/selection/${selection.slug}`,
+            changeFrequency: "weekly" as const,
+            priority: 0.6,
+          })),
+        ]),
     { path: "/faq", changeFrequency: "monthly", priority: 0.6 },
     { path: "/categories", changeFrequency: "weekly", priority: 0.7 },
     { path: "/about", changeFrequency: "yearly", priority: 0.4 },

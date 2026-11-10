@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Container } from "@/components/common/container";
 import { LocaleLink } from "@/components/common/locale-link";
+import { Motif } from "@/components/common/motif";
 import { ConditionLadder } from "@/components/product/condition-ladder";
 import { SearchBar } from "@/components/search/search-bar";
 import { getPricedCatalogue } from "@/lib/catalogue";
@@ -44,8 +45,9 @@ export async function HeroSection() {
   );
 
   return (
-    <section className="bg-brand-50 border-b">
-      <Container className="grid grid-cols-1 gap-10 py-14 sm:py-20 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-center">
+    <section className="bg-brand-50 relative overflow-hidden border-b">
+      <Motif kind="dots" className="text-primary opacity-30" />
+      <Container className="relative grid grid-cols-1 gap-10 py-14 sm:py-20 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-center">
         <div className="space-y-6">
           <h1 className="max-w-xl text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl">
             Le même produit, neuf, reconditionné ou d&apos;occasion.

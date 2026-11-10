@@ -248,12 +248,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
 
+        <ProductSpecs product={product} category={category} />
+
         <ProductComparison product={product} />
 
         {priceHistory.length > 0 ? <PriceHistory history={priceHistory} /> : null}
 
         <div className="space-y-4">
-          <ProductSpecs specs={product.specs ?? []} />
           {/* Only reviews Findlydeal can stand behind: none for live products. */}
           {!isDemo ? null : (
             <ProductReviews reviews={product.reviews ?? []} rating={product.rating} />

@@ -185,6 +185,8 @@ export interface Product {
    * here and the shelf keeps working unchanged.
    */
   releasedAt?: string;
+  /** What kind of thing it is, in plain words ("Smartphone", "Poussette"). */
+  subject?: string;
 }
 
 export type SortOption =
