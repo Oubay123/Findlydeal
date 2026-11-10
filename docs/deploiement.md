@@ -40,14 +40,18 @@ pas pendant le build.
 
 ## Ce qui se passe en mode réel
 
-- **Catalogue.** Les fiches listées dans `src/config/catalogue-ebay.ts`
-  gardent leur description. Elles sont tarifées par les annonces eBay
-  correspondantes (filtres de titre, prix minimum et maximum, état). Le
-  catalogue entier est stocké dans **Workers KV** (binding `CATALOGUE`, créé
-  automatiquement par Wrangler au premier déploiement) et reconstruit toutes
-  les 3 h par une **tâche planifiée** (`triggers.crons` dans `wrangler.jsonc`,
-  gérée par `cloudflare/worker.js`), soit une recherche eBay par fiche. Un
-  catalogue périmé reste affiché pendant sa reconstruction en arrière-plan.
+- **Catalogue.** Les produits comparés sont déclarés dans
+  `src/config/catalogue-ebay.ts` et `src/config/catalogue/` (un fichier par
+  catégorie, environ 330 produits). Chacun est tarifé par les annonces eBay
+  qui lui correspondent (filtres de titre, prix minimum et maximum, état).
+  Le catalogue est découpé en 16 lots. Une **tâche planifiée** toutes les
+  10 minutes (`triggers.crons` dans `wrangler.jsonc`, gérée par
+  `cloudflare/worker.js`) reconstruit le lot le plus ancien : une recherche
+  eBay par produit du lot, soit un tour complet en un peu moins de 3 h. Les
+  pages ne contactent jamais eBay : elles lisent le catalogue stocké.
+- **Stockage.** Supabase quand `SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY`
+  sont définis, sinon Workers KV (binding `CATALOGUE`). Voir « Supabase »
+  ci-dessous.
 - **Bonnes affaires.** La médiane est calculée par état (neuf, reconditionné,
   occasion), sans les prix aberrants. Une offre à plus de 45 % sous la
   médiane est marquée « Prix inhabituel, à vérifier ».
@@ -57,6 +61,32 @@ pas pendant le build.
   à l'en-tête `X-EBAY-C-ENDUSERCTX` (campagne EPN). À défaut, l'application
   construit un lien EPN avec `campid`.
 - **Images.** Les photos viennent des annonces eBay (`i.ebayimg.com`).
+
+## Supabase
+
+La base stocke le catalogue (une ligne par produit, une par offre), un
+historique des prix (`price_points`) et le journal des reconstructions
+(`ingest_runs`). Sans elle, le site fonctionne avec Workers KV.
+
+1. Créer un projet sur supabase.com (région Europe).
+2. Ouvrir **SQL Editor**, coller le contenu de
+   `supabase/migrations/0001_catalogue.sql`, exécuter.
+3. Dans **Project Settings > API**, copier l'URL du projet et la clé
+   `service_role` (ou une clé secrète `sb_secret_…`).
+4. Dans Cloudflare, **Workers & Pages > findlydeal > Settings > Variables and
+   Secrets** (pas la section Build), ajouter :
+
+| Nom                         | Type   | Valeur                         |
+| --------------------------- | ------ | ------------------------------ |
+| `SUPABASE_URL`              | Text   | `https://<projet>.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Secret | la clé `service_role`          |
+
+5. Cliquer sur **Deploy**. Le catalogue se remplit lot par lot dans les trois
+   heures ; `select * from ingest_status;` montre l'avancement.
+
+La clé `service_role` contourne la sécurité par ligne : elle ne doit exister
+que dans les secrets Cloudflare. Les tables ont la sécurité par ligne activée
+sans aucune règle, donc la clé publique `anon` ne peut rien lire.
 
 ## Vérifier après un déploiement
 
@@ -70,11 +100,11 @@ répond pas 200, qui porte `noindex`, ou dont le JSON-LD sort du profil
 
 ## Limites connues
 
-- Une reconstruction fait environ 25 sous-requêtes, sous la limite gratuite
-  de 50. Au-delà d'environ 40 fiches, il faudra la découper en lots.
-- Une modification de `catalogue-ebay.ts` ne s'applique qu'à la
-  reconstruction suivante (au plus 3 h). Pour forcer : changer `STORE_KEY`
-  dans `src/lib/catalogue/index.ts`.
+- Un lot compte au plus une trentaine de produits : avec les écritures, une
+  reconstruction reste sous la limite gratuite de 50 sous-requêtes. Au-delà
+  d'environ 450 produits, augmenter `BUCKET_COUNT` (`src/lib/catalogue/store.ts`).
+- Un produit ajouté ou modifié dans la configuration est pris en compte au
+  prochain passage de son lot (au plus 3 h).
 - Les frais de Protection des acheteurs eBay (vendeurs particuliers) sont
   estimés sous l'offre selon le barème eBay France, sans être ajoutés au
   total : l'API ne dit pas si le prix renvoyé les inclut.

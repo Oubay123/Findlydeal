@@ -23,17 +23,38 @@
  *
  * Products of the demonstration catalogue that are not listed here are
  * invented examples (sofas, jewellery, a bike…): they have no eBay
- * equivalent and stop being shown when eBay is live.
+ * equivalent and stop being shown when eBay is live. Real furniture, fashion
+ * and leisure products come from the extended catalogue instead.
  */
+
+import { fashionCatalogue } from "@/config/catalogue/fashion";
+import { furnitureCatalogue } from "@/config/catalogue/furniture";
+import { homeAppliancesCatalogue } from "@/config/catalogue/home";
+import { leisureCatalogue } from "@/config/catalogue/leisure";
+import { techCatalogue } from "@/config/catalogue/tech";
+import { watchesCatalogue } from "@/config/catalogue/watches";
+import type { CategorySlug } from "@/types";
 
 export interface CatalogueEbayEntry {
   slug: string;
   query: string;
   require: string[][];
   exclude?: string[];
+  /** Global exclusions lifted for this product ("pièces" for a puzzle). */
+  allow?: string[];
   minPrice: number;
   maxPrice: number;
   description?: string;
+  /**
+   * Identity of the product, for the entries of the extended catalogue
+   * (`src/config/catalogue/`). The first entries below take theirs from the
+   * described catalogue (`src/lib/mock/catalog/`), which also gives them a
+   * description and a spec sheet.
+   */
+  title?: string;
+  brand?: string;
+  category?: CategorySlug;
+  subject?: string;
 }
 
 /**
@@ -62,7 +83,8 @@ export const GLOBAL_EXCLUDED_WORDS = [
   "lot de",
 ];
 
-export const catalogueEbayEntries: CatalogueEbayEntry[] = [
+/** Products that also have a description and a spec sheet. */
+const describedEntries: CatalogueEbayEntry[] = [
   // --- Tech ---------------------------------------------------------------
   {
     slug: "apple-iphone-13-128go-minuit",
@@ -243,3 +265,24 @@ export const catalogueEbayEntries: CatalogueEbayEntry[] = [
     maxPrice: 330,
   },
 ];
+
+/**
+ * Every product compared on the site: the described ones first, then the
+ * extended catalogue, one file per category in `src/config/catalogue/`.
+ * A slug declared twice keeps its first definition.
+ */
+export const catalogueEbayEntries: CatalogueEbayEntry[] = [
+  ...new Map(
+    [
+      ...describedEntries,
+      ...techCatalogue,
+      ...homeAppliancesCatalogue,
+      ...watchesCatalogue,
+      ...furnitureCatalogue,
+      ...fashionCatalogue,
+      ...leisureCatalogue,
+    ]
+      .reverse()
+      .map((entry) => [entry.slug, entry] as const),
+  ).values(),
+].reverse();

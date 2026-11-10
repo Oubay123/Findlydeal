@@ -3,8 +3,8 @@
  *
  * `npm run build` writes `.open-next/worker.js` (the Next.js app). This file
  * wraps it so the Worker also answers the Cron Trigger set in
- * `wrangler.jsonc`, which refreshes the eBay-priced catalogue every three
- * hours through the app's own `/api/catalogue/refresh` route — the rebuild
+ * `wrangler.jsonc`, which refreshes part of the eBay-priced catalogue
+ * every ten minutes through the app's own `/api/catalogue/refresh` route — the rebuild
  * logic stays in one place, inside the Next.js code.
  */
 import handler from "../.open-next/worker.js";

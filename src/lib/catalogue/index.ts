@@ -5,33 +5,44 @@ import {
   type CatalogueEbayEntry,
 } from "@/config/catalogue-ebay";
 import { annotateOffersWithDeals, summarizeOffers, typicalOffers } from "@/lib/deals";
-import { cached } from "@/lib/ebay/cache";
 import { getEbayConfig } from "@/lib/ebay/config";
 import { EbayApiError, getAccessToken, searchItems } from "@/lib/ebay/client";
-import type { MockProductSeed } from "@/lib/mock/build";
 import { catalogueSeeds } from "@/lib/mock";
 import { normalizeTerm } from "@/lib/search/normalize";
 import { toOffer } from "@/lib/sources/ebay";
-import { getCatalogueRuntime, type CatalogueKv, type CatalogueRuntime } from "./store";
-import type { Offer, Product } from "@/types";
+import type { Offer, Product, ProductCondition } from "@/types";
+import {
+  BUCKET_COUNT,
+  bucketOf,
+  getCatalogueRuntime,
+  type CatalogueIndex,
+  type CatalogueStore,
+} from "./store";
 
 /**
- * The live catalogue: our product descriptions, priced by real eBay offers.
+ * The live catalogue: the products of `src/config/catalogue-ebay.ts`, priced
+ * by the real eBay listings that match them.
  *
- * Each product listed in `src/config/catalogue-ebay.ts` keeps its catalogue
- * description (title, specs, release date) and gets the eBay listings that
- * match it as offers. Ratings and reviews of the demonstration catalogue are
- * dropped: they were examples, and nothing here may pass them off as real.
+ * Ratings and reviews of the demonstration catalogue are dropped: they were
+ * examples, and nothing here may pass them off as real.
  *
- * The whole catalogue is rebuilt every `CATALOGUE_TTL_SECONDS` by a scheduled
- * job and kept as a single Workers KV entry shared by every data centre (see
- * `loadFromKv`). A rebuild costs one eBay search per product, which stays
- * under the 50-subrequest limit of a Worker on the free plan (about 25
- * products today). Past ~40 products, split the rebuild in batches.
+ * ## How it is kept up to date
+ *
+ * The catalogue is stored (Supabase, or Workers KV: see `./store.ts`) and
+ * split into buckets. Every ten minutes a Cron Trigger rebuilds the stalest
+ * bucket: one eBay search per product of that bucket, about twenty, which
+ * stays under the subrequest limit of a Worker. A full turn of the catalogue
+ * takes a little under three hours.
+ *
+ * Pages never call eBay: listing pages read the index (one card per
+ * product), a product page reads that product.
  */
 
-/** How long one priced catalogue is reused: prices shown are at most this old. */
+/** Prices shown are at most about this old (one full turn of the buckets). */
 export const CATALOGUE_TTL_SECONDS = 3 * 60 * 60;
+
+/** A bucket younger than this is left alone, whoever asks for a refresh. */
+export const MIN_BUCKET_AGE_SECONDS = 2 * 60 * 60;
 
 /** Offers kept per product, cheapest first. */
 const MAX_OFFERS_PER_PRODUCT = 24;
@@ -39,18 +50,8 @@ const MAX_OFFERS_PER_PRODUCT = 24;
 /** eBay searches run at once during a rebuild. */
 const CONCURRENCY = 6;
 
-/**
- * A rebuild where some searches failed is kept 15 minutes, so the missing
- * products come back soon; one where eBay refused everything, 2 minutes, so
- * a fixed key is picked up quickly without calling eBay on every visit.
- */
-const PARTIAL_TTL_SECONDS = 15 * 60;
-const FAILED_TTL_SECONDS = 2 * 60;
-
-interface LiveCatalogue {
-  products: Product[];
-  failures: number;
-}
+/** How long an isolate reuses the index it read. */
+const INDEX_MEMORY_MS = 5 * 60 * 1000;
 
 /** Lowercase, accents and punctuation folded: "GA-2100" -> "ga2100". */
 const squash = (text: string) => normalizeTerm(text).replace(/[^a-z0-9]/g, "");
@@ -76,9 +77,11 @@ export function matchesEntry(title: string, entry: CatalogueEbayEntry): boolean 
   );
   if (!allRequired) return false;
 
-  return ![...GLOBAL_EXCLUDED_WORDS, ...(entry.exclude ?? [])].some((excluded) =>
-    words.includes(spaced(excluded)),
-  );
+  const allowed = new Set(entry.allow ?? []);
+  return ![
+    ...GLOBAL_EXCLUDED_WORDS.filter((word) => !allowed.has(word)),
+    ...(entry.exclude ?? []),
+  ].some((excluded) => words.includes(spaced(excluded)));
 }
 
 async function findOffers(entry: CatalogueEbayEntry): Promise<{ offers: Offer[]; total: number }> {
@@ -107,12 +110,30 @@ async function findOffers(entry: CatalogueEbayEntry): Promise<{ offers: Offer[];
   };
 }
 
+/** Identity of a catalogue product: the described catalogue, else the entry. */
+function identityOf(entry: CatalogueEbayEntry) {
+  const seed = seedsBySlug.get(entry.slug);
+  return {
+    title: seed?.title ?? entry.title ?? entry.slug,
+    brand: seed?.brand ?? entry.brand,
+    model: seed?.model,
+    category: seed?.category ?? entry.category,
+    subject: seed?.imageSubject ?? entry.subject ?? "",
+    releasedAt: seed?.releasedAt,
+    description: entry.description ?? seed?.description,
+    specs: seed?.specs,
+    videoReviewId: seed?.videoReviewId,
+  };
+}
+
+const seedsBySlug = new Map(catalogueSeeds.map((seed) => [seed.slug, seed]));
+
 function buildLiveProduct(
-  seed: MockProductSeed,
   entry: CatalogueEbayEntry,
   offers: Offer[],
   offerCount = offers.length,
-) {
+): Product {
+  const identity = identityOf(entry);
   // Photos from listings priced like the others: a doubtful listing's photo
   // may not even show the product.
   const images = [
@@ -123,24 +144,49 @@ function buildLiveProduct(
     ),
   ].slice(0, 3) as string[];
 
-  const product: Product = {
-    id: seed.slug,
-    title: seed.title,
-    brand: seed.brand,
-    model: seed.model,
-    categorySlug: seed.category,
+  return {
+    id: entry.slug,
+    title: identity.title,
+    brand: identity.brand,
+    model: identity.model,
+    categorySlug: identity.category,
     imageUrl: images[0],
-    imageAlt: `${seed.imageSubject} ${seed.title}`,
+    imageAlt: `${identity.subject} ${identity.title}`.trim(),
     images,
-    videoReviewId: seed.videoReviewId,
-    releasedAt: seed.releasedAt,
-    description: entry.description ?? seed.description,
-    specs: seed.specs,
+    videoReviewId: identity.videoReviewId,
+    releasedAt: identity.releasedAt,
+    description: identity.description,
+    specs: identity.specs,
     offers,
     offerCount,
     ...summarizeOffers(offers),
   };
-  return product;
+}
+
+const CONDITIONS: ProductCondition[] = ["new", "refurbished", "used"];
+
+/**
+ * The listing card of a product: everything a grid, a filter or a sort needs,
+ * with the offers reduced to the cheapest typical one per condition (so the
+ * "refurbished" and "used" pages, and the condition filter, still work).
+ */
+function toCard(product: Product): Product {
+  const typical = typicalOffers(product.offers);
+  const kept = CONDITIONS.flatMap((condition) => {
+    const cheapest = typical
+      .filter((offer) => offer.condition === condition)
+      .sort((a, b) => a.totalPrice.amount - b.totalPrice.amount)[0];
+    return cheapest ? [cheapest] : [];
+  });
+  const best = product.bestOffer;
+  const offers = best && !kept.some((offer) => offer.id === best.id) ? [best, ...kept] : kept;
+  return {
+    ...product,
+    images: product.imageUrl ? [product.imageUrl] : [],
+    description: undefined,
+    specs: undefined,
+    offers,
+  };
 }
 
 /** Runs `task` over `items`, at most `limit` at a time, keeping the order. */
@@ -161,170 +207,204 @@ async function mapWithConcurrency<T, R>(
   return results;
 }
 
-async function buildLiveCatalogue(): Promise<LiveCatalogue> {
-  const seedsBySlug = new Map(catalogueSeeds.map((seed) => [seed.slug, seed]));
-  const entries = catalogueEbayEntries.filter((entry) => seedsBySlug.has(entry.slug));
-  const config = getEbayConfig();
-  if (!config) return { products: [], failures: 0 };
-  const empty = (entry: CatalogueEbayEntry) =>
-    buildLiveProduct(seedsBySlug.get(entry.slug) as MockProductSeed, entry, []);
+const describe = (error: unknown) =>
+  error instanceof EbayApiError || error instanceof Error ? error.message : String(error);
 
-  // One token for the whole rebuild; if eBay refuses the keys, stop there
+const entriesOfBucket = (bucket: number) =>
+  catalogueEbayEntries.filter((entry) => bucketOf(entry.slug) === bucket);
+
+/* ------------------------------------------------------------------ */
+/* Refresh                                                             */
+/* ------------------------------------------------------------------ */
+
+export interface RefreshResult {
+  rebuilt: boolean;
+  reason?: "ebay-not-configured" | "fresh" | "locked" | "ebay-refused";
+  store?: CatalogueStore["kind"];
+  bucket?: number;
+  products?: number;
+  priced?: number;
+  failures?: number;
+}
+
+/** Oldest refresh among the products of a bucket (0 when one is missing). */
+function bucketAge(index: CatalogueIndex, bucket: number, now: number): number {
+  const entries = entriesOfBucket(bucket);
+  if (entries.length === 0) return 0;
+  const oldest = Math.min(...entries.map((entry) => index[entry.slug]?.refreshedAt ?? 0));
+  return now - oldest;
+}
+
+/** The bucket most in need of a refresh, if any is due. */
+function stalestBucket(index: CatalogueIndex, now: number): number | null {
+  let stalest: { bucket: number; age: number } | null = null;
+  for (let bucket = 0; bucket < BUCKET_COUNT; bucket++) {
+    const age = bucketAge(index, bucket, now);
+    if (age >= MIN_BUCKET_AGE_SECONDS * 1000 && (!stalest || age > stalest.age)) {
+      stalest = { bucket, age };
+    }
+  }
+  return stalest?.bucket ?? null;
+}
+
+async function rebuildBucket(store: CatalogueStore, bucket: number): Promise<RefreshResult> {
+  const started = Date.now();
+  const config = getEbayConfig();
+  if (!config) return { rebuilt: false, reason: "ebay-not-configured" };
+  const entries = entriesOfBucket(bucket);
+
+  // One token for the whole run; if eBay refuses the keys, stop there
   // instead of failing the same way once per product.
   try {
     await getAccessToken(config);
   } catch (error) {
     console.error(`[ebay] catalogue: ${describe(error)}`);
-    return { products: entries.map(empty), failures: entries.length };
+    return { rebuilt: false, reason: "ebay-refused", bucket };
   }
 
   let failures = 0;
-  const products = await mapWithConcurrency(entries, CONCURRENCY, async (entry) => {
+  const failed = new Set<string>();
+  const built = await mapWithConcurrency(entries, CONCURRENCY, async (entry) => {
     try {
       const { offers, total } = await findOffers(entry);
-      return buildLiveProduct(seedsBySlug.get(entry.slug) as MockProductSeed, entry, offers, total);
+      return buildLiveProduct(entry, offers, total);
     } catch (error) {
-      // One product failing (timeout, quota) must not empty the whole site.
+      // One product failing (timeout, quota) must not empty the others.
       failures++;
+      failed.add(entry.slug);
       console.error(`[ebay] catalogue ${entry.slug}: ${describe(error)}`);
-      return empty(entry);
+      return buildLiveProduct(entry, []);
     }
   });
 
-  const priced = products.filter((product) => product.offers.length > 0).length;
-  console.log(
-    `[ebay] catalogue rebuilt: ${priced}/${entries.length} products priced, ${failures} failed`,
+  // A product eBay failed on keeps its previous offers rather than vanishing.
+  const previous =
+    failed.size > 0
+      ? new Map((await store.readBucket(bucket)).map((product) => [product.id, product]))
+      : new Map<string, Product>();
+  const products = built.map((product) =>
+    failed.has(product.id) ? (previous.get(product.id) ?? product) : product,
   );
-  return { products, failures };
-}
 
-const describe = (error: unknown) =>
-  error instanceof EbayApiError || error instanceof Error ? error.message : String(error);
+  const now = Date.now();
+  const cards: CatalogueIndex = Object.fromEntries(
+    products.map((product) => [product.id, { card: toCard(product), refreshedAt: now }]),
+  );
+  const priced = products.filter((product) => product.offers.length > 0).length;
 
-interface StoredCatalogue extends LiveCatalogue {
-  /** Epoch milliseconds of the rebuild. */
-  builtAt: number;
-}
-
-/** Bump when the stored shape or the offer logic changes. */
-const STORE_KEY = "catalogue:ebay:v3";
-/** Set while a rebuild runs; expires on its own (KV minimum: 60 s). */
-const LOCK_KEY = `${STORE_KEY}:lock`;
-const LOCK_TTL_SECONDS = 120;
-/** How long an isolate reuses what it read from KV before reading again. */
-const MEMORY_TTL_MS = 5 * 60 * 1000;
-
-function ttlSecondsFor({ products, failures }: LiveCatalogue): number {
-  if (failures === 0) return CATALOGUE_TTL_SECONDS;
-  return failures < products.length ? PARTIAL_TTL_SECONDS : FAILED_TTL_SECONDS;
-}
-
-const ageMs = (catalogue: StoredCatalogue) => Date.now() - catalogue.builtAt;
-const isFresh = (catalogue: StoredCatalogue) => ageMs(catalogue) < ttlSecondsFor(catalogue) * 1000;
-
-let memory: { catalogue: StoredCatalogue; readAt: number } | null = null;
-let rebuilding: Promise<StoredCatalogue> | null = null;
-
-/**
- * Rebuilds the catalogue and stores it. A rebuild where eBay refused
- * everything never replaces a good catalogue: visitors keep seeing the last
- * prices (with their date) rather than an empty site.
- */
-function rebuild(kv: CatalogueKv | undefined, previous: StoredCatalogue | null) {
-  rebuilding ??= (async () => {
-    const built = await buildLiveCatalogue();
-    const failedEntirely = built.failures > 0 && built.failures >= built.products.length;
-    if (failedEntirely && previous && previous.products.length > 0) return previous;
-
-    const stored: StoredCatalogue = { ...built, builtAt: Date.now() };
-    memory = { catalogue: stored, readAt: Date.now() };
-    await kv?.put(STORE_KEY, JSON.stringify(stored));
-    return stored;
-  })().finally(() => {
-    rebuilding = null;
+  await store.writeBucket({
+    bucket,
+    products,
+    cards,
+    slugs: entries.map((entry) => entry.slug),
+    stats: { priced, failures, durationMs: now - started },
   });
-  return rebuilding;
+  memory = null;
+
+  console.log(
+    `[ebay] bucket ${bucket} (${store.kind}): ${priced}/${entries.length} products priced, ${failures} failed`,
+  );
+  return { rebuilt: true, store: store.kind, bucket, products: entries.length, priced, failures };
 }
 
-async function readStored(kv: CatalogueKv): Promise<StoredCatalogue | null> {
-  if (memory && Date.now() - memory.readAt < MEMORY_TTL_MS && isFresh(memory.catalogue)) {
-    return memory.catalogue;
+/**
+ * Rebuilds the stalest bucket if one is due. Called by the Cron Trigger
+ * every ten minutes (`cloudflare/worker.js`), and in the background by page
+ * views while part of the catalogue has never been built. Harmless when
+ * called more often: a recent bucket is left alone and a lock keeps two
+ * refreshes from running together.
+ */
+export async function refreshCatalogue(): Promise<RefreshResult> {
+  if (!getEbayConfig()) return { rebuilt: false, reason: "ebay-not-configured" };
+  const { store } = getCatalogueRuntime();
+
+  const index = await store.readIndex();
+  const bucket = stalestBucket(index, Date.now());
+  if (bucket === null) return { rebuilt: false, reason: "fresh", store: store.kind };
+  if (!(await store.acquireLock(90)))
+    return { rebuilt: false, reason: "locked", store: store.kind };
+
+  try {
+    return await rebuildBucket(store, bucket);
+  } finally {
+    await store.releaseLock().catch(() => undefined);
   }
-  const stored = (await kv.get(STORE_KEY, { type: "json" })) as StoredCatalogue | null;
-  if (stored) memory = { catalogue: stored, readAt: Date.now() };
-  return stored;
 }
 
-/**
- * The stored catalogue, refreshed when due.
- *
- * - fresh: served as is;
- * - stale: served as is, and rebuilt in the background by one request only
- *   (a KV lock), so visitors never wait for eBay;
- * - missing (first deploy): built now.
- *
- * A Cron Trigger (`cloudflare/worker.js`) also calls `refreshCatalogue()`
- * every three hours, so a visitor rarely meets a stale catalogue at all.
- */
-async function loadFromKv(kv: CatalogueKv, waitUntil?: CatalogueRuntime["waitUntil"]) {
-  const stored = await readStored(kv);
-  if (stored && isFresh(stored)) return stored;
-  if (rebuilding) return stored ?? rebuilding;
+/* ------------------------------------------------------------------ */
+/* Reads                                                               */
+/* ------------------------------------------------------------------ */
 
-  const locked = await kv.get(LOCK_KEY);
-  if (locked && stored) return stored;
-  await kv.put(LOCK_KEY, "1", { expirationTtl: LOCK_TTL_SECONDS });
+let memory: { index: CatalogueIndex; readAt: number } | null = null;
 
-  const job = rebuild(kv, stored);
-  if (!stored) return job;
-  waitUntil?.(job.catch((error) => console.error(`[ebay] catalogue: ${describe(error)}`)));
-  return stored;
-}
+const readIndex = cache(async function readIndex(): Promise<CatalogueIndex> {
+  if (memory && Date.now() - memory.readAt < INDEX_MEMORY_MS) return memory.index;
+  const { store, waitUntil } = getCatalogueRuntime();
 
-/**
- * Rebuilds the catalogue if it is older than `minAgeSeconds` (or incomplete).
- * Used by the scheduled refresh; harmless if called more often, since a
- * recent catalogue is left alone.
- */
-export async function refreshCatalogue(minAgeSeconds: number) {
-  if (!getEbayConfig()) return { rebuilt: false, reason: "ebay-not-configured" as const };
-  const { kv } = getCatalogueRuntime();
-  if (!kv) return { rebuilt: false, reason: "no-kv" as const };
-
-  const stored = (await kv.get(STORE_KEY, { type: "json" })) as StoredCatalogue | null;
-  if (stored && stored.failures === 0 && ageMs(stored) < minAgeSeconds * 1000) {
-    return { rebuilt: false, reason: "recent" as const, builtAt: stored.builtAt };
+  let index: CatalogueIndex;
+  try {
+    index = await store.readIndex();
+  } catch (error) {
+    console.error(`[catalogue] index: ${describe(error)}`);
+    return memory?.index ?? {};
   }
-  await kv.put(LOCK_KEY, "1", { expirationTtl: LOCK_TTL_SECONDS });
-  const catalogue = await rebuild(kv, stored);
-  return {
-    rebuilt: true,
-    builtAt: catalogue.builtAt,
-    priced: catalogue.products.filter((product) => product.offers.length > 0).length,
-    failures: catalogue.failures,
-  };
-}
 
-/**
- * Every live catalogue product, including those with no offer right now
- * (their page stays reachable, without being indexed). Memoised per request.
- */
-export const getLiveCatalogue = cache(async function getLiveCatalogue(): Promise<Product[]> {
-  if (!getEbayConfig()) return [];
-  const { kv, waitUntil } = getCatalogueRuntime();
-  if (kv) return (await loadFromKv(kv, waitUntil)).products;
+  // Without a store shared between requests (local server), build it all now.
+  if (store.kind === "memory" && Object.keys(index).length === 0) {
+    for (let bucket = 0; bucket < BUCKET_COUNT; bucket++) await rebuildBucket(store, bucket);
+    index = await store.readIndex();
+  }
 
-  // No KV (local server, tests): the per-isolate cache is enough.
-  const catalogue = await cached(STORE_KEY, ttlSecondsFor, buildLiveCatalogue);
-  return catalogue.products;
+  // Part of the catalogue has never been built (first deployment, new
+  // products): build it in the background instead of waiting for the cron.
+  const incomplete = catalogueEbayEntries.some((entry) => !index[entry.slug]);
+  if (incomplete && waitUntil && store.kind !== "memory") {
+    waitUntil(refreshCatalogue().catch((error) => console.error(`[catalogue] ${describe(error)}`)));
+  }
+
+  memory = { index, readAt: Date.now() };
+  return index;
 });
 
-/** Live catalogue products that currently have at least one offer. */
-export async function getPricedCatalogue(): Promise<Product[]> {
-  return (await getLiveCatalogue()).filter((product) => product.offers.length > 0);
-}
+const knownSlugs = new Set(catalogueEbayEntries.map((entry) => entry.slug));
+
+/**
+ * Listing cards of the catalogue products that currently have an offer, in
+ * the order of the configuration. Their `offers` hold one offer per
+ * condition; use `getCatalogueProduct` for the full comparison.
+ */
+export const getPricedCatalogue = cache(async function getPricedCatalogue(): Promise<Product[]> {
+  if (!getEbayConfig()) return [];
+  const index = await readIndex();
+  return catalogueEbayEntries.flatMap((entry) => {
+    const card = index[entry.slug]?.card;
+    return card && card.offers.length > 0 ? [card] : [];
+  });
+});
+
+/**
+ * One catalogue product with every offer kept for it, or `null` when the slug
+ * is unknown. A product not built yet (or with no offer right now) comes back
+ * without offers: its page stays reachable, without being indexed.
+ */
+export const getCatalogueProduct = cache(async function getCatalogueProduct(
+  slug: string,
+): Promise<Product | null> {
+  if (!knownSlugs.has(slug) || !getEbayConfig()) return null;
+  const entry = catalogueEbayEntries.find((candidate) => candidate.slug === slug);
+  if (!entry) return null;
+  try {
+    const stored = await getCatalogueRuntime().store.readProduct(slug);
+    if (stored) return stored;
+  } catch (error) {
+    console.error(`[catalogue] ${slug}: ${describe(error)}`);
+  }
+  // Fall back on the card (cheapest offer per condition), else an empty page.
+  const card = (await readIndex())[slug]?.card;
+  return card ?? buildLiveProduct(entry, []);
+});
 
 /** Is this id one of the live catalogue products? */
 export function isCatalogueSlug(id: string): boolean {
-  return catalogueEbayEntries.some((entry) => entry.slug === id);
+  return knownSlugs.has(id);
 }

@@ -42,9 +42,9 @@
       "binding": "CATALOGUE",
     },
   ],
-  // Rebuilds the catalogue every three hours (UTC), at minute 7.
+  // Every ten minutes: refreshes the stalest sixteenth of the catalogue.
   "triggers": {
-    "crons": ["7 */3 * * *"],
+    "crons": ["*/10 * * * *"],
   },
   // Non-secret settings. `keep_vars` stops a deploy from wiping the
   // variables added in the dashboard (EBAY_CAMPAIGN_ID, etc.).

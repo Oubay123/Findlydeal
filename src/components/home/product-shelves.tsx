@@ -33,7 +33,14 @@ import type { CategorySlug, Product } from "@/types";
  */
 
 /** The three universes shelved on the landing page, in display order. */
-const FEATURED_CATEGORIES: CategorySlug[] = ["tech", "watches-jewelry", "home-appliances"];
+const FEATURED_CATEGORIES: CategorySlug[] = [
+  "tech",
+  "home-appliances",
+  "watches-jewelry",
+  "furniture",
+  "fashion",
+  "leisure",
+];
 
 /** Shelves never show fewer cards than this, even if it means a repeat. */
 const MIN_CARDS_PER_SHELF = 3;
@@ -75,7 +82,7 @@ export async function ProductShelves() {
   const bestDeals = pickUnseen(bestDealsPool, 6, shown);
   const newest = pickUnseen(newestPool, 6, shown);
   const mostReviewed = pickUnseen(mostReviewedPool, 6, shown);
-  const byCategory = byCategoryPool.map((pool) => pickUnseen(pool, 5, shown));
+  const byCategory = byCategoryPool.map((pool) => pickUnseen(pool, 4, shown));
 
   return (
     <section className="py-20">

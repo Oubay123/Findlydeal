@@ -104,23 +104,12 @@ export const categories: Category[] = [
 ];
 
 /**
- * Categories advertised in the menus, the footer and the category grids: the
- * ones the live catalogue (`src/config/catalogue-ebay.ts`) covers, plus the
- * two transversal ones (by condition). Furniture, fashion and leisure have no
- * real product yet: their pages stay reachable (and `noindex` while empty) but
- * are not advertised. Add a slug back here when its products arrive.
+ * Categories advertised in the menus, the footer and the category grids.
+ * All of them today: each is covered by the catalogue
+ * (`src/config/catalogue/`). Take a slug out of here to stop advertising a
+ * category whose products are gone; its page stays reachable and `noindex`.
  */
-const LISTED_CATEGORY_SLUGS: readonly CategorySlug[] = [
-  "tech",
-  "home-appliances",
-  "watches-jewelry",
-  "refurbished",
-  "second-hand",
-];
-
-export const listedCategories: Category[] = categories.filter((category) =>
-  LISTED_CATEGORY_SLUGS.includes(category.slug),
-);
+export const listedCategories: Category[] = categories;
 
 /** O(1) lookup used by the `/category/[slug]` route. */
 const categoriesBySlug = new Map<string, Category>(categories.map((c) => [c.slug, c]));

@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { annotateOffersWithDeals } from "@/lib/deals";
 import { getConfiguredSources, getSource } from "@/lib/sources";
-import { getLiveCatalogue, isCatalogueSlug } from "@/lib/catalogue";
+import { getCatalogueProduct, isCatalogueSlug } from "@/lib/catalogue";
 import { getMockProductById } from "@/lib/mock";
 import { DEFAULT_LOCALE } from "@/lib/constants";
 import type { Locale, Product, SourceId } from "@/types";
@@ -57,7 +57,7 @@ export const getProductById = cache(async function getProductById(
 
   // A catalogue product: our description, priced by live offers.
   if (isCatalogueSlug(id)) {
-    return (await getLiveCatalogue()).find((product) => product.id === id) ?? null;
+    return getCatalogueProduct(id);
   }
 
   // Otherwise a single marketplace listing (`ebay:v1|123|0`), found by search.
