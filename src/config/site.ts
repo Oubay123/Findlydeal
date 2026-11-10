@@ -58,6 +58,28 @@ export const siteConfig = {
   url: resolveSiteUrl(),
   locale: "fr",
   contactEmail: "contact@findlydeal.com",
+  /**
+   * Who publishes the site, shown on the legal notice (required in France by
+   * LCEN art. 6 III and in Switzerland by LCD art. 3 al. 1 let. s).
+   * Fill in every field: while `name` is empty the notice says the
+   * identification is being completed, which is not compliant.
+   */
+  publisher: {
+    /** Company name, or first and last name for a sole trader. */
+    name: "",
+    /** Legal form and registration number (IDE/UID, SIREN…), if any. */
+    legalForm: "",
+    /** Full postal address. */
+    address: "",
+    /** Publication director (a natural person). */
+    director: "",
+  },
+  /** Who hosts the site: Cloudflare Workers. */
+  host: {
+    name: "Cloudflare, Inc.",
+    address: "101 Townsend Street, San Francisco, CA 94107, États-Unis",
+    website: "https://www.cloudflare.com",
+  },
 } as const;
 
 export type SiteConfig = typeof siteConfig;

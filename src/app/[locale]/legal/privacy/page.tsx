@@ -49,7 +49,7 @@ export default function PrivacyPage() {
     <LegalPage
       title="Politique de confidentialité"
       intro="Quelles données le site traite, pourquoi, combien de temps, et comment exercer vos droits. Findlydeal fonctionne sans compte et collecte le strict minimum."
-      lastUpdated="2026-08-23"
+      lastUpdated="2026-11-10"
       sections={SECTIONS}
     >
       <h2 id={slugify("Responsable du traitement")}>Responsable du traitement</h2>
@@ -133,6 +133,11 @@ export default function PrivacyPage() {
           <strong>les marketplaces</strong> vers lesquelles vous choisissez d&apos;être redirigé.
           Dès que vous quittez notre site, c&apos;est leur politique de confidentialité qui
           s&apos;applique.
+        </li>
+        <li>
+          <strong>les marketplaces interrogées</strong> : lorsque vous lancez une recherche, les
+          mots saisis sont transmis à leurs interfaces pour obtenir les offres, sans votre adresse
+          IP ni aucun identifiant vous concernant.
         </li>
       </ul>
       <p>

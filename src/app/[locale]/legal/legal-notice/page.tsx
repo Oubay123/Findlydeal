@@ -21,6 +21,8 @@ export async function generateMetadata({
 }
 
 const SECTIONS = [
+  { title: "Éditeur du site" },
+  { title: "Hébergement" },
   { title: "Nature du service" },
   { title: "Propriété intellectuelle" },
   { title: "Signaler un contenu" },
@@ -35,24 +37,52 @@ const SECTIONS = [
  * before real commercial operation: obligations differ with the legal form
  * chosen, the country of establishment and the turnover.
  *
- * ## Two required identifications are absent
+ * ## The publisher's identity is still owed
  *
- * The page no longer says who publishes the site, nor who hosts it. Both were
- * removed at the operator's request and are left out on purpose, so this is a
- * note rather than a bug report: France's LCEN (art. 6 III) and Switzerland's
- * LCD (art. 3 para. 1 let. s) both require a commercial site to identify its
- * publisher and its host, and an affiliate network reviewing an application
- * looks for exactly that. They need to come back before real commercial
- * operation.
+ * The host is named. The publisher is read from `siteConfig.publisher`, which
+ * is empty: France's LCEN (art. 6 III) and Switzerland's LCD (art. 3 para. 1
+ * let. s) both require a commercial site to identify its publisher, and an
+ * affiliate network reviewing an application looks for exactly that. Fill in
+ * `src/config/site.ts` before real commercial operation.
  */
 export default function LegalNoticePage() {
+  const { publisher, host } = siteConfig;
   return (
     <LegalPage
       title="Mentions légales"
       intro="Comment fonctionne le comparateur, à qui appartiennent les contenus qu'il affiche, et comment nous signaler un problème sur une page."
-      lastUpdated="2026-08-23"
+      lastUpdated="2026-11-10"
       sections={SECTIONS}
     >
+      <h2 id={slugify("Éditeur du site")}>Éditeur du site</h2>
+      {publisher.name ? (
+        <p>
+          {publisher.name}
+          {publisher.legalForm ? `, ${publisher.legalForm}` : ""}
+          <br />
+          {publisher.address}
+          <br />
+          Directeur de la publication : {publisher.director || publisher.name}
+          <br />
+          Contact : <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
+        </p>
+      ) : (
+        <p>
+          L&apos;identification complète de l&apos;éditeur est en cours de publication. Dans
+          l&apos;intervalle, l&apos;éditeur répond à toute demande à l&apos;adresse{" "}
+          <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.
+        </p>
+      )}
+
+      <h2 id={slugify("Hébergement")}>Hébergement</h2>
+      <p>
+        Le site est hébergé par {host.name}, {host.address} (
+        <a href={host.website} rel="noopener noreferrer" target="_blank">
+          cloudflare.com
+        </a>
+        ).
+      </p>
+
       <h2 id={slugify("Nature du service")}>Nature du service</h2>
       <p>
         {siteConfig.name} est un comparateur de prix. Le site ne vend aucun produit, ne détient
@@ -82,8 +112,10 @@ export default function LegalNoticePage() {
         à l&apos;affiliation.
       </p>
       <p>
-        Les photographies illustrant le site proviennent de banques d&apos;images sous licence libre
-        autorisant l&apos;usage commercial.
+        Les photographies des produits proviennent des annonces des marketplaces, via leurs
+        interfaces officielles, et restent la propriété de leurs auteurs. Les photographies
+        illustrant les articles et les catégories proviennent de banques d&apos;images sous licence
+        libre autorisant l&apos;usage commercial.
       </p>
 
       <h2 id={slugify("Signaler un contenu")}>Signaler un contenu</h2>

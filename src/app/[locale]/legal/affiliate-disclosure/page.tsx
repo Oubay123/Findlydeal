@@ -5,6 +5,7 @@ import { SourceLogo } from "@/components/common/source-logo";
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/layout/legal-page";
 import { siteConfig } from "@/config/site";
+import { isDemoCatalogueActive } from "@/lib/mock";
 import { getAllSources } from "@/lib/sources";
 import { slugify } from "@/lib/utils";
 
@@ -48,6 +49,9 @@ const SECTIONS = [
  * to that section the day its application is accepted, or the account can be
  * suspended for it.
  */
+/** The partner list and the service status depend on the runtime keys. */
+export const dynamic = "force-dynamic";
+
 export default function AffiliateDisclosurePage() {
   const sources = getAllSources();
 
@@ -55,16 +59,17 @@ export default function AffiliateDisclosurePage() {
     <LegalPage
       title="Transparence sur l'affiliation"
       intro="Comment Findlydeal est financé, ce que cela change pour vous, et pourquoi une commission ne fait jamais remonter une offre dans le classement."
-      lastUpdated="2026-08-23"
+      lastUpdated="2026-11-10"
       sections={SECTIONS}
     >
       <h2 id={slugify("Comment nous gagnons de l'argent")}>
         Comment nous gagnons de l&apos;argent
       </h2>
       <p>
-        {siteConfig.name} est gratuit et sans publicité. Certains liens vers les marketplaces sont
-        des liens affiliés : si vous achetez après avoir suivi l&apos;un d&apos;eux, la marketplace
-        nous verse une commission, généralement un pourcentage du montant de la commande.
+        {siteConfig.name} est gratuit et n&apos;affiche aucune bannière publicitaire. Certains liens
+        vers les marketplaces sont des liens affiliés : si vous achetez après avoir suivi l&apos;un
+        d&apos;eux, la marketplace nous verse une commission, généralement un pourcentage du montant
+        de la commande.
       </p>
       <p>
         Cette commission est payée par le marchand sur sa propre marge. Elle rémunère l&apos;apport
@@ -100,17 +105,24 @@ export default function AffiliateDisclosurePage() {
       </p>
 
       <h2 id={slugify("Programmes partenaires")}>Programmes partenaires</h2>
-      <p>Les marketplaces actuellement intégrées ou en cours d&apos;intégration :</p>
+      <p>État de chaque marketplace sur le site aujourd&apos;hui :</p>
       <ul>
         {sources.map((source) => (
           <li key={source.id}>
-            <SourceLogo source={source.id} />
+            <SourceLogo source={source.id} />{" "}
+            {source.isConfigured() ? "— offres affichées, liens affiliés" : "— pas encore intégrée"}
           </li>
         ))}
       </ul>
       <p>
-        Les programmes d&apos;affiliation visés sont eBay Partner Network, Awin et CJ Affiliate.
-        Cette liste sera mise à jour au fur et à mesure des validations.
+        Lorsque vous cliquez sur un lien vers un marchand depuis ce site et que vous effectuez un
+        achat, ce site peut percevoir une commission. Les programmes d&apos;affiliation auxquels
+        nous participons comprennent, sans s&apos;y limiter, le{" "}
+        <strong>eBay Partner Network</strong>.
+      </p>
+      <p>
+        D&apos;autres programmes (Awin, CJ Affiliate) sont visés pour les marketplaces pas encore
+        intégrées. Cette liste est mise à jour à chaque activation.
       </p>
 
       <h2 id={slugify("Fiabilité des prix affichés")}>Fiabilité des prix affichés</h2>
@@ -126,17 +138,24 @@ export default function AffiliateDisclosurePage() {
       </p>
 
       <h2 id={slugify("Statut actuel du service")}>Statut actuel du service</h2>
+      {isDemoCatalogueActive() ? (
+        <p>
+          {siteConfig.name} est en préparation. Tant que les partenariats marchands ne sont pas
+          activés, les produits, prix, notes et avis présentés sont des{" "}
+          <strong>exemples de démonstration</strong> et non des offres relevées en temps réel. Un
+          bandeau le signale sur chaque page affichant des produits, et chaque fiche porte la
+          mention « Exemple ».
+        </p>
+      ) : (
+        <p>
+          Les offres affichées sont des <strong>annonces réelles</strong>, relevées auprès des
+          marketplaces intégrées ci-dessus et rafraîchies plusieurs fois par jour. La date du relevé
+          figure sur chaque offre. Le site n&apos;affiche ni note ni avis de son cru.
+        </p>
+      )}
       <p>
-        {siteConfig.name} est en préparation. Tant que les partenariats marchands ne sont pas
-        activés, les produits, prix, notes et avis présentés sont des{" "}
-        <strong>exemples de démonstration</strong> et non des offres relevées en temps réel. Un
-        bandeau le signale sur chaque page affichant des produits, et chaque fiche porte la mention
-        « Exemple ».
-      </p>
-      <p>
-        Ces données seront intégralement remplacées par des relevés en direct dès l&apos;ouverture
-        des accès aux API des marchands. Voir aussi notre{" "}
-        <LocaleLink href="/about">page à propos</LocaleLink> et notre{" "}
+        Voir aussi notre <LocaleLink href="/methodologie">méthodologie de classement</LocaleLink>,
+        notre <LocaleLink href="/about">page à propos</LocaleLink> et notre{" "}
         <LocaleLink href="/legal/cookies">politique de cookies</LocaleLink>, qui détaille les
         cookies déposés par les marchands lors d&apos;une redirection.
       </p>

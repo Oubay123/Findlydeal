@@ -9,13 +9,21 @@ import { getAllSources } from "@/lib/sources";
  * place that reads and writes that URL shape.
  */
 
+/** Longest search term accepted; the rest is dropped. */
+export const MAX_SEARCH_TERM_LENGTH = 80;
+
 export type RawSearchParams = Record<string, string | string[] | undefined>;
 
 const CONDITIONS: ProductCondition[] = ["new", "refurbished", "used"];
 
 /** Parse Next.js `searchParams` into a validated `SearchQuery`. */
 export function parseSearchParams(params: RawSearchParams): SearchQuery {
-  const term = first(params[SEARCH_PARAM_KEYS.term])?.trim() ?? "";
+  // Capped and stripped of control characters: the term travels to the
+  // marketplaces' APIs, and each distinct term can cost one call.
+  const term = (first(params[SEARCH_PARAM_KEYS.term]) ?? "")
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .trim()
+    .slice(0, MAX_SEARCH_TERM_LENGTH);
   const page = Math.max(1, toInt(first(params[SEARCH_PARAM_KEYS.page])) ?? 1);
 
   return {
