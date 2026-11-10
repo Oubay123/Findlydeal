@@ -6,8 +6,6 @@
  * points to products whose prices the catalogue already shows.
  */
 
-export type SelectionMotif = "winter" | "sales" | "school" | "summer";
-
 export interface SeasonalSelection {
   slug: string;
   /** Short name used in links and breadcrumbs. */
@@ -21,7 +19,6 @@ export interface SeasonalSelection {
   to: string;
   /** Catalogue slugs, shown in this order; absent or unpriced ones are skipped. */
   products: string[];
-  motif: SelectionMotif;
 }
 
 export const seasonalSelections: SeasonalSelection[] = [
@@ -32,7 +29,6 @@ export const seasonalSelections: SeasonalSelection[] = [
     lead: "Consoles, jouets, casques et appareils photo : le même produit, souvent bien moins cher qu'en neuf, livré avant le 24.",
     from: "11-01",
     to: "12-24",
-    motif: "winter",
     products: [
       "nintendo-switch-2",
       "sony-playstation-5-slim-standard",
@@ -59,7 +55,6 @@ export const seasonalSelections: SeasonalSelection[] = [
     lead: "Une remise de 30 % sur du neuf reste souvent au-dessus d'un exemplaire reconditionné. Les prix ci-dessous sont relevés aujourd'hui, pas calculés sur un prix de référence.",
     from: "01-07",
     to: "02-05",
-    motif: "sales",
     products: [
       "apple-iphone-15-128-go",
       "apple-macbook-air-m2-256go",
@@ -78,7 +73,6 @@ export const seasonalSelections: SeasonalSelection[] = [
     lead: "Ordinateurs portables, tablettes, casques et cartables à roulettes : ce qui sert dix mois par an se trouve en reconditionné avec la garantie légale.",
     from: "08-15",
     to: "09-20",
-    motif: "school",
     products: [
       "apple-macbook-air-m1-13-256-go",
       "apple-ipad-10-2022-64-go",
@@ -97,7 +91,6 @@ export const seasonalSelections: SeasonalSelection[] = [
     lead: "Appareils photo, caméras d'action, drones et vélos : du matériel qui sert quelques semaines par an, à acheter d'occasion et à revendre ensuite.",
     from: "06-01",
     to: "07-31",
-    motif: "summer",
     products: [
       "gopro-hero12-black",
       "dji-mini-4-pro",

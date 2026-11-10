@@ -5,7 +5,6 @@ import { Container } from "@/components/common/container";
 import { DemoBanner } from "@/components/common/demo-notice";
 import { JsonLd } from "@/components/common/json-ld";
 import { LocaleLink } from "@/components/common/locale-link";
-import { Motif } from "@/components/common/motif";
 import { selectionProducts } from "@/components/home/seasonal-banner";
 import { ProductCard } from "@/components/product/product-card";
 import { getSelection, seasonalSelections } from "@/config/selections";
@@ -72,9 +71,8 @@ export default async function SelectionPage({ params }: SelectionPageProps) {
         )}
       />
 
-      <section className="bg-brand-50 relative overflow-hidden border-b">
-        <Motif kind={selection.motif} className="text-primary opacity-[0.28]" />
-        <Container className="relative space-y-4 py-10 sm:py-14">
+      <section className="bg-brand-50 border-b">
+        <Container className="space-y-4 py-10 sm:py-14">
           <Breadcrumbs path={path} items={[{ name: `Sélection ${selection.name}` }]} />
           <h1 className="max-w-3xl text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl">
             {selection.title}
