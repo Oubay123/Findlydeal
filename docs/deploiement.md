@@ -49,9 +49,11 @@ pas pendant le build.
   `cloudflare/worker.js`) reconstruit le lot le plus ancien : une recherche
   eBay par produit du lot, soit un tour complet en un peu moins de 3 h. Les
   pages ne contactent jamais eBay : elles lisent le catalogue stocké.
-- **Stockage.** Supabase quand `SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY`
-  sont définis, sinon Workers KV (binding `CATALOGUE`). Voir « Supabase »
-  ci-dessous.
+- **Stockage.** Workers KV (binding `CATALOGUE`) sert les pages : une lecture
+  par page, répliquée partout. Quand la clé Supabase est définie, chaque
+  reconstruction est aussi écrite dans Supabase, la base de référence (toutes
+  les offres, l'historique des prix, le journal). Une panne de la base est
+  journalisée et ne coupe jamais le site. Voir « Supabase » ci-dessous.
 - **Bonnes affaires.** La médiane est calculée par état (neuf, reconditionné,
   occasion), sans les prix aberrants. Une offre à plus de 45 % sous la
   médiane est marquée « Prix inhabituel, à vérifier ».
@@ -73,18 +75,18 @@ Le projet existe : **findlydeal** (réf. `htemgvbkiaeiqowztttb`, région
 eu-west-3 Paris, organisation Findlydeal), tables créées par la migration
 `supabase/migrations/0001_catalogue.sql`. Pour que le site l'utilise :
 
-1. Dans Supabase, **Project Settings > API Keys**, copier la clé
-   `service_role` (ou une clé secrète `sb_secret_…`).
+`SUPABASE_URL` est déjà dans `wrangler.jsonc` (ce n'est pas un secret). Il
+reste une seule étape :
+
+1. Dans Supabase, **Project Settings > API Keys**, créer ou copier une clé
+   secrète (`sb_secret_…`, recommandée) ou la clé `service_role`.
 2. Dans Cloudflare, **Workers & Pages > findlydeal > Settings > Variables and
-   Secrets** (pas la section Build), ajouter :
+   Secrets** (pas la section Build), ajouter `SUPABASE_SERVICE_ROLE_KEY` en
+   type **Secret**, coller la clé, cliquer sur **Deploy**.
 
-| Nom                         | Type   | Valeur                         |
-| --------------------------- | ------ | ------------------------------ |
-| `SUPABASE_URL`              | Text   | `https://<projet>.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Secret | la clé `service_role`          |
-
-5. Cliquer sur **Deploy**. Le catalogue se remplit lot par lot dans les trois
-   heures ; `select * from ingest_status;` montre l'avancement.
+Le site continue de servir le catalogue depuis Workers KV ; Supabase se
+remplit lot par lot dans les trois heures et l'historique des prix démarre.
+`select * from ingest_status;` dans l'éditeur SQL montre l'avancement.
 
 La clé `service_role` contourne la sécurité par ligne : elle ne doit exister
 que dans les secrets Cloudflare. Les tables ont la sécurité par ligne activée

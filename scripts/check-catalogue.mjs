@@ -67,8 +67,11 @@ for (const entry of catalogueEbayEntries) {
       if (!content.specs?.length) errors.push(`${entry.slug}: aucune caractéristique (specs)`);
     }
   }
-  const title = entry.title ?? entry.query;
-  if (!matchesEntry(title, entry) && !matchesEntry(entry.query, entry)) {
+  // The product's own name must pass its rules: the extended catalogue's
+  // title, else the described catalogue's, else the query.
+  const seedTitle = catalogueSeeds.find((seed) => seed.slug === entry.slug)?.title;
+  const titles = [entry.title, seedTitle, entry.query].filter(Boolean);
+  if (!titles.some((title) => matchesEntry(title, entry))) {
     errors.push(`${entry.slug}: les règles ne reconnaissent pas son propre titre`);
   }
 }

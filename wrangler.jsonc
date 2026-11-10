@@ -50,6 +50,9 @@
   // variables added in the dashboard (EBAY_CAMPAIGN_ID, etc.).
   "vars": {
     "EBAY_MARKETPLACE_ID": "EBAY_FR",
+    // Not a secret: the address of the Supabase project. The database is
+    // used only once the secret SUPABASE_SERVICE_ROLE_KEY is also set.
+    "SUPABASE_URL": "https://htemgvbkiaeiqowztttb.supabase.co",
   },
   "keep_vars": true,
   "observability": {

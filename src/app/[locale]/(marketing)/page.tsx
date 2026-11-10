@@ -1,3 +1,4 @@
+import { MarketPulse } from "@/components/home/market-pulse";
 import type { UiLocale } from "@/i18n";
 import { localeAlternates } from "@/lib/seo/locale";
 import { FaqSection } from "@/components/home/faq-section";
@@ -41,6 +42,7 @@ export default function HomePage() {
       <DemoBanner />
       <HeroSection />
       <HowItWorks />
+      <MarketPulse />
       <ProductShelves />
       <FeatureHighlights />
       <FaqSection limit={5} />

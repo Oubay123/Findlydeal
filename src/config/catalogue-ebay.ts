@@ -31,6 +31,7 @@ import { fashionCatalogue } from "@/config/catalogue/fashion";
 import { furnitureCatalogue } from "@/config/catalogue/furniture";
 import { homeAppliancesCatalogue } from "@/config/catalogue/home";
 import { leisureCatalogue } from "@/config/catalogue/leisure";
+import { queryOverrides } from "@/config/catalogue/queries";
 import { techCatalogue } from "@/config/catalogue/tech";
 import { watchesCatalogue } from "@/config/catalogue/watches";
 import type { CategorySlug } from "@/types";
@@ -208,7 +209,9 @@ const describedEntries: CatalogueEbayEntry[] = [
   {
     slug: "orient-bambino-version-4-classique",
     query: "Orient Bambino RA-AC0002S",
-    require: [["ac0002s"]],
+    // The reference is often glued to its suffix (RA-AC0002S10B) or replaced
+    // by "V4": either identifies this Bambino.
+    require: [["bambino"], ["ac0002", "version 4", "v4"]],
     minPrice: 80,
     maxPrice: 300,
   },
@@ -266,6 +269,12 @@ const describedEntries: CatalogueEbayEntry[] = [
   },
 ];
 
+/** Applies the short query written for a product, if any (`catalogue/queries.ts`). */
+function withQueryOverride(entry: CatalogueEbayEntry): CatalogueEbayEntry {
+  const query = queryOverrides[entry.slug];
+  return query ? { ...entry, query } : entry;
+}
+
 /**
  * Every product compared on the site: the described ones first, then the
  * extended catalogue, one file per category in `src/config/catalogue/`.
@@ -283,6 +292,6 @@ export const catalogueEbayEntries: CatalogueEbayEntry[] = [
       ...leisureCatalogue,
     ]
       .reverse()
-      .map((entry) => [entry.slug, entry] as const),
+      .map((entry) => [entry.slug, withQueryOverride(entry)] as const),
   ).values(),
 ].reverse();

@@ -61,6 +61,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/blog", changeFrequency: "weekly", priority: 0.8 },
     { path: "/how-it-works", changeFrequency: "monthly", priority: 0.6 },
     { path: "/methodologie", changeFrequency: "monthly", priority: 0.6 },
+    ...(!showsRealOffers
+      ? []
+      : [{ path: "/barometre-des-prix", changeFrequency: "daily" as const, priority: 0.7 }]),
     { path: "/faq", changeFrequency: "monthly", priority: 0.6 },
     { path: "/categories", changeFrequency: "weekly", priority: 0.7 },
     { path: "/about", changeFrequency: "yearly", priority: 0.4 },

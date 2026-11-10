@@ -99,6 +99,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { title: "Toutes les catégories", href: "/categories" },
       { title: "À propos", href: "/about" },
       { title: "Comment ça marche", href: "/how-it-works" },
+      { title: "Baromètre des prix", href: "/barometre-des-prix" },
       { title: "Méthodologie et classement", href: "/methodologie" },
       { title: "FAQ", href: "/faq" },
       { title: "Blog", href: "/blog" },

@@ -33,9 +33,15 @@
       "recommended": ["description", "breadcrumb", "about", "mainEntity", "publisher"],
       "forbidden": []
     },
-    "CollectionPage": { "extends": "WebPage" },
-    "ItemPage": { "extends": "WebPage" },
-    "AboutPage": { "extends": "WebPage" },
+    "CollectionPage": {
+      "extends": "WebPage"
+    },
+    "ItemPage": {
+      "extends": "WebPage"
+    },
+    "AboutPage": {
+      "extends": "WebPage"
+    },
     "FAQPage": {
       "extends": "WebPage",
       "required": ["mainEntity"]
@@ -101,7 +107,7 @@
       "forbidden": []
     },
     "Dataset": {
-      "status": "prévu",
+      "status": "actif",
       "required": [
         "@id",
         "name",
@@ -114,7 +120,7 @@
       ],
       "recommended": ["distribution", "dateModified", "spatialCoverage", "isAccessibleForFree"],
       "forbidden": [],
-      "$comment": "Pour le futur baromètre mensuel des prix du reconditionné. Ne pas émettre avant que la page existe."
+      "$comment": "Baromètre des prix (/barometre-des-prix), émis seulement en mode réel avec au moins un relevé."
     }
   },
   "vocabularies": {

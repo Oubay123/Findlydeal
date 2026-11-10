@@ -4,7 +4,8 @@ import type { Offer, Product } from "@/types";
 /**
  * Where the priced catalogue lives between refreshes.
  *
- * Three back ends behind one interface, picked at runtime:
+ * Back ends behind one interface, picked at runtime (on Cloudflare with
+ * both configured, KV in front of Supabase: see `layeredStore`):
  *
  * - **Supabase** (Postgres) when `SUPABASE_URL` and
  *   `SUPABASE_SERVICE_ROLE_KEY` are set: one row per product, one row per
@@ -64,7 +65,7 @@ export interface PricePoint {
 }
 
 export interface CatalogueStore {
-  readonly kind: "supabase" | "kv" | "memory";
+  readonly kind: "supabase" | "kv" | "kv+supabase" | "memory";
   readIndex(): Promise<CatalogueIndex>;
   readProduct(slug: string): Promise<Product | null>;
   /** Price history of one product, oldest first (empty without history). */
@@ -394,6 +395,42 @@ const memoryStore: CatalogueStore = {
 
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/* Workers KV in front, Supabase behind                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The production setup once both exist. Pages read Workers KV: replicated to
+ * every data centre, one read per page, nothing to wait for. Every refresh is
+ * also written to Supabase, the reference database, which keeps what KV does
+ * not: every offer as a row and the price history. A database incident is
+ * logged and never takes the site down, and plugging the database in does not
+ * empty the site while it fills up.
+ */
+function layeredStore(front: CatalogueStore, database: CatalogueStore): CatalogueStore {
+  return {
+    kind: "kv+supabase",
+    readIndex: () => front.readIndex(),
+    async readProduct(slug) {
+      return (await front.readProduct(slug)) ?? database.readProduct(slug).catch(() => null);
+    },
+    readPriceHistory: (slug, days) => database.readPriceHistory(slug, days),
+    readBucket: (bucket) => front.readBucket(bucket),
+    async writeBucket(write) {
+      await front.writeBucket(write);
+      try {
+        await database.writeBucket(write);
+      } catch (error) {
+        console.error(
+          `[catalogue] Supabase, lot ${write.bucket} : ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    },
+    acquireLock: (seconds) => front.acquireLock(seconds),
+    releaseLock: () => front.releaseLock(),
+  };
+}
+
 export interface CatalogueRuntime {
   store: CatalogueStore;
   /** Keeps a background refresh alive after the response is sent. */
@@ -406,6 +443,9 @@ export function getCatalogueRuntime(): CatalogueRuntime {
     const { env, ctx } = getCloudflareContext();
     const kv = (env as unknown as { CATALOGUE?: KvNamespace }).CATALOGUE;
     const waitUntil = (promise: Promise<unknown>) => ctx.waitUntil(promise);
+    if (kv && supabase) {
+      return { store: layeredStore(kvStore(kv), supabaseStore(supabase)), waitUntil };
+    }
     if (supabase) return { store: supabaseStore(supabase), waitUntil };
     if (kv) return { store: kvStore(kv), waitUntil };
     return { store: memoryStore, waitUntil };

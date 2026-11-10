@@ -1,3 +1,6 @@
+import type { Product } from "@/types";
+import { marketByCondition } from "@/lib/catalogue/market";
+import { formatPrice } from "@/lib/utils";
 import { CONDITION_LABELS } from "@/lib/constants";
 import type { UiLocale } from "@/i18n";
 import { localeAlternates } from "@/lib/seo/locale";
@@ -54,9 +57,42 @@ function isIndexable(product: { id: string; offers: unknown[] }): boolean {
 }
 
 /** Title shown in search results: the model plus the intent, within ~60 characters. */
+/**
+ * The search result title carries the site's angle (new, refurbished, used)
+ * when it fits in the ~60 characters Google shows, else a shorter intent.
+ */
 function productTitle(title: string): string {
-  const withIntent = `${title} : comparer les prix`;
-  return withIntent.length <= 60 ? withIntent : title;
+  for (const suffix of [
+    " : prix neuf, reconditionné, occasion",
+    " : neuf ou reconditionné",
+    " : comparer les prix",
+  ]) {
+    if (title.length + suffix.length <= 60) return title + suffix;
+  }
+  return title;
+}
+
+/**
+ * Meta description built from the live figures when there are offers: what
+ * a searcher wants to know before clicking, and true at the time of the crawl.
+ */
+function productDescription(product: Product): string {
+  const market = marketByCondition(product.offers);
+  const prices = market
+    .filter((row) => row.lowestCents)
+    .map(
+      (row) =>
+        `${CONDITION_LABELS[row.condition].toLowerCase()} dès ${formatPrice({ amount: row.lowestCents as number, currency: "EUR" })}`,
+    );
+  const count = product.offerCount ?? product.offers.length;
+  if (prices.length > 0 && count > 0) {
+    const lead = `${product.title} : ${prices.join(", ")}. ${count} offres comparées, livraison comprise.`;
+    const rest = product.description ? ` ${product.description}` : "";
+    return (lead + rest).length <= 158 ? lead + rest : lead.slice(0, 158);
+  }
+  return product.description
+    ? product.description.slice(0, 155)
+    : `Comparez toutes les offres pour ${product.title}.`;
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
@@ -64,9 +100,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = await getProductById(decodeURIComponent(id));
   if (!product) return { title: getDictionary(locale).product.unavailableTitle };
 
-  const description = product.description
-    ? product.description.slice(0, 155)
-    : `Comparez toutes les offres pour ${product.title}.`;
+  const description = productDescription(product);
 
   return {
     /**
