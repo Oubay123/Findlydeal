@@ -1,7 +1,7 @@
 import type { UiLocale } from "@/i18n";
 import { localeAlternates } from "@/lib/seo/locale";
 import { FaqSection } from "@/components/home/faq-section";
-import { HeroSection } from "@/components/home/hero-section";
+import { HeroFacts, HeroSection } from "@/components/home/hero-section";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { HomeCategories } from "@/components/home/home-categories";
 import { HomeDeals } from "@/components/home/home-deals";
@@ -40,6 +40,7 @@ export default function HomePage() {
     <>
       <DemoBanner />
       <HeroSection />
+      <HeroFacts />
       <HomeDeals />
       <HomeCategories />
       <HowItWorks />

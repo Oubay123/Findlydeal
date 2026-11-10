@@ -1,12 +1,27 @@
 import { Suspense } from "react";
 import { Container } from "@/components/common/container";
 import { LocaleLink } from "@/components/common/locale-link";
-import { ProductStrip } from "@/components/home/product-strip";
+import { HeroBackdrop } from "@/components/home/hero-backdrop";
 import { SearchBar } from "@/components/search/search-bar";
 import { getPricedCatalogue } from "@/lib/catalogue";
-import { marketByCondition } from "@/lib/catalogue/market";
 import { isDemoCatalogueActive } from "@/lib/mock";
+import { unsplash } from "@/lib/utils/images";
 import type { Product } from "@/types";
+
+/**
+ * Product photographs behind the headline, one per universe the site covers.
+ * Editorial photos (Unsplash licence, free commercial use): an object on a
+ * calm surface, lots of empty space, no people, no shopping bags. Listing
+ * photos from eBay are never used here: they belong to their sellers.
+ */
+const PHOTOS = [
+  unsplash("photo-1517336714731-489689fd1ca8", 1920), // ordinateur portable
+  unsplash("photo-1505740420928-5e560c06d30e", 1920), // casque
+  unsplash("photo-1546868871-7041f2a55e12", 1920), // montre connectée
+  unsplash("photo-1555041469-a586c61ea9bc", 1920), // canapé
+  unsplash("photo-1606813907291-d86efa9b94db", 1920), // manette
+  unsplash("photo-1524592094714-0f0654e20314", 1920), // montre
+];
 
 /** Products people look for second hand, offered as one-click starting points. */
 const POPULAR = [
@@ -16,35 +31,12 @@ const POPULAR = [
   "apple-macbook-air-m1-13-256-go",
   "dyson-v15-detect-absolute",
   "vorwerk-thermomix-tm6",
-  "babyzen-yoyo2",
-  "stokke-tripp-trapp",
 ];
 
-/** Products with a photo and a price in every condition, at most two per category. */
-function stripProducts(products: Product[]): Product[] {
-  const perCategory = new Map<string, number>();
-  const picked: Product[] = [];
-  const ordered = [
-    ...POPULAR.map((slug) => products.find((product) => product.id === slug)),
-    ...products,
-  ].filter((product): product is Product => Boolean(product));
-  for (const product of ordered) {
-    if (picked.includes(product) || !product.imageUrl) continue;
-    if (marketByCondition(product.offers).filter((row) => row.lowestCents).length < 3) continue;
-    const key = product.categorySlug ?? "";
-    const count = perCategory.get(key) ?? 0;
-    if (count >= 2) continue;
-    perCategory.set(key, count + 1);
-    picked.push(product);
-    if (picked.length === 14) break;
-  }
-  return picked;
-}
-
 /**
- * Above the fold: one sentence, the search, and under them a slow strip of
- * product photos from the catalogue. Nothing else competes with the search
- * field.
+ * Above the fold: photographs fading one into the next behind a single
+ * sentence and the search. A dark veil keeps the white text above 4.5:1
+ * whatever the photo; the search field is the only control.
  */
 export async function HeroSection() {
   const products = isDemoCatalogueActive() ? [] : await getPricedCatalogue();
@@ -53,34 +45,71 @@ export async function HeroSection() {
   );
 
   return (
-    <section className="bg-brand-50 overflow-hidden border-b">
-      <Container className="flex flex-col items-center pt-16 pb-10 text-center sm:pt-24 sm:pb-14">
-        <h1 className="max-w-2xl text-4xl leading-[1.08] font-bold tracking-tight text-balance sm:text-5xl">
+    <section className="relative isolate overflow-hidden bg-neutral-900 text-white">
+      <HeroBackdrop photos={PHOTOS} />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-black/50" />
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-linear-to-b from-black/30 via-transparent to-black/50"
+      />
+
+      <Container className="flex min-h-[34rem] flex-col items-center justify-center py-20 text-center sm:min-h-[40rem] sm:py-28">
+        <h1 className="max-w-3xl text-4xl leading-[1.06] font-semibold tracking-tight text-balance sm:text-6xl">
           Le même produit, neuf, reconditionné ou d&apos;occasion.
         </h1>
-        <p className="mt-4 max-w-xl text-lg text-muted-foreground">
+        <p className="mt-5 max-w-xl text-lg text-pretty text-white/80">
           Les prix livrés en France, côte à côte, pour chaque modèle.
         </p>
-        <div className="mt-8 w-full max-w-xl">
+        <div className="mt-9 w-full max-w-xl">
           <Suspense fallback={null}>
             <SearchBar variant="hero" />
           </Suspense>
         </div>
         {popular.length > 0 ? (
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-sm">
-            {popular.slice(0, 6).map((product) => (
+          <p className="mt-6 flex max-w-xl flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-white/75">
+            {popular.map((product) => (
               <LocaleLink
                 key={product.id}
                 href={`/product/${encodeURIComponent(product.id)}`}
-                className="rounded-full border bg-white px-3 py-1 text-foreground/85 hover:border-primary hover:text-primary"
+                className="underline-offset-4 hover:text-white hover:underline"
               >
                 {product.model ?? product.title.replace(`${product.brand ?? ""} `, "")}
               </LocaleLink>
             ))}
-          </div>
+          </p>
         ) : null}
       </Container>
-      <ProductStrip products={stripProducts(products)} className="strip-fade pb-12 sm:pb-16" />
+    </section>
+  );
+}
+
+/**
+ * Four facts anyone can check on the site, in plain text under the photos:
+ * no icons, no badges. Hidden on the demonstration catalogue, whose figures
+ * would describe nothing real.
+ */
+export async function HeroFacts() {
+  if (isDemoCatalogueActive()) return null;
+  const products = await getPricedCatalogue();
+  if (products.length === 0) return null;
+  const facts = [
+    { value: products.length.toLocaleString("fr-FR"), label: "modèles suivis" },
+    { value: "3 états", label: "neuf, reconditionné, occasion" },
+    { value: "Prix livrés", label: "frais de port compris" },
+    { value: "Plusieurs fois par jour", label: "relevé des offres" },
+  ];
+  return (
+    <section aria-label="Findlydeal en bref" className="border-b">
+      <Container>
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-6 py-8 sm:py-10 lg:grid-cols-4">
+          {facts.map((fact) => (
+            <div key={fact.label} className="flex flex-col-reverse">
+              <dt className="mt-1 text-sm text-muted-foreground">{fact.label}</dt>
+              <dd className="text-lg font-semibold tracking-tight sm:text-xl">{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </Container>
     </section>
   );
 }
