@@ -28,7 +28,6 @@ writeFileSync(
   export { catalogueSeeds } from "@/lib/mock";
   export { matchesEntry } from "@/lib/catalogue";
   export { bucketOf, BUCKET_COUNT } from "@/lib/catalogue/store";
-  export { seasonalSelections } from "@/config/selections";
   `,
 );
 execFileSync(
@@ -51,7 +50,6 @@ const {
   matchesEntry,
   bucketOf,
   BUCKET_COUNT,
-  seasonalSelections,
 } = await import(pathToFileURL(out).href);
 rmSync(dir, { recursive: true, force: true });
 rmSync(out, { force: true });
@@ -79,13 +77,6 @@ for (const entry of catalogueEbayEntries) {
 }
 for (const slug of Object.keys(catalogueContent)) {
   if (!known.has(slug)) errors.push(`content/${slug}: ne correspond à aucun produit du catalogue`);
-}
-
-for (const selection of seasonalSelections) {
-  for (const slug of selection.products) {
-    if (!known.has(slug))
-      errors.push(`sélection ${selection.slug} : ${slug} n'est pas un produit du catalogue`);
-  }
 }
 
 const sizes = Array.from({ length: BUCKET_COUNT }, () => 0);

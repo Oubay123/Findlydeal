@@ -5,7 +5,6 @@ import { HeroSection } from "@/components/home/hero-section";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { HomeCategories } from "@/components/home/home-categories";
 import { HomeDeals } from "@/components/home/home-deals";
-import { SeasonalBanner } from "@/components/home/seasonal-banner";
 import { DemoBanner } from "@/components/common/demo-notice";
 import type { Metadata } from "next";
 
@@ -32,8 +31,7 @@ export async function generateMetadata({
 }
 
 /**
- * Landing page: what the site does (with a live example), the occasion of
- * the moment when there is one, the one product grid, the categories, how
+ * Landing page: what the site does, the one product grid, the categories, how
  * it works, the FAQ.
  * Every block is its own component in `@/components/home`.
  */
@@ -42,7 +40,6 @@ export default function HomePage() {
     <>
       <DemoBanner />
       <HeroSection />
-      <SeasonalBanner />
       <HomeDeals />
       <HomeCategories />
       <HowItWorks />
