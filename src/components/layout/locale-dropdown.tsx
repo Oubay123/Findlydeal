@@ -36,7 +36,7 @@ export function LocaleDropdown({ className }: { className?: string }) {
       <DropdownMenuTrigger
         aria-label={dictionary.nav.switchLanguage}
         className={cn(
-          "flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 text-xs font-medium tracking-wide text-muted-foreground/80 uppercase transition-colors outline-none hover:text-primary focus-visible:ring-3 focus-visible:ring-ring data-[state=open]:text-primary",
+          "flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 text-xs font-medium text-muted-foreground/80 transition-colors outline-none hover:text-primary focus-visible:ring-3 focus-visible:ring-ring data-[state=open]:text-primary",
           className,
         )}
       >

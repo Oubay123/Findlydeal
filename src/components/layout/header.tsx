@@ -16,7 +16,7 @@ import type { UiLocale } from "@/i18n";
 export function Header({ locale }: { locale: UiLocale }) {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <Container className="flex h-[72px] items-center gap-3">
+      <Container className="flex h-16 items-center gap-3">
         <MobileMenu />
         <Logo locale={locale} />
 

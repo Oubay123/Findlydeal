@@ -32,7 +32,7 @@ export function SearchBar({
       }}
       className={cn(
         "flex w-full items-center gap-2 rounded-full bg-white",
-        isHero ? "p-1.5 shadow-xl shadow-black/10" : "border p-1",
+        isHero ? "border border-input p-1.5" : "border p-1",
         className,
       )}
     >

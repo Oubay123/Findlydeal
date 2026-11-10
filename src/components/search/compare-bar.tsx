@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLocalePath } from "@/i18n/use-locale";
-import { ArrowRight, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCompare } from "@/hooks/use-compare";
 import { MAX_COMPARED_PRODUCTS, MIN_COMPARED_PRODUCTS } from "@/lib/constants";
@@ -60,10 +60,7 @@ export function CompareBar() {
             </Button>
             <Button asChild size="md" disabled={!canCompare}>
               {canCompare ? (
-                <Link href={path(compareHref)}>
-                  Comparer
-                  <ArrowRight data-icon="inline-end" aria-hidden />
-                </Link>
+                <Link href={path(compareHref)}>Comparer</Link>
               ) : (
                 <span aria-disabled className="cursor-not-allowed opacity-60">
                   Choisissez-en {MIN_COMPARED_PRODUCTS}

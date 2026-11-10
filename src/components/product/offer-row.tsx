@@ -1,8 +1,9 @@
 import { ExternalLink } from "lucide-react";
-import { SourceLogo } from "@/components/common/source-logo";
+import { CONDITION_TONE } from "@/components/product/condition-ladder";
 import { DealBadge } from "@/components/product/deal-badge";
 import { PriceBadge } from "@/components/product/price-badge";
 import { Button } from "@/components/ui/button";
+import { getSourcePresentation } from "@/config/sources";
 import { CONDITION_LABELS } from "@/lib/constants";
 import { getServerDictionary } from "@/i18n/server";
 import { estimateBuyerProtectionFee } from "@/lib/sources/ebay-fees";
@@ -28,18 +29,19 @@ export async function OfferRow({ offer, isBest }: OfferRowProps) {
   const t = await getServerDictionary();
   return (
     <li
-      className={`flex flex-wrap items-center gap-4 rounded-2xl border bg-white p-5 ${
-        isBest ? "border-primary" : ""
+      className={`flex flex-wrap items-center gap-x-4 gap-y-3 rounded-xl border bg-white p-4 sm:p-5 ${
+        isBest ? "border-primary ring-1 ring-primary" : ""
       }`}
     >
       <div className="min-w-40 flex-1 space-y-1.5">
         <div className="flex flex-wrap items-center gap-2">
-          <SourceLogo source={offer.source} size="md" />
-          <span className="rounded-md bg-cream px-2 py-0.5 text-xs font-medium text-foreground">
+          <span
+            className={`rounded-md px-2 py-0.5 text-xs font-medium ${CONDITION_TONE[offer.condition]}`}
+          >
             {CONDITION_LABELS[offer.condition]}
           </span>
           {isBest ? (
-            <span className="rounded-md bg-deal-soft px-2 py-0.5 text-xs font-semibold text-white">
+            <span className="rounded-md bg-deal-soft px-2 py-0.5 text-xs font-semibold text-deal">
               {t.product.cheapest}
             </span>
           ) : null}
@@ -56,10 +58,10 @@ export async function OfferRow({ offer, isBest }: OfferRowProps) {
                 : offer.sellerType === "business"
                   ? " (professionnel)"
                   : ""}
-              {" · "}
+              {", "}
             </>
           ) : null}
-          mis à jour {formatRelativeTime(offer.fetchedAt)}
+          {offer.seller?.name ? "mis à jour" : "Mis à jour"} {formatRelativeTime(offer.fetchedAt)}
         </p>
       </div>
 
@@ -82,10 +84,11 @@ export async function OfferRow({ offer, isBest }: OfferRowProps) {
         {offer.deal ? <DealBadge deal={offer.deal} /> : null}
       </div>
 
-      <Button asChild size="md">
+      <Button asChild size="md" variant={isBest ? "default" : "outline"}>
         <a href={offer.url} target="_blank" rel="sponsored nofollow noopener noreferrer">
-          {t.product.seeOffer}
+          Voir sur {getSourcePresentation(offer.source).label}
           <ExternalLink data-icon="inline-end" aria-hidden />
+          <span className="sr-only"> (nouvel onglet)</span>
         </a>
       </Button>
     </li>

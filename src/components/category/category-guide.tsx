@@ -44,9 +44,7 @@ export function CategoryGuide({ slug, name }: { slug: CategorySlug; name: string
 
       {articles.length > 0 ? (
         <div>
-          <h3 className="font-display text-sm font-semibold tracking-wider text-muted-foreground uppercase">
-            Pour aller plus loin
-          </h3>
+          <h3 className="text-base font-semibold">Pour aller plus loin</h3>
           <ul className="mt-2 space-y-1.5 text-sm">
             {articles.map((article) => (
               <li key={article.slug}>

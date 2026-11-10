@@ -84,9 +84,7 @@ export function ActiveFilters() {
 
   return (
     <div className="flex flex-wrap items-center gap-2" aria-label={t.search.activeFilters}>
-      <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-        {t.search.activeFilters}
-      </span>
+      <span className="text-sm text-muted-foreground">{t.search.activeFilters}</span>
 
       {chips.map((chip) => (
         <button

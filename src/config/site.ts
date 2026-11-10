@@ -85,10 +85,16 @@ export const siteConfig = {
 export type SiteConfig = typeof siteConfig;
 
 /** Primary navigation, rendered in the header and the mobile menu. */
+/**
+ * Header links after the "Catégories" menu: the two ways people shop second
+ * hand (by condition), the price barometer and the guides. "How it works" and
+ * the FAQ live in the footer.
+ */
 export const mainNav: NavItem[] = [
-  { title: "Comment ça marche", href: "/how-it-works" },
-  { title: "Blog", href: "/blog" },
-  { title: "FAQ", href: "/faq" },
+  { title: "Reconditionné", href: "/category/refurbished" },
+  { title: "Occasion", href: "/category/second-hand" },
+  { title: "Baromètre des prix", href: "/barometre-des-prix" },
+  { title: "Guides", href: "/blog" },
 ];
 
 /** Footer link groups. Add a group here rather than in the Footer component. */
@@ -102,7 +108,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { title: "Baromètre des prix", href: "/barometre-des-prix" },
       { title: "Méthodologie et classement", href: "/methodologie" },
       { title: "FAQ", href: "/faq" },
-      { title: "Blog", href: "/blog" },
+      { title: "Guides d'achat", href: "/blog" },
       { title: "Contact", href: `mailto:${siteConfig.contactEmail}`, external: true },
     ],
   },

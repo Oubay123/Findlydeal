@@ -150,7 +150,7 @@ export function SearchFilters({ sourceIds, showHeading = true }: SearchFiltersPr
 function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{label}</p>
+      <p className="text-sm font-semibold">{label}</p>
       {children}
     </div>
   );

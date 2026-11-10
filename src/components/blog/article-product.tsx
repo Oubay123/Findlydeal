@@ -1,5 +1,5 @@
 import { LocaleLink } from "@/components/common/locale-link";
-import { ArrowRight, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isCatalogueSlug } from "@/lib/catalogue";
 import { getMockProductById } from "@/lib/mock";
@@ -61,10 +61,7 @@ export function ArticleProduct({ slug, fallbackTerm }: ArticleProductProps) {
         </p>
       </div>
       <Button asChild size="md" className="w-full sm:w-auto">
-        <LocaleLink href={href}>
-          Comparer les prix
-          <ArrowRight data-icon="inline-end" aria-hidden />
-        </LocaleLink>
+        <LocaleLink href={href}>Comparer les prix</LocaleLink>
       </Button>
     </aside>
   );

@@ -58,11 +58,14 @@ export function PriceHistory({ history }: { history: PricePoint[] }) {
       candidate.points.length >= 3 &&
       (candidate.points.at(-1)?.t ?? 0) - (candidate.points[0]?.t ?? 0) >= MIN_SPAN_MS,
   );
+  // Until a curve can be drawn, the current prices are already shown at the
+  // top of the page: a second block of the same figures adds nothing.
+  if (drawable.length === 0) return null;
 
   return (
-    <section aria-labelledby="price-history" className="rounded-2xl border bg-white p-6">
-      <h2 id="price-history" className="font-display text-xl font-bold">
-        Prix du marché
+    <section aria-labelledby="price-history" className="rounded-xl border bg-white p-6">
+      <h2 id="price-history" className="text-xl font-semibold">
+        Évolution des prix
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Prix médian des offres comparables relevées par Findlydeal, par état. Les prix aberrants
@@ -78,7 +81,7 @@ export function PriceHistory({ history }: { history: PricePoint[] }) {
           return (
             <div key={condition} className="rounded-xl bg-cream px-4 py-3">
               <dt className="text-xs font-medium text-muted-foreground">
-                {CONDITION_LABELS[condition]} · médiane
+                {CONDITION_LABELS[condition]}, médiane
               </dt>
               <dd className="mt-0.5 font-display text-lg font-bold tabular-nums">
                 {formatPrice(money(last.medianCents))}
@@ -90,7 +93,7 @@ export function PriceHistory({ history }: { history: PricePoint[] }) {
                       ? "stable"
                       : `${delta > 0 ? "+" : "−"}${Math.abs(deltaPercent).toFixed(1).replace(".", ",")} %`}{" "}
                     sur {Math.max(1, Math.round(((current?.t ?? 0) - (first?.t ?? 0)) / DAY_MS))}{" "}
-                    jours · {last.offerCount} offres
+                    jours, {last.offerCount} offres
                   </>
                 ) : (
                   <>{last.offerCount} offres comparées</>

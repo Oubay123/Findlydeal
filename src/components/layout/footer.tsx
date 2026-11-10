@@ -16,10 +16,10 @@ export function Footer({ locale }: { locale: UiLocale }) {
   const dictionary = getDictionary(locale);
   const path = (href: string) => localePath(locale, href);
   return (
-    <footer className="mt-auto bg-ink text-white/70">
-      <Container className="grid gap-10 py-16 md:grid-cols-4">
+    <footer className="bg-brand-50 mt-auto border-t text-muted-foreground">
+      <Container className="grid gap-10 py-14 md:grid-cols-4">
         <div className="space-y-4">
-          <Logo locale={locale} inverted />
+          <Logo locale={locale} />
           <p className="max-w-xs text-sm leading-relaxed">{dictionary.footer.tagline}</p>
         </div>
 
@@ -53,7 +53,7 @@ export function Footer({ locale }: { locale: UiLocale }) {
       </Container>
 
       <Container>
-        <div className="flex flex-col gap-3 border-t border-white/10 py-6 text-xs sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-t py-6 text-xs sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {siteConfig.name}. Tous droits réservés.
           </p>
@@ -75,7 +75,9 @@ export function Footer({ locale }: { locale: UiLocale }) {
                 href={localePath(other, "/")}
                 hrefLang={other}
                 aria-current={other === locale ? "true" : undefined}
-                className={other === locale ? "text-white" : "transition-colors hover:text-white"}
+                className={
+                  other === locale ? "text-foreground" : "transition-colors hover:text-foreground"
+                }
               >
                 {UI_LOCALE_LABELS[other]}
               </Link>
@@ -96,9 +98,7 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
     <div className="space-y-4">
       {/* h2, not h3: nothing on the page introduces these groups, so an h3
           leaves the outline jumping straight from the page title. */}
-      <h2 className="font-display text-xs font-semibold tracking-wider text-white uppercase">
-        {title}
-      </h2>
+      <h2 className="text-sm font-semibold text-foreground">{title}</h2>
       <ul className="space-y-2.5">{children}</ul>
     </div>
   );
@@ -117,7 +117,7 @@ function FooterLink({
     <li>
       <Link
         href={href}
-        className="text-sm transition-colors hover:text-white"
+        className="text-sm transition-colors hover:text-primary"
         {...(external ? { rel: "noopener noreferrer" } : {})}
       >
         {children}

@@ -57,7 +57,7 @@ export function VideoReview({ videoId, title }: VideoReviewProps) {
               className="size-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
             />
             <span className="absolute inset-0 flex items-center justify-center">
-              <span className="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform group-hover:scale-110">
+              <span className="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 <Play className="size-7 translate-x-0.5" fill="currentColor" aria-hidden />
               </span>
             </span>

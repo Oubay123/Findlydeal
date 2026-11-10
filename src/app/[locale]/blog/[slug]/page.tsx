@@ -163,10 +163,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             aria-labelledby="article-toc"
             className="mx-auto mb-8 max-w-[68ch] rounded-2xl border bg-white px-6 py-5"
           >
-            <h2
-              id="article-toc"
-              className="font-display text-xs font-semibold tracking-wider text-muted-foreground uppercase"
-            >
+            <h2 id="article-toc" className="text-sm font-semibold">
               Dans cet article
             </h2>
             <ol className="mt-3 space-y-1.5 text-sm">

@@ -12,8 +12,8 @@
 export const fr = {
   nav: {
     home: "Accueil",
-    search: "Comparateur",
-    blog: "Blog",
+    search: "Recherche",
+    blog: "Guides",
     faq: "FAQ",
     howItWorks: "Comment ça marche",
     about: "À propos",
@@ -26,9 +26,9 @@ export const fr = {
   },
 
   search: {
-    title: "Comparateur de prix",
-    subtitle: "Une recherche, de nombreux vendeurs, les vraies bonnes affaires signalées.",
-    placeholder: "Rechercher un produit",
+    title: "Recherche",
+    subtitle: "Offres neuves, reconditionnées et d'occasion, classées par prix livré.",
+    placeholder: "iPhone 13, PS5, Thermomix…",
     filters: "Filtres",
     reset: "Réinitialiser",
     activeFilters: "Filtres actifs",
@@ -39,21 +39,21 @@ export const fr = {
     category: "Catégorie",
     price: "Prix (€)",
     condition: "État",
-    platform: "Plateforme",
+    platform: "Site marchand",
     deals: "Bonnes affaires",
     dealsOnly: "Bonnes affaires uniquement",
-    results: "Résultats de recherche",
+    results: "Résultats",
     productCount: "produit",
     productCountPlural: "produits",
   },
 
   emptyState: {
-    startTitle: "Lancez une recherche",
+    startTitle: "Que cherchez-vous ?",
     startBody:
-      "Tapez ce que vous cherchez et Findlydeal compare les offres de nombreux vendeurs en une fois.",
+      "Tapez le nom d'un produit : les offres neuves, reconditionnées et d'occasion s'affichent ensemble.",
     noMatchTitle: "Aucune offre trouvée",
     noMatchBody: "Essayez un terme plus large, ou une autre orthographe.",
-    filteredTitle: "Aucun produit ne passe ces filtres",
+    filteredTitle: "Aucun produit avec ces filtres",
     filteredBodyWithTerm:
       "Aucune offre ne correspond à la fois à votre recherche et aux filtres appliqués.",
     filteredBody: "Les filtres appliqués ne laissent passer aucune offre du catalogue.",
@@ -61,26 +61,26 @@ export const fr = {
   },
 
   product: {
-    bestPrice: "Meilleur prix trouvé",
+    bestPrice: "Prix livré le plus bas",
     offersCompared: "offres comparées",
     seeOffer: "Voir l'offre",
-    compareOffers: "Comparer les offres",
+    compareOffers: "Voir l'offre",
     cheapest: "Moins cher",
     specs: "Fiche technique",
     reviews: "Avis clients",
     similar: "Produits similaires",
-    similarBody: "D'autres références de la même catégorie, à un prix comparable.",
-    discovery: "Ces produits pourraient vous intéresser",
-    discoveryBody: "Une sélection dans les autres univers du comparateur.",
+    similarBody: "Même catégorie, prix proche.",
+    discovery: "Dans d'autres catégories",
+    discoveryBody: "Des modèles à l'écart de prix marqué entre neuf et seconde main.",
     unavailableTitle: "Ce produit n'est plus disponible",
     unavailableBody:
-      "L'offre a peut-être expiré, ou aucune source n'est encore connectée. Essayez de le rechercher à nouveau.",
-    backToSearch: "Retour à la recherche",
+      "L'annonce a peut-être été retirée par le vendeur. Recherchez le modèle pour voir les offres actuelles.",
+    backToSearch: "Rechercher le modèle",
     shippingIncluded: "frais de port inclus",
   },
 
   compare: {
-    title: "Comparaison côte à côte",
+    title: "Comparaison",
     aligned: "produits alignés sur les mêmes critères.",
     backToResults: "Retour aux résultats",
     similarTitle: "Produits similaires",
@@ -88,14 +88,14 @@ export const fr = {
     minimumTitle: "Sélectionnez au moins {min} produits à comparer",
     minimumBody:
       "Depuis les résultats de recherche, cochez « Comparer » sur les produits qui vous intéressent (jusqu'à {max}), puis revenez ici.",
-    goToComparator: "Aller au comparateur",
+    goToComparator: "Aller à la recherche",
   },
 
   home: {
     newest: "Nouveautés",
     newestBody: "Les modèles les plus récents du catalogue.",
-    bestDeals: "Meilleures offres du moment",
-    bestDealsBody: "Les remises les plus fortes face au prix de référence.",
+    bestDeals: "Les plus gros écarts avec le neuf",
+    bestDealsBody: "Les modèles où la seconde main coûte le moins par rapport au neuf.",
     mostReviewed: "Les plus populaires",
     mostReviewedBody: "Les produits qui rassemblent le plus d'avis.",
     seeAll: "Voir tout",
@@ -104,14 +104,14 @@ export const fr = {
   },
 
   blog: {
-    title: "Blog",
+    title: "Guides",
     readingTime: "min de lecture",
     allArticles: "Tous les articles",
   },
 
   footer: {
     tagline:
-      "Le comparateur malin qui trouve les meilleures offres à votre place, chez de nombreux vendeurs.",
+      "Les prix du neuf, du reconditionné et de l'occasion, côte à côte. Offres eBay livrables en France.",
     legal: "Légal",
   },
 

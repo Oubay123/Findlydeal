@@ -41,10 +41,7 @@ export function ProductListRow({ product, action }: ProductListRowProps) {
               alt={product.imageAlt ?? product.title}
               fill
               context="productCardList"
-              className={cn(
-                productImageFit(product.imageUrl),
-                "transition-transform duration-500 group-hover:scale-105",
-              )}
+              className={cn(productImageFit(product.imageUrl))}
             />
           ) : (
             <span className="absolute inset-0 flex items-center justify-center text-muted-foreground">

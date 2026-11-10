@@ -68,7 +68,7 @@ export function ComparisonTable({ products }: ComparisonTableProps) {
                       alt={product.imageAlt ?? product.title}
                       fill
                       context="productCardGrid"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="object-cover"
                     />
                   ) : null}
                 </span>
@@ -215,7 +215,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
     <tr className="border-t align-top">
       <th
         scope="row"
-        className={`${STICKY_CELL} p-3 text-left text-[11px] leading-tight font-medium tracking-wide text-muted-foreground uppercase sm:text-xs`}
+        className={`${STICKY_CELL} p-3 text-left text-xs leading-tight font-medium text-muted-foreground sm:text-sm`}
       >
         {label}
       </th>

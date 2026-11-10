@@ -35,7 +35,7 @@ export async function generateMetadata({
   return {
     title: { absolute: TITLE },
     description:
-      "Combien coûte un produit reconditionné ou d'occasion par rapport au neuf ? Écarts de prix relevés sur les offres eBay, par catégorie et par modèle, mis à jour toutes les trois heures.",
+      "Combien coûte un produit reconditionné ou d'occasion par rapport au neuf ? Écarts de prix relevés sur les offres eBay, par catégorie et par modèle, mis à jour plusieurs fois par jour.",
     alternates: localeAlternates(locale, PATH),
     ...(isDemoCatalogueActive() ? { robots: { index: false, follow: true } } : {}),
   };
@@ -193,7 +193,7 @@ export default async function BarometerPage({ params }: { params: Promise<{ loca
         title={TITLE}
         description={
           capturedAt
-            ? `Combien coûte un produit reconditionné ou d'occasion par rapport au neuf, relevé sur ${overall.products} produits le ${formatArticleDate(capturedAt)}. Les chiffres se mettent à jour toutes les trois heures.`
+            ? `Combien coûte un produit reconditionné ou d'occasion par rapport au neuf, relevé sur ${overall.products} produits le ${formatArticleDate(capturedAt)}. Chaque produit est relevé au moins toutes les quatre heures.`
             : "Les relevés sont en cours : revenez dans quelques heures."
         }
       />
@@ -230,7 +230,7 @@ export default async function BarometerPage({ params }: { params: Promise<{ loca
               {category.name}
             </h2>
             <p className="text-sm text-muted-foreground">
-              Reconditionné {gap(summary.refurbishedGap)} · Occasion {gap(summary.usedGap)} ·{" "}
+              Reconditionné {gap(summary.refurbishedGap)}, occasion {gap(summary.usedGap)},{" "}
               {summary.products} produits
             </p>
           </div>

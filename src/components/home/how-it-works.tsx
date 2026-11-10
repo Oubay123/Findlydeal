@@ -1,7 +1,6 @@
 import { Scale, Search, ThumbsUp } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Container } from "@/components/common/container";
-import { SectionTitle } from "@/components/common/section-title";
 
 /**
  * The three-step explanation. Reused, in a longer form, by `/how-it-works` —
@@ -10,54 +9,45 @@ import { SectionTitle } from "@/components/common/section-title";
 export const HOW_IT_WORKS_STEPS: { icon: LucideIcon; title: string; description: string }[] = [
   {
     icon: Search,
-    title: "Recherchez un produit",
-    description: "Tapez le nom du produit dans la barre de recherche.",
+    title: "Cherchez un modèle",
+    description: "Tapez son nom, ou parcourez les catégories.",
   },
   {
     icon: Scale,
-    title: "Comparez les offres",
+    title: "Comparez neuf, reconditionné et occasion",
     description:
-      "Findlydeal relève les offres des marketplaces partenaires et les classe au prix total, livraison comprise.",
+      "Les offres eBay livrables en France sont classées par prix livré, avec l'état et le type de vendeur de chacune.",
   },
   {
     icon: ThumbsUp,
-    title: "Trouvez la meilleure affaire",
+    title: "Achetez chez le vendeur",
     description:
-      "Les offres nettement sous la médiane sont signalées. Vous achetez directement chez le vendeur.",
+      "Un clic vous mène à l'annonce. Findlydeal ne vend rien et ne touche jamais à votre paiement.",
   },
 ];
 
 export function HowItWorks() {
   return (
-    <section className="bg-cream py-20">
-      <Container className="space-y-12">
-        <SectionTitle
-          centered
-          title="Comment ça marche ?"
-          description="Trois étapes, zéro effort."
-        />
-
-        <ol className="grid gap-6 md:grid-cols-3">
+    <section aria-labelledby="how-it-works" className="py-16">
+      <Container className="space-y-8">
+        <h2 id="how-it-works" className="text-2xl font-bold tracking-tight sm:text-3xl">
+          Comment ça marche
+        </h2>
+        <ol className="grid gap-8 md:grid-cols-3">
           {HOW_IT_WORKS_STEPS.map((step, index) => (
-            <li
-              key={step.title}
-              className="relative overflow-hidden rounded-2xl bg-white p-8 text-center"
-            >
+            <li key={step.title} className="flex gap-4">
               <span
                 aria-hidden
-                className="absolute top-3 right-5 font-display text-5xl font-bold text-primary/10"
+                className="flex size-8 shrink-0 items-center justify-center rounded-full border text-sm font-semibold"
               >
                 {index + 1}
               </span>
-
-              <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-brand-100 text-primary">
-                <step.icon className="size-6" strokeWidth={2} aria-hidden />
-              </span>
-
-              <h3 className="mt-6 text-base font-semibold">{step.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {step.description}
-              </p>
+              <div>
+                <h3 className="text-base font-semibold">{step.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                  {step.description}
+                </p>
+              </div>
             </li>
           ))}
         </ol>

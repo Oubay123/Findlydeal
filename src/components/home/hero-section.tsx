@@ -1,56 +1,94 @@
 import { Suspense } from "react";
 import { Container } from "@/components/common/container";
-import { HeroSlideshow } from "@/components/home/hero-slideshow";
+import { LocaleLink } from "@/components/common/locale-link";
+import { ConditionLadder } from "@/components/product/condition-ladder";
 import { SearchBar } from "@/components/search/search-bar";
-import { siteConfig } from "@/config/site";
-import { unsplash } from "@/lib/utils/images";
+import { getPricedCatalogue } from "@/lib/catalogue";
+import { marketByCondition } from "@/lib/catalogue/market";
+import { isDemoCatalogueActive } from "@/lib/mock";
+import type { Product } from "@/types";
 
-/**
- * Above-the-fold section.
- *
- * The backdrop cycles through one photo per universe covered by the site, so
- * the promise ("partout") is shown rather than claimed. Two layers sit above
- * the photos: a dark scrim that guarantees text contrast whatever the current
- * image, and the warm brand glows.
- */
-const HERO_IMAGES = [
-  unsplash("photo-1441986300917-64674bd600d8", 1920), // boutique
-  unsplash("photo-1519389950473-47ba0277781c", 1920), // tech
-  unsplash("photo-1560769629-975ec94e6a86", 1920), // mode
-  unsplash("photo-1616486338812-3dadae4b4ace", 1920), // meubles
-  unsplash("photo-1524805444758-089113d48a6d", 1920), // montres
+/** Products people look for second hand, offered as one-click starting points. */
+const POPULAR = [
+  "apple-iphone-13-128go-minuit",
+  "nintendo-switch-oled",
+  "sony-playstation-5-slim-standard",
+  "apple-macbook-air-m1-13-256-go",
+  "dyson-v15-detect-absolute",
+  "vorwerk-thermomix-tm6",
+  "babyzen-yoyo2",
+  "stokke-tripp-trapp",
 ];
 
-export function HeroSection() {
+/** The example shown beside the search: a well-known product priced in all three conditions. */
+function pickExample(products: Product[]): Product | undefined {
+  const complete = (product: Product) =>
+    marketByCondition(product.offers).filter((row) => row.lowestCents).length === 3;
   return (
-    <section className="relative isolate overflow-hidden bg-ink">
-      <HeroSlideshow images={HERO_IMAGES} />
+    products.find((product) => product.id === POPULAR[0] && complete(product)) ??
+    products.find((product) => POPULAR.includes(product.id) && complete(product)) ??
+    products.find(complete)
+  );
+}
 
-      <div aria-hidden className="absolute inset-0 -z-10 bg-ink/78" />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10"
-        style={{
-          backgroundImage:
-            "radial-gradient(60% 55% at 22% 12%, rgba(232,118,58,0.32) 0%, transparent 60%), radial-gradient(55% 60% at 82% 88%, rgba(232,118,58,0.20) 0%, transparent 62%)",
-        }}
-      />
+/**
+ * Above the fold: what the site does, said once, the search, and a real
+ * product priced new, refurbished and used right now. No stock photo: the
+ * prices are the picture.
+ */
+export async function HeroSection() {
+  const products = isDemoCatalogueActive() ? [] : await getPricedCatalogue();
+  const example = pickExample(products);
+  const popular = POPULAR.map((slug) => products.find((product) => product.id === slug)).filter(
+    (product): product is Product => Boolean(product),
+  );
 
-      <Container className="flex flex-col items-center gap-7 py-24 text-center sm:py-32">
-        <h1 className="max-w-4xl text-4xl leading-[1.12] font-bold text-balance text-white drop-shadow-sm sm:text-5xl lg:text-6xl">
-          Trouvez la meilleure affaire, <span className="text-brand-400">partout</span>, en une
-          seule recherche.
-        </h1>
-
-        <p className="max-w-2xl text-base leading-relaxed text-pretty text-white/80">
-          {siteConfig.description}
-        </p>
-
-        <div className="mt-2 w-full max-w-2xl">
-          <Suspense fallback={null}>
-            <SearchBar variant="hero" autoFocus />
-          </Suspense>
+  return (
+    <section className="bg-brand-50 border-b">
+      <Container className="grid grid-cols-1 gap-10 py-14 sm:py-20 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-center">
+        <div className="space-y-6">
+          <h1 className="max-w-xl text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl">
+            Le même produit, neuf, reconditionné ou d&apos;occasion.
+          </h1>
+          <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
+            Findlydeal relève les offres livrables en France et vous montre, pour chaque modèle, ce
+            que vous économisez en passant à la seconde main.
+          </p>
+          <div className="max-w-xl">
+            <Suspense fallback={null}>
+              <SearchBar variant="hero" />
+            </Suspense>
+          </div>
+          {popular.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Recherchés :</span>
+              {popular.slice(0, 6).map((product) => (
+                <LocaleLink
+                  key={product.id}
+                  href={`/product/${encodeURIComponent(product.id)}`}
+                  className="rounded-full border bg-white px-3 py-1 text-foreground/85 hover:border-primary hover:text-primary"
+                >
+                  {product.model ?? product.title.replace(`${product.brand ?? ""} `, "")}
+                </LocaleLink>
+              ))}
+            </div>
+          ) : null}
         </div>
+
+        {example ? (
+          <LocaleLink
+            href={`/product/${encodeURIComponent(example.id)}`}
+            className="block rounded-2xl border bg-white p-6 transition-colors hover:border-primary sm:p-7"
+          >
+            <p className="text-sm text-muted-foreground">En ce moment</p>
+            <p className="mt-1 text-xl font-semibold">{example.title}</p>
+            <ConditionLadder offers={example.offers} size="large" className="mt-5" />
+            <p className="mt-5 text-sm text-muted-foreground">
+              Prix livrés les plus bas, relevés sur {example.offerCount ?? example.offers.length}{" "}
+              annonces.
+            </p>
+          </LocaleLink>
+        ) : null}
       </Container>
     </section>
   );

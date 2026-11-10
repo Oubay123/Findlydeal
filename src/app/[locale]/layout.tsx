@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Hanken_Grotesk } from "next/font/google";
 import { notFound } from "next/navigation";
 import { IconSprite } from "@/components/common/icon-sprite";
 import { CookieConsent } from "@/components/common/cookie-consent";
@@ -13,23 +13,14 @@ import { localeOpenGraph } from "@/lib/seo/locale";
 import "../globals.css";
 
 /**
- * Poppins carries the headings, Inter the body copy.
- *
- * Only the two weights actually used: `font-display` never appears with
- * `font-medium` anywhere in the codebase, so 500 was three subset files
- * downloaded for nothing. `display: "swap"` is next/font's default — text is
- * painted immediately in the fallback rather than staying invisible.
+ * Hanken Grotesk for everything, headings and body alike: a sober grotesque
+ * with clear figures, so prices read at a glance. Hierarchy comes from size
+ * and weight, not from a second typeface.
  */
-const poppins = Poppins({
-  variable: "--font-poppins",
+const hanken = Hanken_Grotesk({
+  variable: "--font-hanken",
   subsets: ["latin"],
-  weight: ["600", "700"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -89,7 +80,7 @@ export default async function RootLayout({
   const dictionary = getDictionary(locale);
 
   return (
-    <html lang={locale} className={`${poppins.variable} ${inter.variable} h-full antialiased`}>
+    <html lang={locale} className={`${hanken.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         {/*
           Skip link: the header carries a dozen links and a category menu, so

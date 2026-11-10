@@ -1,7 +1,5 @@
 import { LocaleDropdown } from "@/components/layout/locale-dropdown";
 import { PUBLIC_UI_LOCALES } from "@/i18n";
-import { getServerDictionary, getUiLocale } from "@/i18n/server";
-import { cn } from "@/lib/utils";
 
 /**
  * The current language, and a way to change it once there is a choice.
@@ -21,19 +19,7 @@ import { cn } from "@/lib/utils";
  * It becomes a real switcher on its own the day a second locale is published.
  */
 export async function LanguageSwitcher({ className }: { className?: string }) {
-  if (PUBLIC_UI_LOCALES.length >= 2) return <LocaleDropdown className={className} />;
-
-  const [locale, dictionary] = await Promise.all([getUiLocale(), getServerDictionary()]);
-
-  return (
-    <span
-      aria-label={dictionary.nav.languageLabel}
-      className={cn(
-        "text-xs font-medium tracking-wide text-muted-foreground/70 uppercase",
-        className,
-      )}
-    >
-      {locale}
-    </span>
-  );
+  // A single published language: nothing to switch, so nothing is shown.
+  if (PUBLIC_UI_LOCALES.length < 2) return null;
+  return <LocaleDropdown className={className} />;
 }

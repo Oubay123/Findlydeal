@@ -1,44 +1,36 @@
+import { CategoryIcon } from "@/components/category/category-icon";
 import { LocaleLink } from "@/components/common/locale-link";
-import { SmartImage } from "@/components/common/smart-image";
+import { formatPrice } from "@/lib/utils";
 import type { Category } from "@/types";
 
 interface CategoryCardProps {
   category: Category;
+  /** Products currently priced in the category, when known. */
+  count?: number;
+  /** Lowest delivered price in the category, in cents, when known. */
+  fromCents?: number;
 }
 
 /**
- * One category tile: a photo of the universe with its name written over it.
- *
- * The photo is decorative, so its `alt` is empty: the category name is right
- * there in the tile, and a descriptive alt would make a screen reader announce
- * it twice.
- *
- * The scrim is not styling for its own sake. White text over an arbitrary
- * photograph has no guaranteed contrast, and these photos change; the gradient
- * is what makes the label readable whatever picture sits under it.
+ * One category tile: icon, name, what it covers and, when the catalogue is
+ * live, how many products are priced in it. Text only: a stock photo per
+ * category said nothing a word does not, and cost a large download.
  */
-export function CategoryCard({ category }: CategoryCardProps) {
+export function CategoryCard({ category, count, fromCents }: CategoryCardProps) {
   return (
     <LocaleLink
       href={`/category/${category.slug}`}
-      className="group relative block aspect-[4/3] overflow-hidden rounded-xl focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none"
+      className="flex h-full flex-col gap-3 rounded-xl border bg-white p-5 transition-colors hover:border-primary focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none"
     >
-      <SmartImage
-        src={category.image}
-        alt=""
-        fill
-        context="categoryTile"
-        className="object-cover transition-transform duration-500 group-hover:scale-105"
-      />
-
-      <span
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"
-      />
-
-      <span className="absolute inset-x-0 bottom-0 p-4 font-display text-sm font-semibold text-white">
-        {category.name}
-      </span>
+      <CategoryIcon name={category.icon} className="size-6 text-primary" strokeWidth={1.75} />
+      <span className="text-base font-semibold">{category.name}</span>
+      <span className="text-sm leading-snug text-muted-foreground">{category.description}</span>
+      {count ? (
+        <span className="mt-auto pt-1 text-sm text-foreground/80">
+          {count} produits
+          {fromCents ? `, dès ${formatPrice({ amount: fromCents, currency: "EUR" })}` : ""}
+        </span>
+      ) : null}
     </LocaleLink>
   );
 }

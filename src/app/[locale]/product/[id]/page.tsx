@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import type { Product } from "@/types";
 import { marketByCondition } from "@/lib/catalogue/market";
 import { formatPrice } from "@/lib/utils";
@@ -12,7 +13,6 @@ import { Container } from "@/components/common/container";
 import { DemoBanner } from "@/components/common/demo-notice";
 import { JsonLd } from "@/components/common/json-ld";
 import { RatingStars } from "@/components/common/rating-stars";
-import { PriceBadge } from "@/components/product/price-badge";
 import { ConditionPrices } from "@/components/product/condition-prices";
 import { PriceHistory } from "@/components/product/price-history";
 import { ProductComparison } from "@/components/product/product-comparison";
@@ -29,7 +29,7 @@ import { getSourcePresentation } from "@/config/sources";
 import { getDictionary } from "@/i18n";
 import { isDemoCatalogueActive } from "@/lib/mock";
 import { getProductById } from "@/lib/products";
-import { getDiscoveryProducts, getSimilarProducts } from "@/lib/products/related";
+import { getSimilarProducts } from "@/lib/products/related";
 import { buildGraph, pageUrl, productNode, schemaIds, webPageNode } from "@/lib/seo/json-ld";
 
 interface ProductPageProps {
@@ -140,11 +140,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   if (!product) notFound();
 
-  // Both shelves read the same pool, and the price history its own store:
-  // one await for the three.
-  const [similar, discovery, priceHistory] = await Promise.all([
+  // The similar products and the price history: one await for both.
+  const [similar, priceHistory] = await Promise.all([
     getSimilarProducts(product),
-    getDiscoveryProducts(product),
     getPriceHistory(product.id),
   ]);
 
@@ -177,7 +175,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <Breadcrumbs
           path={path}
           items={[
-            { name: "Comparateur", href: "/search" },
             ...(category ? [{ name: category.name, href: `/category/${category.slug}` }] : []),
             { name: product.title },
           ]}
@@ -191,37 +188,50 @@ export default async function ProductPage({ params }: ProductPageProps) {
           />
 
           <div className="space-y-5">
-            {product.brand ? (
-              <p className="text-sm font-semibold tracking-wide text-primary uppercase">
-                {product.brand}
-              </p>
-            ) : null}
-
-            <h1 className="text-2xl leading-tight font-bold sm:text-3xl">{product.title}</h1>
+            <div className="space-y-1.5">
+              {product.brand ? (
+                <p className="text-sm text-muted-foreground">{product.brand}</p>
+              ) : null}
+              <h1 className="text-2xl leading-tight font-bold tracking-tight sm:text-3xl">
+                {product.title}
+              </h1>
+            </div>
 
             {product.rating ? (
               <RatingStars value={product.rating.value} count={product.rating.count} size="md" />
             ) : null}
 
+            <ConditionPrices offers={product.offers} />
+
             {bestOffer ? (
-              <div className="space-y-1.5 rounded-2xl bg-cream p-5">
-                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  {t.product.bestPrice}
-                </p>
-                <PriceBadge
+              <div className="space-y-2">
+                <Button
+                  asChild
                   size="lg"
-                  price={bestOffer.totalPrice}
-                  comparedTo={bestOffer.deal?.referencePrice}
-                />
+                  className="h-12 w-full rounded-lg text-base sm:w-auto sm:px-8"
+                >
+                  <a
+                    href={bestOffer.url}
+                    target="_blank"
+                    rel="sponsored nofollow noopener noreferrer"
+                  >
+                    Voir l&apos;offre à {formatPrice(bestOffer.totalPrice)} sur{" "}
+                    {getSourcePresentation(bestOffer.source).label}
+                  </a>
+                </Button>
                 <p className="text-xs text-muted-foreground">
-                  {CONDITION_LABELS[bestOffer.condition]} · sur{" "}
-                  {getSourcePresentation(bestOffer.source).label} ·{" "}
-                  {product.offerCount ?? product.offers.length} offres comparées
+                  {CONDITION_LABELS[bestOffer.condition]}, livraison comprise.
+                  {product.offers.length > 1 ? (
+                    <>
+                      {" "}
+                      <a href="#offres" className="underline underline-offset-2">
+                        Voir les {product.offers.length} offres
+                      </a>
+                    </>
+                  ) : null}
                 </p>
               </div>
             ) : null}
-
-            <ConditionPrices offers={product.offers} />
 
             {product.description ? (
               <p className="text-sm leading-relaxed text-muted-foreground">{product.description}</p>
@@ -244,7 +254,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         <div className="space-y-4">
           <ProductSpecs specs={product.specs ?? []} />
-          <ProductReviews reviews={product.reviews ?? []} rating={product.rating} />
+          {/* Only reviews Findlydeal can stand behind: none for live products. */}
+          {!isDemo ? null : (
+            <ProductReviews reviews={product.reviews ?? []} rating={product.rating} />
+          )}
           {/* Renders nothing until a review video is attached to the product. */}
           <VideoReview videoId={product.videoReviewId} title={`Test de ${product.title}`} />
         </div>
@@ -254,14 +267,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           description={t.product.similarBody}
           products={similar}
           href={category ? `/category/${category.slug}` : "/search"}
-          linkLabel={category ? `Voir ${category.name}` : "Voir le comparateur"}
-        />
-
-        <ProductRow
-          title={t.product.discovery}
-          description={t.product.discoveryBody}
-          products={discovery}
-          href="/search"
+          linkLabel={category ? `Voir ${category.name}` : "Voir tout"}
         />
       </Container>
 

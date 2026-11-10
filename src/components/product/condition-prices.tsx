@@ -1,4 +1,5 @@
 import { LocaleLink } from "@/components/common/locale-link";
+import { CONDITION_TONE } from "@/components/product/condition-ladder";
 import { CONDITION_LABELS } from "@/lib/constants";
 import { lastFetchedAt, marketByCondition } from "@/lib/catalogue/market";
 import { formatPrice, formatRelativeTime } from "@/lib/utils";
@@ -19,30 +20,29 @@ export function ConditionPrices({ offers }: { offers: Offer[] }) {
 
   return (
     <section aria-labelledby="market-now" className="space-y-2">
-      <h2
-        id="market-now"
-        className="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
-      >
-        Le marché en ce moment
+      <h2 id="market-now" className="text-sm font-semibold">
+        Prix livrés les plus bas
       </h2>
-      <dl className="grid grid-cols-3 divide-x overflow-hidden rounded-2xl border bg-white text-center">
+      <dl className="grid grid-cols-3 divide-x overflow-hidden rounded-xl border bg-white text-center">
         {market.map(({ condition, lowestCents, count, gapWithNewPercent }) => (
           <div key={condition} className="px-2 py-3.5">
-            <dt className="text-xs font-medium text-muted-foreground">
-              {CONDITION_LABELS[condition]}
+            <dt>
+              <span
+                className={`inline-block rounded-md px-1.5 py-0.5 text-xs font-medium ${CONDITION_TONE[condition]}`}
+              >
+                {CONDITION_LABELS[condition]}
+              </span>
             </dt>
             <dd className="mt-1">
               {lowestCents ? (
                 <>
-                  <span className="block font-display text-base font-bold tabular-nums sm:text-lg">
-                    {eur(lowestCents)}
-                  </span>
+                  <span className="block text-lg font-bold tabular-nums">{eur(lowestCents)}</span>
                   <span className="block text-[0.7rem] text-muted-foreground">
-                    dès · {count} offre{count > 1 ? "s" : ""}
+                    {count} offre{count > 1 ? "s" : ""}
                   </span>
                   {gapWithNewPercent ? (
-                    <span className="mt-1 inline-block rounded-md bg-emerald-50 px-1.5 py-0.5 text-[0.7rem] font-semibold text-emerald-800">
-                      {gapWithNewPercent} % de moins que le neuf
+                    <span className="mt-0.5 block text-xs font-medium text-deal">
+                      −{gapWithNewPercent} % par rapport au neuf
                     </span>
                   ) : null}
                 </>

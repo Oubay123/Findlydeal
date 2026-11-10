@@ -5,10 +5,10 @@ import { DemoBadge } from "@/components/common/demo-notice";
 import { RatingStars } from "@/components/common/rating-stars";
 import { SmartImage } from "@/components/common/smart-image";
 import { DealBadge } from "@/components/product/deal-badge";
+import { CONDITION_TONE, ConditionLadder } from "@/components/product/condition-ladder";
 import { PriceBadge } from "@/components/product/price-badge";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS } from "@/lib/constants";
-import { getServerDictionary } from "@/i18n/server";
 import { productImageFit, type ImageContext } from "@/lib/utils/images";
 import type { Product } from "@/types";
 
@@ -25,64 +25,55 @@ interface ProductCardProps {
 }
 
 /**
- * One result in a product grid. Links to the comparison page rather than to a
- * merchant, so the user always sees every offer before leaving.
+ * One result in a product grid. Links to the product page, where every offer
+ * is listed, so the visitor sees them all before leaving for a merchant.
+ *
+ * For a compared model, the card shows its lowest delivered price in each
+ * condition (new, refurbished, used): that comparison is what the site is
+ * for. A single marketplace listing shows its own price and condition.
  */
 export async function ProductCard({
   product,
   action,
   imageContext = "productCardGrid",
 }: ProductCardProps) {
-  const t = await getServerDictionary();
   const { bestOffer } = product;
   const href = `/product/${encodeURIComponent(product.id)}`;
-  const otherOffers = product.offers.length - 1;
-  // A single marketplace listing, not a model compared across sellers.
   const isSingleListing = product.id.includes(":");
+  const count = product.offerCount ?? product.offers.length;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border bg-white transition-shadow hover:shadow-lg hover:shadow-black/5">
-      <LocaleLink href={href} className="block">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+    <article className="flex flex-col overflow-hidden rounded-xl border bg-white transition-colors hover:border-foreground/25">
+      <LocaleLink href={href} className="block" tabIndex={-1} aria-hidden>
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-white">
           {product.imageUrl ? (
             <SmartImage
               src={product.imageUrl}
-              alt={product.imageAlt ?? product.title}
+              alt=""
               fill
               context={imageContext}
-              className={cn(
-                productImageFit(product.imageUrl),
-                "transition-transform duration-500 group-hover:scale-105",
-              )}
+              className={productImageFit(product.imageUrl)}
             />
           ) : (
-            <span className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+            <span className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground">
               <ImageOff className="size-7" strokeWidth={1.5} aria-hidden />
             </span>
           )}
-
           {bestOffer?.deal ? (
-            <span className="absolute top-3 left-3">
+            <span className="absolute top-2.5 left-2.5">
               <DealBadge deal={bestOffer.deal} />
             </span>
           ) : null}
-
-          {bestOffer ? (
-            <span className="absolute top-3 right-3 rounded-md bg-white/95 px-2.5 py-1 text-xs font-medium text-foreground">
-              {CONDITION_LABELS[bestOffer.condition]}
-            </span>
-          ) : null}
-
-          <DemoBadge className="absolute bottom-3 left-3" />
+          <DemoBadge className="absolute bottom-2.5 left-2.5" />
         </div>
       </LocaleLink>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-4">
-        <LocaleLink href={href}>
-          <h3 className="line-clamp-2 text-sm leading-snug font-medium transition-colors hover:text-primary">
+      <div className="flex min-w-0 flex-1 flex-col gap-3 border-t p-4">
+        <h3 className="line-clamp-2 text-[0.95rem] leading-snug font-semibold">
+          <LocaleLink href={href} className="hover:text-primary">
             {product.title}
-          </h3>
-        </LocaleLink>
+          </LocaleLink>
+        </h3>
 
         {product.rating ? (
           <RatingStars
@@ -92,24 +83,31 @@ export async function ProductCard({
           />
         ) : null}
 
-        {bestOffer ? (
-          <PriceBadge price={bestOffer.totalPrice} comparedTo={bestOffer.deal?.referencePrice} />
+        {isSingleListing && bestOffer ? (
+          <div className="flex items-baseline justify-between gap-2">
+            <span
+              className={cn(
+                "rounded-md px-1.5 py-0.5 text-xs font-medium",
+                CONDITION_TONE[bestOffer.condition],
+              )}
+            >
+              {CONDITION_LABELS[bestOffer.condition]}
+            </span>
+            <PriceBadge price={bestOffer.totalPrice} />
+          </div>
+        ) : bestOffer ? (
+          <ConditionLadder offers={product.offers} />
         ) : (
-          <p className="text-sm text-muted-foreground">Prix indisponible</p>
+          <p className="text-sm text-muted-foreground">Aucune offre en ce moment</p>
         )}
 
-        {otherOffers > 0 ? (
-          <p className="text-xs text-muted-foreground">
-            Meilleur prix sur {product.offerCount ?? product.offers.length} offres comparées
-          </p>
-        ) : null}
-
         <div className="mt-auto space-y-2 pt-1">
+          {!isSingleListing && count > 1 ? (
+            <p className="text-xs text-muted-foreground">{count} annonces comparées</p>
+          ) : null}
           {action}
-          <Button asChild className="h-11 w-full rounded-lg">
-            <LocaleLink href={href}>
-              {isSingleListing ? "Voir cette offre" : t.product.compareOffers}
-            </LocaleLink>
+          <Button asChild variant="outline" className="h-10 w-full rounded-lg">
+            <LocaleLink href={href}>Voir l&apos;offre</LocaleLink>
           </Button>
         </div>
       </div>

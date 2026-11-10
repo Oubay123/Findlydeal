@@ -33,7 +33,7 @@ export function ArticleCard({ article, featured }: ArticleCardProps) {
           alt={article.cover.alt}
           fill
           context="blogCard"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover"
         />
       </LocaleLink>
 

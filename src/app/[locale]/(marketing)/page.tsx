@@ -1,12 +1,10 @@
-import { MarketPulse } from "@/components/home/market-pulse";
 import type { UiLocale } from "@/i18n";
 import { localeAlternates } from "@/lib/seo/locale";
 import { FaqSection } from "@/components/home/faq-section";
-import { FeatureHighlights } from "@/components/home/feature-highlights";
-import { FinalCta } from "@/components/home/final-cta";
 import { HeroSection } from "@/components/home/hero-section";
 import { HowItWorks } from "@/components/home/how-it-works";
-import { ProductShelves } from "@/components/home/product-shelves";
+import { HomeCategories } from "@/components/home/home-categories";
+import { HomeDeals } from "@/components/home/home-deals";
 import { DemoBanner } from "@/components/common/demo-notice";
 import type { Metadata } from "next";
 
@@ -33,20 +31,19 @@ export async function generateMetadata({
 }
 
 /**
- * Landing page. Every block is its own component in `@/components/home` —
- * this file only decides the order of the sections.
+ * Landing page, kept to five blocks: what the site does (with a live
+ * example), the one product grid, the categories, how it works, the FAQ.
+ * Every block is its own component in `@/components/home`.
  */
 export default function HomePage() {
   return (
     <>
       <DemoBanner />
       <HeroSection />
+      <HomeDeals />
+      <HomeCategories />
       <HowItWorks />
-      <MarketPulse />
-      <ProductShelves />
-      <FeatureHighlights />
       <FaqSection limit={5} />
-      <FinalCta />
     </>
   );
 }

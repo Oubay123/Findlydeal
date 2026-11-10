@@ -6,8 +6,7 @@ import { ChevronRight, Menu } from "lucide-react";
 import { CategoryIcon } from "@/components/category/category-icon";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { listedCategories as categories } from "@/config/categories";
-import { browseMenuGroups } from "@/config/menu";
+import { productCategories as categories } from "@/config/categories";
 import { mainNav, siteConfig } from "@/config/site";
 import { useLocalePath } from "@/i18n/use-locale";
 
@@ -41,30 +40,22 @@ export function MobileMenu() {
       </SheetTrigger>
       <SheetContent side="left" className="w-[21rem] gap-0 p-0">
         <SheetHeader className="border-b px-5 py-4">
-          <SheetTitle className="font-display">Parcourir</SheetTitle>
+          <SheetTitle>Menu</SheetTitle>
         </SheetHeader>
 
         <nav className="flex-1 overflow-y-auto pb-8" aria-label="Navigation mobile">
-          <Section title="Tous les univers">
+          <Section title="Catégories">
             {categories.map((category) => (
               <Row key={category.slug} href={path(`/category/${category.slug}`)} onNavigate={close}>
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-primary">
-                  <CategoryIcon name={category.icon} className="size-4" />
-                </span>
+                <CategoryIcon
+                  name={category.icon}
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                />
                 {category.name}
               </Row>
             ))}
           </Section>
-
-          {browseMenuGroups.map((group) => (
-            <Section key={group.title} title={group.title}>
-              {group.items.map((item) => (
-                <Row key={item.href} href={path(item.href)} onNavigate={close}>
-                  {item.title}
-                </Row>
-              ))}
-            </Section>
-          ))}
 
           <Section title={siteConfig.name}>
             {mainNav.map((item) => (
@@ -72,8 +63,11 @@ export function MobileMenu() {
                 {item.title}
               </Row>
             ))}
-            <Row href={path("/about")} onNavigate={close}>
-              À propos
+            <Row href={path("/how-it-works")} onNavigate={close}>
+              Comment ça marche
+            </Row>
+            <Row href={path("/faq")} onNavigate={close}>
+              Questions fréquentes
             </Row>
           </Section>
         </nav>
@@ -85,9 +79,7 @@ export function MobileMenu() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="border-b py-3 last:border-b-0">
-      <h2 className="px-5 pt-1 pb-2 font-display text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-        {title}
-      </h2>
+      <h2 className="px-5 pt-1 pb-2 text-sm font-semibold text-muted-foreground">{title}</h2>
       <ul>{children}</ul>
     </section>
   );

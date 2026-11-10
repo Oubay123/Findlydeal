@@ -107,14 +107,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <Container className="space-y-8 py-10">
         <Breadcrumbs
           path={path}
-          items={[{ name: "Comparateur", href: "/search" }, { name: category.name }]}
+          items={[{ name: "Catégories", href: "/categories" }, { name: category.name }]}
         />
 
-        <SectionTitle
-          as="h1"
-          title={`${category.name} : comparateur de prix`}
-          description={category.description}
-        />
+        <SectionTitle as="h1" title={category.name} description={category.description} />
 
         <div className="max-w-2xl">
           <Suspense fallback={null}>

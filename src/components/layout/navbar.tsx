@@ -1,15 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { CategoryIcon } from "@/components/category/category-icon";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { listedCategories as categories } from "@/config/categories";
-import { browseMenuGroups } from "@/config/menu";
+import { productCategories as categories } from "@/config/categories";
 import { mainNav } from "@/config/site";
 import { useLocalePath, useUnprefixedPathname } from "@/i18n/use-locale";
 import { cn } from "@/lib/utils";
@@ -17,9 +16,8 @@ import { cn } from "@/lib/utils";
 /**
  * Desktop navigation.
  *
- * "Catégories" opens a panel rather than a flat list: a comparator is browsed
- * by universe *and* by state or budget, and a single column could not carry
- * both without becoming a scrollbar.
+ * "Catégories" opens the list of product universes; the two ways of shopping
+ * second hand (refurbished, used) are direct links next to it.
  */
 export function Navbar() {
   const pathname = useUnprefixedPathname();
@@ -27,7 +25,7 @@ export function Navbar() {
   const isBrowseActive = pathname.startsWith("/category") || pathname.startsWith("/search");
 
   return (
-    <nav className="hidden items-center gap-8 lg:flex" aria-label="Navigation principale">
+    <nav className="hidden items-center gap-7 lg:flex" aria-label="Navigation principale">
       <DropdownMenu>
         <DropdownMenuTrigger
           className={cn(
@@ -43,64 +41,35 @@ export function Navbar() {
           />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent
-          align="start"
-          sideOffset={16}
-          className="w-[54rem] max-w-[calc(100vw-2rem)] p-0"
-        >
-          <div className="grid grid-cols-[1.6fr_1fr]">
-            <div className="p-5">
-              <MenuHeading>Tous les univers</MenuHeading>
-              <ul className="mt-3 grid grid-cols-2 gap-1">
-                {categories.map((category) => (
-                  <li key={category.slug}>
-                    <Link
-                      href={path(`/category/${category.slug}`)}
-                      className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-accent"
-                    >
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-primary">
-                        <CategoryIcon name={category.icon} className="size-4.5" />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-sm font-medium transition-colors group-hover:text-primary">
-                          {category.name}
-                        </span>
-                        <span className="line-clamp-1 block text-xs text-muted-foreground">
-                          {category.description}
-                        </span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-5 rounded-r-lg border-l bg-cream p-5">
-              {browseMenuGroups.map((group) => (
-                <div key={group.title}>
-                  <MenuHeading>{group.title}</MenuHeading>
-                  <ul className="mt-2 space-y-0.5">
-                    {group.items.map((item) => (
-                      <li key={item.href}>
-                        <Link
-                          href={path(item.href)}
-                          className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm text-foreground/80 transition-colors hover:bg-white hover:text-primary"
-                        >
-                          {item.title}
-                          <ChevronRight className="size-3.5 opacity-40" aria-hidden />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
+        <DropdownMenuContent align="start" sideOffset={14} className="w-[30rem] p-3">
+          <ul className="grid grid-cols-2 gap-0.5">
+            {categories.map((category) => (
+              <li key={category.slug}>
+                <Link
+                  href={path(`/category/${category.slug}`)}
+                  className="flex items-center gap-3 rounded-md px-2.5 py-2 text-sm transition-colors hover:bg-accent hover:text-primary"
+                >
+                  <CategoryIcon
+                    name={category.icon}
+                    className="size-4 text-muted-foreground"
+                    strokeWidth={1.75}
+                  />
+                  {category.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <Link
+            href={path("/categories")}
+            className="mt-2 block border-t px-2.5 pt-3 pb-1 text-sm font-medium text-primary hover:underline"
+          >
+            Toutes les catégories
+          </Link>
         </DropdownMenuContent>
       </DropdownMenu>
 
       {mainNav.map((item) => {
-        const isActive = pathname === item.href;
+        const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
         return (
           <Link
             key={item.href}
@@ -116,13 +85,5 @@ export function Navbar() {
         );
       })}
     </nav>
-  );
-}
-
-function MenuHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="font-display text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-      {children}
-    </p>
   );
 }

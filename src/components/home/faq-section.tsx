@@ -11,17 +11,10 @@ interface FaqSectionProps {
 export function FaqSection({ limit }: FaqSectionProps) {
   const faqItems = getFaqItems();
   return (
-    <section className="py-20">
-      <Container className="space-y-10">
-        <SectionTitle
-          centered
-          title="Questions fréquentes"
-          description="Tout ce qu'il faut savoir avant de commencer."
-        />
-        <FaqAccordion
-          items={limit ? faqItems.slice(0, limit) : faqItems}
-          className="mx-auto max-w-3xl"
-        />
+    <section className="py-16">
+      <Container className="space-y-6">
+        <SectionTitle title="Questions fréquentes" />
+        <FaqAccordion items={limit ? faqItems.slice(0, limit) : faqItems} className="max-w-3xl" />
       </Container>
     </section>
   );

@@ -19,10 +19,7 @@ export function ArticleSummary({ points }: ArticleSummaryProps) {
       aria-labelledby="article-summary"
       className="not-prose my-8 rounded-2xl bg-cream px-6 py-5"
     >
-      <h2
-        id="article-summary"
-        className="font-display text-xs font-semibold tracking-wider text-muted-foreground uppercase"
-      >
+      <h2 id="article-summary" className="text-sm font-semibold">
         En résumé
       </h2>
       <ul className="mt-3 space-y-2">
