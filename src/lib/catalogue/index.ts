@@ -9,6 +9,7 @@ import { getEbayConfig } from "@/lib/ebay/config";
 import { EbayApiError, getAccessToken, searchItems } from "@/lib/ebay/client";
 import { catalogueSeeds } from "@/lib/mock";
 import { normalizeTerm } from "@/lib/search/normalize";
+import { catalogueContent } from "@/config/catalogue/content";
 import { toOffer } from "@/lib/sources/ebay";
 import type { Offer, Product, ProductCondition } from "@/types";
 import {
@@ -17,7 +18,10 @@ import {
   getCatalogueRuntime,
   type CatalogueIndex,
   type CatalogueStore,
+  type PricePoint,
 } from "./store";
+
+export type { PricePoint } from "./store";
 
 /**
  * The live catalogue: the products of `src/config/catalogue-ebay.ts`, priced
@@ -52,6 +56,8 @@ const CONCURRENCY = 6;
 
 /** How long an isolate reuses the index it read. */
 const INDEX_MEMORY_MS = 5 * 60 * 1000;
+/** An incomplete index (filling up) is re-read much sooner. */
+const INDEX_MEMORY_INCOMPLETE_MS = 15 * 1000;
 
 /** Lowercase, accents and punctuation folded: "GA-2100" -> "ga2100". */
 const squash = (text: string) => normalizeTerm(text).replace(/[^a-z0-9]/g, "");
@@ -110,9 +116,14 @@ async function findOffers(entry: CatalogueEbayEntry): Promise<{ offers: Offer[];
   };
 }
 
-/** Identity of a catalogue product: the described catalogue, else the entry. */
+/**
+ * Identity of a catalogue product: the described catalogue
+ * (`src/lib/mock/catalog/`) when the slug has a seed there, completed by the
+ * editorial sheets of the extended catalogue (`src/config/catalogue/content/`).
+ */
 function identityOf(entry: CatalogueEbayEntry) {
   const seed = seedsBySlug.get(entry.slug);
+  const content = catalogueContent[entry.slug];
   return {
     title: seed?.title ?? entry.title ?? entry.slug,
     brand: seed?.brand ?? entry.brand,
@@ -120,8 +131,8 @@ function identityOf(entry: CatalogueEbayEntry) {
     category: seed?.category ?? entry.category,
     subject: seed?.imageSubject ?? entry.subject ?? "",
     releasedAt: seed?.releasedAt,
-    description: entry.description ?? seed?.description,
-    specs: seed?.specs,
+    description: entry.description ?? seed?.description ?? content?.description,
+    specs: seed?.specs ?? content?.specs,
     videoReviewId: seed?.videoReviewId,
   };
 }
@@ -335,10 +346,20 @@ export async function refreshCatalogue(): Promise<RefreshResult> {
 /* Reads                                                               */
 /* ------------------------------------------------------------------ */
 
-let memory: { index: CatalogueIndex; readAt: number } | null = null;
+let memory: { index: CatalogueIndex; expiresAt: number } | null = null;
+
+function remember(index: CatalogueIndex) {
+  // While the catalogue is filling up (first deployment, new products), the
+  // next read happens soon: nobody should see an empty site for minutes.
+  const complete = catalogueEbayEntries.every((entry) => index[entry.slug]);
+  memory = {
+    index,
+    expiresAt: Date.now() + (complete ? INDEX_MEMORY_MS : INDEX_MEMORY_INCOMPLETE_MS),
+  };
+}
 
 const readIndex = cache(async function readIndex(): Promise<CatalogueIndex> {
-  if (memory && Date.now() - memory.readAt < INDEX_MEMORY_MS) return memory.index;
+  if (memory && Date.now() < memory.expiresAt) return memory.index;
   const { store, waitUntil } = getCatalogueRuntime();
 
   let index: CatalogueIndex;
@@ -362,7 +383,7 @@ const readIndex = cache(async function readIndex(): Promise<CatalogueIndex> {
     waitUntil(refreshCatalogue().catch((error) => console.error(`[catalogue] ${describe(error)}`)));
   }
 
-  memory = { index, readAt: Date.now() };
+  remember(index);
   return index;
 });
 
@@ -402,6 +423,26 @@ export const getCatalogueProduct = cache(async function getCatalogueProduct(
   // Fall back on the card (cheapest offer per condition), else an empty page.
   const card = (await readIndex())[slug]?.card;
   return card ?? buildLiveProduct(entry, []);
+});
+
+/** How far back the product page's price history looks. */
+export const PRICE_HISTORY_DAYS = 90;
+
+/**
+ * Price history of a catalogue product, oldest first. Empty while the
+ * database has not accumulated points (or without a database at all): the
+ * page then simply skips the section.
+ */
+export const getPriceHistory = cache(async function getPriceHistory(
+  slug: string,
+): Promise<PricePoint[]> {
+  if (!knownSlugs.has(slug) || !getEbayConfig()) return [];
+  try {
+    return await getCatalogueRuntime().store.readPriceHistory(slug, PRICE_HISTORY_DAYS);
+  } catch (error) {
+    console.error(`[catalogue] history ${slug}: ${describe(error)}`);
+    return [];
+  }
 });
 
 /** Is this id one of the live catalogue products? */

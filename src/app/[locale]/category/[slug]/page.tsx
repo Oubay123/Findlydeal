@@ -3,6 +3,7 @@ import { localeAlternates } from "@/lib/seo/locale";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense, cache } from "react";
+import { CategoryGuide } from "@/components/category/category-guide";
 import { Breadcrumbs } from "@/components/common/breadcrumbs";
 import { JsonLd } from "@/components/common/json-ld";
 import { Container } from "@/components/common/container";
@@ -122,6 +123,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </div>
 
         <SearchResults result={result} emptyTermLabel={category.name} />
+
+        <CategoryGuide slug={category.slug} name={category.name} />
       </Container>
     </>
   );

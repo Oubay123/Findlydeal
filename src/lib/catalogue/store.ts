@@ -51,10 +51,24 @@ export interface BucketWrite {
   stats: { priced: number; failures: number; durationMs: number };
 }
 
+/** One point of a product's price history, per condition. */
+export interface PricePoint {
+  condition: string;
+  /** Median of the typical offers at that refresh, in cents. */
+  medianCents: number;
+  /** Cheapest typical offer at that refresh, in cents. */
+  minCents: number;
+  offerCount: number;
+  /** Epoch milliseconds of the capture. */
+  capturedAt: number;
+}
+
 export interface CatalogueStore {
   readonly kind: "supabase" | "kv" | "memory";
   readIndex(): Promise<CatalogueIndex>;
   readProduct(slug: string): Promise<Product | null>;
+  /** Price history of one product, oldest first (empty without history). */
+  readPriceHistory(slug: string, days: number): Promise<PricePoint[]>;
   /** Products of one bucket as last stored (to keep those a refresh failed on). */
   readBucket(bucket: number): Promise<Product[]>;
   writeBucket(write: BucketWrite): Promise<void>;
@@ -96,6 +110,10 @@ function kvStore(kv: KvNamespace): CatalogueStore {
       return products.find((product) => product.id === slug) ?? null;
     },
     readBucket,
+    async readPriceHistory() {
+      // KV keeps only the current state; history needs the database.
+      return [];
+    },
     async writeBucket({ bucket, products, cards, slugs }) {
       await kv.put(bucketKey(bucket), JSON.stringify(products));
       // The index is one document: read, replace this bucket's cards, write.
@@ -185,6 +203,29 @@ function supabaseStore({ url, key }: SupabaseConfig): CatalogueStore {
         data: Product;
       }[];
       return rows.map((row) => row.data);
+    },
+    async readPriceHistory(slug, days) {
+      const since = new Date(Date.now() - days * 24 * 3600 * 1000).toISOString();
+      const rows = (await (
+        await rest(
+          `price_points?product_slug=eq.${encodeURIComponent(slug)}` +
+            `&captured_at=gte.${since}&order=captured_at.asc` +
+            `&select=condition,median_cents,min_cents,offer_count,captured_at&limit=1000`,
+        )
+      ).json()) as {
+        condition: string;
+        median_cents: number;
+        min_cents: number;
+        offer_count: number;
+        captured_at: string;
+      }[];
+      return rows.map((row) => ({
+        condition: row.condition,
+        medianCents: row.median_cents,
+        minCents: row.min_cents,
+        offerCount: row.offer_count,
+        capturedAt: Date.parse(row.captured_at),
+      }));
     },
     async writeBucket({ bucket, products, cards, slugs, stats }) {
       const now = new Date().toISOString();
@@ -333,6 +374,9 @@ const memoryStore: CatalogueStore = {
   },
   async readBucket(bucket) {
     return memoryBuckets.get(bucket) ?? [];
+  },
+  async readPriceHistory() {
+    return [];
   },
   async writeBucket({ bucket, products, cards, slugs }) {
     memoryBuckets.set(bucket, products);

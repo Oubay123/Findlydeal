@@ -11,6 +11,7 @@ import { JsonLd } from "@/components/common/json-ld";
 import { RatingStars } from "@/components/common/rating-stars";
 import { PriceBadge } from "@/components/product/price-badge";
 import { ConditionPrices } from "@/components/product/condition-prices";
+import { PriceHistory } from "@/components/product/price-history";
 import { ProductComparison } from "@/components/product/product-comparison";
 import { ProductRow } from "@/components/product/product-row";
 import { ProductGallery } from "@/components/product/product-gallery";
@@ -20,6 +21,7 @@ import { VideoReview } from "@/components/product/video-review";
 import { CompareBar } from "@/components/search/compare-bar";
 import { CompareToggle } from "@/components/search/compare-toggle";
 import { getCategoryBySlug } from "@/config/categories";
+import { getPriceHistory } from "@/lib/catalogue";
 import { getSourcePresentation } from "@/config/sources";
 import { getDictionary } from "@/i18n";
 import { isDemoCatalogueActive } from "@/lib/mock";
@@ -104,10 +106,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   if (!product) notFound();
 
-  // Both shelves read the same in-memory pool, so one await for the pair.
-  const [similar, discovery] = await Promise.all([
+  // Both shelves read the same pool, and the price history its own store:
+  // one await for the three.
+  const [similar, discovery, priceHistory] = await Promise.all([
     getSimilarProducts(product),
     getDiscoveryProducts(product),
+    getPriceHistory(product.id),
   ]);
 
   const category = product.categorySlug ? getCategoryBySlug(product.categorySlug) : undefined;
@@ -201,6 +205,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         <ProductComparison product={product} />
+
+        {priceHistory.length > 0 ? <PriceHistory history={priceHistory} /> : null}
 
         <div className="space-y-4">
           <ProductSpecs specs={product.specs ?? []} />

@@ -64,16 +64,18 @@ pas pendant le build.
 
 ## Supabase
 
-La base stocke le catalogue (une ligne par produit, une par offre), un
-historique des prix (`price_points`) et le journal des reconstructions
-(`ingest_runs`). Sans elle, le site fonctionne avec Workers KV.
+La base stocke le catalogue (une ligne par produit, une par offre),
+l'historique des prix (`price_points`, affiché sur les fiches produit) et le
+journal des reconstructions (`ingest_runs`). Sans elle, le site fonctionne
+avec Workers KV, sans historique.
 
-1. Créer un projet sur supabase.com (région Europe).
-2. Ouvrir **SQL Editor**, coller le contenu de
-   `supabase/migrations/0001_catalogue.sql`, exécuter.
-3. Dans **Project Settings > API**, copier l'URL du projet et la clé
+Le projet existe : **findlydeal** (réf. `htemgvbkiaeiqowztttb`, région
+eu-west-3 Paris, organisation Findlydeal), tables créées par la migration
+`supabase/migrations/0001_catalogue.sql`. Pour que le site l'utilise :
+
+1. Dans Supabase, **Project Settings > API Keys**, copier la clé
    `service_role` (ou une clé secrète `sb_secret_…`).
-4. Dans Cloudflare, **Workers & Pages > findlydeal > Settings > Variables and
+2. Dans Cloudflare, **Workers & Pages > findlydeal > Settings > Variables and
    Secrets** (pas la section Build), ajouter :
 
 | Nom                         | Type   | Valeur                         |
