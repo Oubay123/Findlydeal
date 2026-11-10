@@ -254,4 +254,91 @@ export const categoryGuides: Record<CategorySlug, CategoryGuide> = {
     ],
     articles: ["reperer-une-vraie-bonne-affaire", "neuf-reconditionne-occasion-que-choisir"],
   },
+  gaming: {
+    intro: [
+      "Les consoles et les jeux se revendent bien et s'achètent beaucoup d'occasion : une console de génération précédente coûte souvent moins de la moitié de son prix de sortie, et les jeux en cartouche gardent leur valeur.",
+      "Les prix relevés viennent d'annonces réelles livrables en France. Les boîtes vides, les consoles en panne ou « pour pièces » et les accessoires seuls sont écartés automatiquement.",
+    ],
+    checks: [
+      {
+        title: "Manettes et sticks",
+        detail:
+          "La dérive des sticks (le personnage bouge seul) est le défaut le plus courant : demandez-le explicitement au vendeur.",
+      },
+      {
+        title: "Compte et bannissement",
+        detail:
+          "Une console liée à un compte ou bannie du jeu en ligne perd une grande partie de son usage : vérifiez qu'elle a été réinitialisée.",
+      },
+      {
+        title: "Ce qui est inclus",
+        detail:
+          "Alimentation, câble HDMI, station d'accueil, manettes : une console nue coûte plus cher à compléter qu'il n'y paraît.",
+      },
+      {
+        title: "Version régionale",
+        detail:
+          "Sur les consoles rétro, une machine européenne (PAL) ne lit pas toujours les jeux japonais ou américains.",
+      },
+    ],
+    articles: ["neuf-reconditionne-occasion-que-choisir", "reperer-une-vraie-bonne-affaire"],
+  },
+  kids: {
+    intro: [
+      "Poussettes, chaises hautes et porte-bébés servent quelques mois et se trouvent souvent en très bon état d'occasion, pour la moitié du prix neuf ou moins. C'est l'une des catégories où la seconde main est la plus naturelle.",
+      "Une règle à part pour les sièges auto : n'en achetez un d'occasion que si vous connaissez son histoire. Un siège qui a subi un accident doit être remplacé, même sans dommage visible.",
+    ],
+    checks: [
+      {
+        title: "Siège auto : histoire et norme",
+        detail:
+          "Aucun choc subi, notice présente, norme R129 (i-Size) lisible sur l'étiquette, date de fabrication récente.",
+      },
+      {
+        title: "Ce qui est inclus",
+        detail:
+          "Nacelle, siège, base, habillage pluie se vendent souvent séparément : comparez ce que contient chaque annonce.",
+      },
+      {
+        title: "Usure mécanique",
+        detail:
+          "Roues, freins, pliage et boucles de harnais : demandez une vidéo si les photos ne suffisent pas.",
+      },
+      {
+        title: "Appareils connectés",
+        detail:
+          "Toniebox, Lunii, Yoto : l'appareil doit être retiré du compte du vendeur, sinon vous ne pourrez pas l'utiliser.",
+      },
+    ],
+    articles: ["neuf-reconditionne-occasion-que-choisir", "reperer-une-vraie-bonne-affaire"],
+  },
+  diy: {
+    intro: [
+      "Un outil professionnel bien entretenu dure des décennies : Makita, DeWalt, Bosch Professional ou Festool se revendent bien et s'achètent couramment d'occasion.",
+      "Pour les outils sans fil, le prix dépend surtout de ce qui accompagne la machine : batteries et chargeur représentent souvent la moitié de la valeur d'un kit.",
+    ],
+    checks: [
+      {
+        title: "Machine nue ou kit",
+        detail:
+          "Vérifiez le nombre et la capacité des batteries, et la présence du chargeur, avant de comparer deux prix.",
+      },
+      {
+        title: "Même plateforme de batteries",
+        detail:
+          "Restez sur une marque dont vous avez déjà les batteries : Bosch bleu (pro) et Bosch vert (grand public) ne sont pas compatibles.",
+      },
+      {
+        title: "Sécurité",
+        detail:
+          "Carter de meuleuse, frein de chaîne de tronçonneuse, câble d'alimentation intact : ne transigez pas sur ces éléments.",
+      },
+      {
+        title: "Robots tondeuses",
+        detail:
+          "Demandez le code antivol et que le robot soit retiré du compte du vendeur ; vérifiez la présence de la station et du câble.",
+      },
+    ],
+    articles: ["neuf-reconditionne-occasion-que-choisir", "reperer-une-vraie-bonne-affaire"],
+  },
 };

@@ -20,7 +20,7 @@ import type { Offer, Product } from "@/types";
  * the subrequest limit of a Worker.
  */
 
-export const BUCKET_COUNT = 16;
+export const BUCKET_COUNT = 23;
 
 /** Stable bucket of a product: the same slug always lands in the same one. */
 export function bucketOf(slug: string): number {
@@ -232,11 +232,20 @@ function supabaseStore({ url, key }: SupabaseConfig): CatalogueStore {
       const now = new Date().toISOString();
 
       // Products no longer in the configuration leave the bucket (their
-      // offers and price history follow: `on delete cascade`).
-      await rest(
-        `products?bucket=eq.${bucket}${slugs.length ? `&slug=not.in.${list(slugs)}` : ""}`,
-        { method: "DELETE" },
-      );
+      // offers and price history follow: `on delete cascade`). Only rows that
+      // still hash to this bucket qualify: after a change of BUCKET_COUNT a
+      // row keeps its old bucket number until its new bucket is refreshed,
+      // and must not lose its history in the meantime.
+      const stored = (await (await rest(`products?bucket=eq.${bucket}&select=slug`)).json()) as {
+        slug: string;
+      }[];
+      const keep = new Set(slugs);
+      const retired = stored
+        .map((row) => row.slug)
+        .filter((slug) => !keep.has(slug) && bucketOf(slug) === bucket);
+      if (retired.length > 0) {
+        await rest(`products?slug=in.${list(retired)}`, { method: "DELETE" });
+      }
       if (products.length === 0) return;
 
       await rest("products?on_conflict=slug", {

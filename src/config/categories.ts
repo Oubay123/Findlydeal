@@ -17,9 +17,9 @@ export const categories: Category[] = [
     slug: "tech",
     seoTitle: "Tech et électronique : prix neuf, reconditionné, occasion",
     name: "Tech & Électronique",
-    description: "Smartphones, ordinateurs, consoles et accessoires.",
+    description: "Smartphones, ordinateurs, tablettes, audio et TV.",
     metaDescription:
-      "Comparez les prix des smartphones, ordinateurs, consoles et casques entre de nombreux vendeurs : neuf, reconditionné et occasion, bonnes affaires signalées.",
+      "Comparez les prix des smartphones, ordinateurs, tablettes et casques entre de nombreux vendeurs : neuf, reconditionné et occasion, bonnes affaires signalées.",
     icon: "Smartphone",
     image: unsplash("photo-1531297484001-80022131f5a1", 700),
     sources: ["ebay", "backmarket"],
@@ -58,10 +58,40 @@ export const categories: Category[] = [
     sources: ["ebay", "creationwatches"],
   },
   {
+    slug: "gaming",
+    seoTitle: "Jeux vidéo et consoles : prix neuf, reconditionné, occasion",
+    name: "Jeux vidéo",
+    description: "Consoles, consoles rétro, manettes et jeux.",
+    metaDescription:
+      "Comparez les prix des consoles et des jeux vidéo : PS5, Switch, Steam Deck, consoles rétro et manettes, en neuf, reconditionné et occasion.",
+    icon: "Gamepad2",
+    sources: ["ebay"],
+  },
+  {
+    slug: "kids",
+    seoTitle: "Enfant et puériculture : prix neuf et occasion",
+    name: "Enfant",
+    description: "Poussettes, sièges auto, équipement bébé et jouets.",
+    metaDescription:
+      "Comparez les prix des poussettes, sièges auto, chaises hautes et jouets : du matériel qui sert quelques mois et se trouve souvent en très bon état d'occasion.",
+    icon: "Baby",
+    sources: ["ebay"],
+  },
+  {
+    slug: "diy",
+    seoTitle: "Bricolage et jardin : prix des outils neufs et d'occasion",
+    name: "Bricolage & Jardin",
+    description: "Outillage électroportatif, mesure et jardin.",
+    metaDescription:
+      "Comparez les prix des outils Makita, DeWalt, Bosch Professional, Festool et des robots tondeuses, neufs ou d'occasion, livraison comprise.",
+    icon: "Hammer",
+    sources: ["ebay"],
+  },
+  {
     slug: "refurbished",
     seoTitle: "Reconditionné : comparer les prix et les garanties",
     name: "Reconditionné",
-    description: "Du matériel testé, remis en état et garanti, à prix réduit.",
+    description: "Testé, remis en état et vendu par des professionnels.",
     metaDescription:
       "Comparez les prix du matériel reconditionné entre de nombreux vendeurs : smartphones, ordinateurs et montres remis en état et vendus moins cher que le neuf.",
     icon: "RefreshCcw",
@@ -94,7 +124,7 @@ export const categories: Category[] = [
     slug: "leisure",
     seoTitle: "Loisirs : comparer les prix neuf et occasion",
     name: "Loisirs",
-    description: "Sport, jeux, instruments et matériel de plein air.",
+    description: "Photo, musique, sport et plein air.",
     metaDescription:
       "Comparez les prix des articles de loisirs entre de nombreux vendeurs : vélos, instruments de musique et matériel de plein air, bonnes affaires signalées.",
     icon: "Bike",
@@ -110,6 +140,11 @@ export const categories: Category[] = [
  * category whose products are gone; its page stays reachable and `noindex`.
  */
 export const listedCategories: Category[] = categories;
+
+/** Product universes, without the two transversal pages (by condition). */
+export const productCategories: Category[] = categories.filter(
+  (category) => category.slug !== "refurbished" && category.slug !== "second-hand",
+);
 
 /** O(1) lookup used by the `/category/[slug]` route. */
 const categoriesBySlug = new Map<string, Category>(categories.map((c) => [c.slug, c]));

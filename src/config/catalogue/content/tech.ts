@@ -5,6 +5,17 @@ import { spec, type CatalogueContent } from "./define";
  * One entry per slug of `src/config/catalogue/tech.ts`.
  */
 export const techContent: Record<string, CatalogueContent> = {
+  "apple-iphone-11-64-go": {
+    description:
+      "L'iPhone le moins cher encore mis à jour par Apple, très présent en reconditionné et d'occasion. Écran LCD, pas de 5G : un bon premier smartphone ou un téléphone de secours. La batterie a souvent plusieurs années, vérifiez sa capacité maximale (Réglages, Batterie).",
+    specs: [
+      spec("Écran", "LCD Liquid Retina 6,1 pouces"),
+      spec("Puce", "Apple A13 Bionic"),
+      spec("Stockage", "64 Go, non extensible"),
+      spec("Photo", "Double capteur 12 Mpx (grand-angle + ultra grand-angle)"),
+      spec("Sortie", "Septembre 2019"),
+    ],
+  },
   "apple-iphone-12-64-go": {
     description:
       "Premier iPhone à écran OLED et 5G sur toute la gamme, toujours mis à jour par Apple. Son prix en reconditionné en fait une porte d'entrée raisonnable dans l'écosystème iOS ; vérifiez l'état de la batterie, qui a souvent plusieurs années.",
@@ -91,6 +102,17 @@ export const techContent: Record<string, CatalogueContent> = {
       spec("Stockage", "128 Go"),
       spec("Châssis", "Titane"),
       spec("Sortie", "Septembre 2023"),
+    ],
+  },
+  "apple-iphone-16-128-go": {
+    description:
+      "L'iPhone de base de 2024, avec bouton Action, bouton Commande de l'appareil photo et puce A18. Récent, il se trouve surtout en reconditionné à quelques mois d'âge : l'écart avec le neuf est plus faible que sur les anciens modèles, comparez-le bien. Ne le confondez pas avec l'iPhone 16e, moins cher et moins équipé.",
+    specs: [
+      spec("Écran", "OLED Super Retina XDR 6,1 pouces"),
+      spec("Puce", "Apple A18"),
+      spec("Stockage", "128 Go, non extensible"),
+      spec("Photo", "Double capteur 48 Mpx + 12 Mpx ultra grand-angle"),
+      spec("Sortie", "Septembre 2024"),
     ],
   },
   "apple-iphone-15-pro-max-256-go": {

@@ -22,7 +22,10 @@ export type CategorySlug =
   | "refurbished"
   | "fashion"
   | "second-hand"
-  | "leisure";
+  | "leisure"
+  | "gaming"
+  | "kids"
+  | "diy";
 
 /** Locales the search engine can query sources in (multilingual search). */
 export type Locale = "fr" | "en" | "de" | "es" | "it";
@@ -249,7 +252,8 @@ export interface Category {
    * as a product card reads as a bug. To use your own asset, drop a file in
    * `public/images/` and put its path here instead of the `unsplash(...)` call.
    */
-  image: string;
+  /** Photo of the universe; optional, the tiles are text only. */
+  image?: string;
   /** Sources that are relevant for this category. */
   sources: SourceId[];
 }

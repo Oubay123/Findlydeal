@@ -128,7 +128,8 @@ function identityOf(entry: CatalogueEbayEntry) {
     title: seed?.title ?? entry.title ?? entry.slug,
     brand: seed?.brand ?? entry.brand,
     model: seed?.model,
-    category: seed?.category ?? entry.category,
+    // The entry wins: it can move a described product to a newer category.
+    category: entry.category ?? seed?.category,
     subject: seed?.imageSubject ?? entry.subject ?? "",
     releasedAt: seed?.releasedAt,
     description: entry.description ?? seed?.description ?? content?.description,

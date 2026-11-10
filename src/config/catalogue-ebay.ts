@@ -28,8 +28,11 @@
  */
 
 import { fashionCatalogue } from "@/config/catalogue/fashion";
+import { diyCatalogue } from "@/config/catalogue/diy";
 import { furnitureCatalogue } from "@/config/catalogue/furniture";
+import { gamingCatalogue } from "@/config/catalogue/gaming";
 import { homeAppliancesCatalogue } from "@/config/catalogue/home";
+import { kidsCatalogue } from "@/config/catalogue/kids";
 import { leisureCatalogue } from "@/config/catalogue/leisure";
 import { queryOverrides } from "@/config/catalogue/queries";
 import { techCatalogue } from "@/config/catalogue/tech";
@@ -153,6 +156,7 @@ const describedEntries: CatalogueEbayEntry[] = [
   },
   {
     slug: "sony-playstation-5-slim-standard",
+    category: "gaming",
     query: "PS5 Slim standard lecteur",
     require: [["ps5", "playstation 5"], ["slim"]],
     exclude: ["digital", "digitale", "pro", "manette", "jeu"],
@@ -161,6 +165,7 @@ const describedEntries: CatalogueEbayEntry[] = [
   },
   {
     slug: "xbox-series-x-1to",
+    category: "gaming",
     query: "Xbox Series X 1 To",
     require: [["series x"]],
     exclude: ["manette", "jeu"],
@@ -290,6 +295,9 @@ export const catalogueEbayEntries: CatalogueEbayEntry[] = [
       ...furnitureCatalogue,
       ...fashionCatalogue,
       ...leisureCatalogue,
+      ...gamingCatalogue,
+      ...kidsCatalogue,
+      ...diyCatalogue,
     ]
       .reverse()
       .map((entry) => [entry.slug, withQueryOverride(entry)] as const),

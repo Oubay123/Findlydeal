@@ -1,5 +1,8 @@
 import {
   Armchair,
+  Baby,
+  Gamepad2,
+  Hammer,
   Bike,
   Package,
   Recycle,
@@ -18,6 +21,9 @@ import type { LucideIcon } from "lucide-react";
  * only ship the ones actually used. Add an entry when adding a category.
  */
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  Gamepad2,
+  Baby,
+  Hammer,
   Smartphone,
   WashingMachine,
   Armchair,

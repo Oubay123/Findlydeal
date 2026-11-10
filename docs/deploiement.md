@@ -42,12 +42,12 @@ pas pendant le build.
 
 - **Catalogue.** Les produits comparés sont déclarés dans
   `src/config/catalogue-ebay.ts` et `src/config/catalogue/` (un fichier par
-  catégorie, environ 330 produits). Chacun est tarifé par les annonces eBay
+  catégorie, environ 400 produits). Chacun est tarifé par les annonces eBay
   qui lui correspondent (filtres de titre, prix minimum et maximum, état).
-  Le catalogue est découpé en 16 lots. Une **tâche planifiée** toutes les
+  Le catalogue est découpé en 23 lots. Une **tâche planifiée** toutes les
   10 minutes (`triggers.crons` dans `wrangler.jsonc`, gérée par
   `cloudflare/worker.js`) reconstruit le lot le plus ancien : une recherche
-  eBay par produit du lot, soit un tour complet en un peu moins de 3 h. Les
+  eBay par produit du lot, soit un tour complet en un peu moins de 4 h. Les
   pages ne contactent jamais eBay : elles lisent le catalogue stocké.
 - **Stockage.** Workers KV (binding `CATALOGUE`) sert les pages : une lecture
   par page, répliquée partout. Quand la clé Supabase est définie, chaque
@@ -106,9 +106,11 @@ répond pas 200, qui porte `noindex`, ou dont le JSON-LD sort du profil
 
 - Un lot compte au plus une trentaine de produits : avec les écritures, une
   reconstruction reste sous la limite gratuite de 50 sous-requêtes. Au-delà
-  d'environ 450 produits, augmenter `BUCKET_COUNT` (`src/lib/catalogue/store.ts`).
+  d'environ 600 produits, augmenter `BUCKET_COUNT` (`src/lib/catalogue/store.ts`).
 - Un produit ajouté ou modifié dans la configuration est pris en compte au
-  prochain passage de son lot (au plus 3 h).
+  prochain passage de son lot (au plus 4 h). Changer `BUCKET_COUNT` ne perd
+  rien : un produit déplacé reste servi par Supabase jusqu'au passage de
+  son nouveau lot.
 - Les frais de Protection des acheteurs eBay (vendeurs particuliers) sont
   estimés sous l'offre selon le barème eBay France, sans être ajoutés au
   total : l'API ne dit pas si le prix renvoyé les inclut.

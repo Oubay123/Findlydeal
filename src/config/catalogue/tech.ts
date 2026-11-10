@@ -4,7 +4,8 @@ const phone = define("tech", "Smartphone");
 const laptop = define("tech", "Ordinateur portable");
 const tablet = define("tech", "Tablette");
 const audio = define("tech", "Casque ou écouteurs");
-const consoleDef = define("tech", "Console de jeux");
+// Consoles are in the "gaming" category (`gaming.ts`).
+const consoleDef = define("gaming", "Console de jeux");
 const screen = define("tech", "Écran");
 const gear = define("tech", "Appareil");
 
@@ -12,6 +13,7 @@ const PRO = ["pro", "max", "plus", "mini"];
 
 export const techCatalogue = [
   // Smartphones
+  phone("Apple", "Apple iPhone 11 64 Go", "iphone 11 | 64", 90, 400, { exclude: PRO }),
   phone("Apple", "Apple iPhone 12 64 Go", "iphone 12 | 64", 110, 500, { exclude: PRO }),
   phone("Apple", "Apple iPhone 12 Pro 128 Go", "iphone 12 pro | 128", 170, 700, {
     exclude: ["max"],
@@ -27,6 +29,9 @@ export const techCatalogue = [
   phone("Apple", "Apple iPhone 15 128 Go", "iphone 15 | 128", 380, 1100, { exclude: PRO }),
   phone("Apple", "Apple iPhone 15 Pro 128 Go", "iphone 15 pro | 128", 520, 1500, {
     exclude: ["max"],
+  }),
+  phone("Apple", "Apple iPhone 16 128 Go", "iphone 16 | 128", 480, 1200, {
+    exclude: [...PRO, "16e", "16 e"],
   }),
   phone("Apple", "Apple iPhone 15 Pro Max 256 Go", "iphone 15 pro max | 256", 650, 1800),
   phone("Apple", "Apple iPhone SE 2022 64 Go", "iphone se | 64 | 2022/3e/3rd/3eme/2022", 110, 500),
@@ -65,7 +70,6 @@ export const techCatalogue = [
   laptop("Microsoft", 'Microsoft Surface Laptop 5 13,5"', "surface laptop 5", 350, 1600),
   laptop("Microsoft", "Microsoft Surface Pro 9", "surface pro 9", 380, 1700),
   laptop("Asus", "Asus ROG Zephyrus G14 (2023)", "zephyrus g14", 600, 2600),
-  laptop("Valve", "Valve Steam Deck 512 Go", "steam deck | 512", 260, 900),
 
   // Tablets and e-readers
   tablet(

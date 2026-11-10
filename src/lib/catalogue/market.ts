@@ -35,13 +35,16 @@ const median = (sorted: number[]) => {
 export function marketByCondition(offers: Offer[]): ConditionMarket[] {
   const typical = typicalOffers(offers);
   const rows = MARKET_CONDITIONS.map((condition): ConditionMarket => {
-    const amounts = typical
-      .filter((offer) => offer.condition === condition)
-      .map((offer) => offer.totalPrice.amount)
-      .sort((a, b) => a - b);
+    const inCondition = typical.filter((offer) => offer.condition === condition);
+    const amounts = inCondition.map((offer) => offer.totalPrice.amount).sort((a, b) => a - b);
+    // The lowest price shown is a delivered price: an offer whose shipping
+    // is unknown only sets it when no other offer exists in that condition.
+    const delivered = inCondition
+      .filter((offer) => !offer.shippingUnknown)
+      .map((offer) => offer.totalPrice.amount);
     return {
       condition,
-      lowestCents: amounts[0],
+      lowestCents: delivered.length ? Math.min(...delivered) : amounts[0],
       medianCents: amounts.length ? Math.round(median(amounts) as number) : undefined,
       count: amounts.length,
     };

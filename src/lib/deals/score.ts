@@ -162,13 +162,28 @@ export function annotateOffersWithDeals(offers: Offer[]): Offer[] {
 }
 
 /**
- * The offer a product is headlined with: the cheapest one that is not
- * flagged as suspicious. A doubtful listing stays in the comparison table,
- * with its warning, but never becomes the "from" price.
+ * Offer order everywhere offers are listed: delivered price, cheapest first,
+ * with offers whose shipping cost is unknown after the others, since their
+ * total is not a delivered price.
+ */
+export function compareOffers(a: Offer, b: Offer): number {
+  const unknown = Number(Boolean(a.shippingUnknown)) - Number(Boolean(b.shippingUnknown));
+  return unknown || a.totalPrice.amount - b.totalPrice.amount;
+}
+
+/**
+ * The offer a product is headlined with: the cheapest one with a known
+ * delivered price that is not flagged as suspicious. A doubtful listing, or
+ * one whose shipping is unknown, stays in the list but never becomes the
+ * "from" price unless nothing else exists.
  */
 export function pickBestOffer(offers: Offer[]): Offer | undefined {
-  const byPrice = [...offers].sort((a, b) => a.totalPrice.amount - b.totalPrice.amount);
-  return byPrice.find((offer) => !offer.deal?.suspicious) ?? byPrice[0];
+  const ordered = [...offers].sort(compareOffers);
+  return (
+    ordered.find((offer) => !offer.deal?.suspicious && !offer.shippingUnknown) ??
+    ordered.find((offer) => !offer.deal?.suspicious) ??
+    ordered[0]
+  );
 }
 
 /** Offers whose price is in line with the others: no outlier, no warning. */

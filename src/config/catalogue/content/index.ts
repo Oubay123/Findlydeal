@@ -1,6 +1,9 @@
+import { diyContent } from "./diy";
 import { fashionContent } from "./fashion";
+import { gamingContent } from "./gaming";
 import { furnitureContent } from "./furniture";
 import { homeContent } from "./home";
+import { kidsContent } from "./kids";
 import { leisureContent } from "./leisure";
 import { techContent } from "./tech";
 import { watchesContent } from "./watches";
@@ -20,4 +23,7 @@ export const catalogueContent: Record<string, CatalogueContent> = {
   ...furnitureContent,
   ...fashionContent,
   ...leisureContent,
+  ...gamingContent,
+  ...kidsContent,
+  ...diyContent,
 };
