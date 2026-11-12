@@ -76,7 +76,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <Breadcrumbs items={[{ name: t.nav.search }]} />
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold sm:text-3xl">{t.search.title}</h1>
+          <h1 className="text-2xl font-semibold sm:text-3xl">{t.search.title}</h1>
           <p className="text-sm text-muted-foreground">{t.search.subtitle}</p>
         </div>
 

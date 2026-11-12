@@ -11,7 +11,7 @@ interface CategoryGridProps {
 }
 
 /**
- * Grid of category tiles, each with the number of products priced in it
+ * Index of the categories, each with the number of products priced in it
  * right now. The two transversal categories (refurbished, used) come last.
  */
 export async function CategoryGrid({ categories = listedCategories }: CategoryGridProps) {
@@ -34,7 +34,7 @@ export async function CategoryGrid({ categories = listedCategories }: CategoryGr
   );
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3">
+    <div className="grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
       {categories.map((category) => (
         <CategoryCard
           key={category.slug}

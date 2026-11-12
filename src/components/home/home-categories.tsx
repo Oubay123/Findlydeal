@@ -10,10 +10,10 @@ import { LocaleLink } from "@/components/common/locale-link";
  */
 export function HomeCategories() {
   return (
-    <section aria-labelledby="home-categories" className="bg-brand-50 border-t py-16">
+    <section aria-labelledby="home-categories" className="border-t py-16">
       <Container className="space-y-6">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-          <h2 id="home-categories" className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 id="home-categories" className="text-2xl font-semibold tracking-tight sm:text-3xl">
             Parcourir les catégories
           </h2>
           <p className="text-sm text-muted-foreground">

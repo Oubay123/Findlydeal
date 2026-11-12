@@ -13,10 +13,9 @@
 
 :root {
   /*
-   * Palette. Findlydeal compares the same product new, refurbished and used:
-   * the three conditions get their own quiet hue, used everywhere a price is
-   * tied to a condition. Everything else stays white, grey-green and ink, so
-   * the prices are what the eye meets first.
+   * Palette. White, grey-green and ink, one green for actions and for the
+   * cheapest price. The three conditions (new, refurbished, used) are told
+   * apart by their names, never by a tint: colour comes from the photos.
    */
   --brand-500: #136f55; /* actions: buttons, links */
   --brand-400: #2a8a6d; /* hover of the actions */
@@ -26,14 +25,6 @@
   --ink: #17221f; /* text on the darkest surfaces */
   --deal: #0f7a4a; /* a price under the median */
   --deal-soft: #e1f2e9; /* background of a deal badge */
-
-  /* Conditions */
-  --condition-new: #355c7d;
-  --condition-new-soft: #e6eef5;
-  --condition-refurbished: #136f55;
-  --condition-refurbished-soft: #e1f2e9;
-  --condition-used: #8a5a14;
-  --condition-used-soft: #f6eddc;
 
   /* Semantic (shadcn contract) */
   --background: #ffffff;
@@ -92,12 +83,6 @@
   --color-ink: var(--ink);
   --color-deal: var(--deal);
   --color-deal-soft: var(--deal-soft);
-  --color-condition-new: var(--condition-new);
-  --color-condition-new-soft: var(--condition-new-soft);
-  --color-condition-refurbished: var(--condition-refurbished);
-  --color-condition-refurbished-soft: var(--condition-refurbished-soft);
-  --color-condition-used: var(--condition-used);
-  --color-condition-used-soft: var(--condition-used-soft);
 
   /* One family for everything: hierarchy comes from size and weight. */
   --font-sans: var(--font-hanken);
@@ -189,5 +174,116 @@
 
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/*
+ * Motion tied to scrolling. Each effect shows something, none decorates:
+ * - the hero headline gives way as the photos leave the screen, the photos
+ *   moving slower than the page;
+ * - the line between the three steps draws from one step to the next;
+ * - a price bar grows to its length, so the gap between conditions is seen
+ *   being measured, and a price chart is uncovered from its first day;
+ * - the header lifts off the page once something scrolls under it.
+ * CSS scroll-driven animations only: no script, run off the main thread.
+ * Nothing moves for visitors who asked for less motion, and in a browser
+ * without support every element simply shows in its final state.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .hero-exit {
+      animation: hero-exit linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 75%;
+    }
+    .hero-parallax {
+      animation: hero-parallax linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+
+    /* Timelines are those of the whole list: a 1px line or a 6px bar would
+       cross the viewport edge in a single pixel of scrolling. */
+    .step-track,
+    .reveal-group {
+      view-timeline-name: --group;
+    }
+    .step-line {
+      transform-origin: top;
+      animation: step-line-y ease-out both;
+      animation-timeline: --group;
+      animation-range: entry 0% entry 100%;
+    }
+    @media (width >= 48rem) {
+      .step-line {
+        transform-origin: left;
+        animation-name: step-line-x;
+      }
+    }
+
+    .reveal-bar {
+      transform-origin: left;
+      animation: grow-x ease-out both;
+      animation-timeline: --group;
+      animation-range: entry 0% entry 100%;
+    }
+
+    .reveal-wipe {
+      view-timeline-name: --wipe;
+    }
+    .reveal-wipe::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: white;
+      pointer-events: none;
+      transform-origin: right;
+      animation: wipe ease-in-out both;
+      animation-timeline: --wipe;
+      animation-range: entry 0% entry 100%;
+    }
+
+    .header-lift {
+      animation: header-lift linear both;
+      animation-timeline: scroll();
+      animation-range: 0 64px;
+    }
+  }
+}
+
+@keyframes hero-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-3rem);
+  }
+}
+@keyframes hero-parallax {
+  to {
+    transform: translateY(18%);
+  }
+}
+@keyframes step-line-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes step-line-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes wipe {
+  to {
+    transform: scaleX(0);
+  }
+}
+@keyframes header-lift {
+  to {
+    box-shadow: 0 1px 14px rgb(15 30 25 / 0.07);
   }
 }

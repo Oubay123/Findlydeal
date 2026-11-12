@@ -50,12 +50,9 @@ export function ProductSpecs({ product, category }: ProductSpecsProps) {
           <h2 id="specs" className="text-xl font-semibold">
             Fiche technique
           </h2>
-          <dl className="divide-y rounded-xl border bg-white">
+          <dl className="divide-y border-y">
             {rows.map((spec) => (
-              <div
-                key={spec.label}
-                className="grid gap-1 px-4 py-3 sm:grid-cols-[11rem_1fr] sm:gap-4 sm:px-5"
-              >
+              <div key={spec.label} className="grid gap-1 py-3 sm:grid-cols-[11rem_1fr] sm:gap-4">
                 <dt className="text-sm text-muted-foreground">{spec.label}</dt>
                 <dd className="text-sm font-medium">{spec.value}</dd>
               </div>

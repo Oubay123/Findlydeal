@@ -1,7 +1,6 @@
 "use client";
 
 import { useId, useState } from "react";
-import { CONDITION_TONE } from "@/components/product/condition-ladder";
 import { CONDITION_LABELS } from "@/lib/constants";
 import { cn, formatPrice } from "@/lib/utils";
 import type { ProductCondition } from "@/types";
@@ -21,30 +20,28 @@ export interface HistorySeries {
   points: HistoryPoint[];
 }
 
+/** Ink, brand green and grey: told apart by tone and dash, not by hue. */
 const STROKE: Partial<Record<ProductCondition, { color: string; dash?: string }>> = {
-  new: { color: "var(--condition-new)" },
-  refurbished: { color: "var(--condition-refurbished)", dash: "7 4" },
-  used: { color: "var(--condition-used)", dash: "2 4" },
+  new: { color: "var(--foreground)" },
+  refurbished: { color: "var(--primary)", dash: "7 4" },
+  used: { color: "var(--muted-foreground)", dash: "2 4" },
 };
 
 const DAY_MS = 24 * 3600 * 1000;
-const MIN_SPAN_MS = 2 * DAY_MS;
 
 const eur = (cents: number) => formatPrice({ amount: cents, currency: "EUR" });
 const dateOf = (t: number) =>
-  new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+  new Date(t).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }).replace(/\.$/, "");
+const dayOf = (t: number) => Math.floor(t / DAY_MS);
 
 /**
- * The price history as a curve or as a table, one control to switch. The
- * table is the complete record (median and cheapest offer per day); the curve
- * draws the medians once three days exist for a condition.
+ * The price history as a chart (shown first) or as a table, one control to
+ * switch. The table is the complete record (median and cheapest offer per
+ * day); the chart draws the medians, with a readout of the day under the
+ * pointer, the finger or the arrow keys.
  */
 export function PriceHistoryView({ series }: { series: HistorySeries[] }) {
-  const drawable = series.filter(
-    (s) => s.points.length >= 3 && (s.points.at(-1)?.t ?? 0) - (s.points[0]?.t ?? 0) >= MIN_SPAN_MS,
-  );
-  const canDraw = drawable.length > 0;
-  const [view, setView] = useState<"chart" | "table">(canDraw ? "chart" : "table");
+  const [view, setView] = useState<"chart" | "table">("chart");
   const id = useId();
   const span = {
     from: Math.min(...series.flatMap((s) => s.points.map((p) => p.t))),
@@ -60,7 +57,7 @@ export function PriceHistoryView({ series }: { series: HistorySeries[] }) {
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Prix médian des offres comparables, par état, du {dateOf(span.from)} au{" "}
-            {dateOf(span.to).replace(/\.$/, "")}. Les prix aberrants sont écartés.
+            {dateOf(span.to)}. Les prix aberrants sont écartés.
           </p>
         </div>
         <div
@@ -68,13 +65,8 @@ export function PriceHistoryView({ series }: { series: HistorySeries[] }) {
           aria-label="Affichage de l'historique"
           className="inline-flex rounded-lg border p-0.5 text-sm"
         >
-          <ViewButton
-            active={view === "chart"}
-            onClick={() => setView("chart")}
-            disabled={!canDraw}
-            title={canDraw ? undefined : "La courbe apparaît après trois jours de relevés"}
-          >
-            Courbe
+          <ViewButton active={view === "chart"} onClick={() => setView("chart")}>
+            Graphique
           </ViewButton>
           <ViewButton active={view === "table"} onClick={() => setView("table")}>
             Tableau
@@ -83,7 +75,7 @@ export function PriceHistoryView({ series }: { series: HistorySeries[] }) {
       </div>
 
       <div className="mt-5">
-        {view === "chart" && canDraw ? <Chart series={drawable} /> : <Table series={series} />}
+        {view === "chart" ? <Chart series={series} /> : <Table series={series} />}
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground">
@@ -104,7 +96,7 @@ function ViewButton({
       type="button"
       aria-pressed={active}
       className={cn(
-        "rounded-md px-3 py-1 font-medium transition-colors focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+        "min-h-9 rounded-md px-3.5 py-1 font-medium transition-colors focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none",
         active ? "bg-foreground text-white" : "text-muted-foreground hover:text-foreground",
       )}
       {...rest}
@@ -119,11 +111,10 @@ function ViewButton({
 /* ------------------------------------------------------------------ */
 
 function Table({ series }: { series: HistorySeries[] }) {
-  const days = [
-    ...new Set(series.flatMap((s) => s.points.map((p) => Math.floor(p.t / DAY_MS)))),
-  ].sort((a, b) => b - a);
-  const at = (s: HistorySeries, day: number) =>
-    s.points.find((p) => Math.floor(p.t / DAY_MS) === day);
+  const days = [...new Set(series.flatMap((s) => s.points.map((p) => dayOf(p.t))))].sort(
+    (a, b) => b - a,
+  );
+  const at = (s: HistorySeries, day: number) => s.points.find((p) => dayOf(p.t) === day);
 
   return (
     <div className="overflow-x-auto">
@@ -138,7 +129,7 @@ function Table({ series }: { series: HistorySeries[] }) {
             </th>
             {series.map((s) => (
               <th key={s.condition} scope="col" className="py-2 pr-4 font-medium">
-                <span className={`rounded-md px-1.5 py-0.5 ${CONDITION_TONE[s.condition]}`}>
+                <span className="font-semibold text-foreground">
                   {CONDITION_LABELS[s.condition]}
                 </span>
                 <span className="mt-1 block font-normal">médiane, la moins chère</span>
@@ -188,118 +179,167 @@ function Table({ series }: { series: HistorySeries[] }) {
 /* ------------------------------------------------------------------ */
 
 const WIDTH = 640;
-const HEIGHT = 200;
-const PAD = { top: 12, right: 12, bottom: 24, left: 56 };
+const HEIGHT = 220;
+const PAD = { top: 16, right: 16, bottom: 26, left: 58 };
 
 function Chart({ series }: { series: HistorySeries[] }) {
   const all = series.flatMap((s) => s.points);
-  const t0 = Math.min(...all.map((p) => p.t));
-  const t1 = Math.max(...all.map((p) => p.t));
+  const days = [...new Set(all.map((p) => dayOf(p.t)))].sort((a, b) => a - b);
+  const [active, setActive] = useState(days.length - 1);
+
+  const d0 = days[0] ?? 0;
+  const d1 = days.at(-1) ?? 0;
   let low = Math.min(...all.map((p) => p.median));
   let high = Math.max(...all.map((p) => p.median));
-  const margin = Math.max((high - low) * 0.12, high * 0.02, 200);
+  const margin = Math.max((high - low) * 0.12, high * 0.03, 200);
   low = Math.max(0, low - margin);
   high = high + margin;
 
-  const x = (t: number) =>
-    PAD.left + ((t - t0) / Math.max(1, t1 - t0)) * (WIDTH - PAD.left - PAD.right);
+  const innerW = WIDTH - PAD.left - PAD.right;
+  const x = (day: number) =>
+    PAD.left + (d1 === d0 ? innerW / 2 : ((day - d0) / (d1 - d0)) * innerW);
   const y = (cents: number) =>
     PAD.top + (1 - (cents - low) / Math.max(1, high - low)) * (HEIGHT - PAD.top - PAD.bottom);
   const ticks = [low, (low + high) / 2, high];
   const euros = (cents: number) => `${Math.round(cents / 100).toLocaleString("fr-FR")} €`;
 
+  const activeDay = days[Math.min(active, days.length - 1)] ?? d1;
+  const readout = series.map((s) => ({
+    condition: s.condition,
+    point: s.points.find((p) => dayOf(p.t) === activeDay),
+  }));
+
+  /** Nearest captured day to a horizontal position in the SVG. */
+  const pick = (event: React.PointerEvent<SVGSVGElement>) => {
+    const box = event.currentTarget.getBoundingClientRect();
+    const svgX = ((event.clientX - box.left) / box.width) * WIDTH;
+    let best = 0;
+    days.forEach((day, index) => {
+      if (Math.abs(x(day) - svgX) < Math.abs(x(days[best] ?? day) - svgX)) best = index;
+    });
+    setActive(best);
+  };
+
   return (
     <figure>
-      <svg
-        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-        role="img"
-        aria-label={`Prix médian par état du ${dateOf(t0)} au ${dateOf(t1)}`}
-        className="h-auto w-full"
-      >
-        {ticks.map((tick) => (
-          <g key={tick}>
-            <line
-              x1={PAD.left}
-              x2={WIDTH - PAD.right}
-              y1={y(tick)}
-              y2={y(tick)}
-              stroke="currentColor"
-              strokeOpacity="0.12"
-            />
-            <text
-              x={PAD.left - 8}
-              y={y(tick) + 4}
-              textAnchor="end"
-              fontSize="11"
-              fill="currentColor"
-              fillOpacity="0.6"
-            >
-              {euros(tick)}
-            </text>
-          </g>
-        ))}
-        <text x={PAD.left} y={HEIGHT - 6} fontSize="11" fill="currentColor" fillOpacity="0.6">
-          {dateOf(t0)}
-        </text>
-        <text
-          x={WIDTH - PAD.right}
-          y={HEIGHT - 6}
-          textAnchor="end"
-          fontSize="11"
-          fill="currentColor"
-          fillOpacity="0.6"
-        >
-          {dateOf(t1)}
-        </text>
-        {series.map(({ condition, points }) => {
-          const style = STROKE[condition] ?? { color: "currentColor" };
-          const path = points
-            .map((p, i) => `${i === 0 ? "M" : "L"}${x(p.t)},${y(p.median)}`)
-            .join(" ");
-          const last = points.at(-1);
-          return (
-            <g key={condition}>
-              <path
-                d={path}
-                fill="none"
-                stroke={style.color}
+      <p aria-live="polite" className="flex flex-wrap items-baseline gap-x-5 gap-y-1 text-sm">
+        <span className="font-medium">{dateOf(activeDay * DAY_MS)}</span>
+        {readout.map(({ condition, point }) => (
+          <span
+            key={condition}
+            className="inline-flex items-baseline gap-1.5 text-muted-foreground"
+          >
+            <svg width="16" height="6" aria-hidden className="self-center">
+              <line
+                x1="1"
+                x2="15"
+                y1="3"
+                y2="3"
+                stroke={STROKE[condition]?.color ?? "currentColor"}
                 strokeWidth="2"
-                strokeDasharray={style.dash}
-                strokeLinejoin="round"
-                strokeLinecap="round"
+                strokeDasharray={STROKE[condition]?.dash}
               />
-              {last ? (
-                <circle cx={x(last.t)} cy={y(last.median)} r="3.5" fill={style.color} />
-              ) : null}
-            </g>
-          );
-        })}
-      </svg>
-      <figcaption className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
-        {series.map(({ condition, points }) => {
-          const style = STROKE[condition] ?? { color: "currentColor" };
-          const last = points.at(-1);
-          return (
-            <span key={condition} className="inline-flex items-center gap-1.5">
-              <svg width="18" height="6" aria-hidden>
-                <line
-                  x1="1"
-                  x2="17"
-                  y1="3"
-                  y2="3"
-                  stroke={style.color}
-                  strokeWidth="2"
-                  strokeDasharray={style.dash}
-                />
-              </svg>
-              {CONDITION_LABELS[condition]}
-              {last ? (
-                <span className="font-medium text-foreground tabular-nums">{eur(last.median)}</span>
-              ) : null}
+            </svg>
+            {CONDITION_LABELS[condition]}
+            <span className="font-semibold text-foreground tabular-nums">
+              {point ? eur(point.median) : "-"}
             </span>
-          );
-        })}
-      </figcaption>
+          </span>
+        ))}
+      </p>
+      <div className="reveal-wipe relative mt-3">
+        <svg
+          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+          role="img"
+          aria-label={`Prix médian par état du ${dateOf(d0 * DAY_MS)} au ${dateOf(d1 * DAY_MS)}. Flèches gauche et droite pour parcourir les jours.`}
+          tabIndex={0}
+          onPointerMove={pick}
+          onPointerDown={pick}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") setActive((i) => Math.max(0, i - 1));
+            else if (event.key === "ArrowRight") setActive((i) => Math.min(days.length - 1, i + 1));
+            else return;
+            event.preventDefault();
+          }}
+          className="h-auto w-full cursor-crosshair touch-pan-y rounded-md focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none"
+        >
+          {ticks.map((tick) => (
+            <g key={tick}>
+              <line
+                x1={PAD.left}
+                x2={WIDTH - PAD.right}
+                y1={y(tick)}
+                y2={y(tick)}
+                stroke="currentColor"
+                strokeOpacity="0.1"
+              />
+              <text
+                x={PAD.left - 10}
+                y={y(tick) + 4}
+                textAnchor="end"
+                fontSize="11"
+                fill="currentColor"
+                fillOpacity="0.55"
+              >
+                {euros(tick)}
+              </text>
+            </g>
+          ))}
+          <text x={PAD.left} y={HEIGHT - 6} fontSize="11" fill="currentColor" fillOpacity="0.55">
+            {dateOf(d0 * DAY_MS)}
+          </text>
+          <text
+            x={WIDTH - PAD.right}
+            y={HEIGHT - 6}
+            textAnchor="end"
+            fontSize="11"
+            fill="currentColor"
+            fillOpacity="0.55"
+          >
+            {dateOf(d1 * DAY_MS)}
+          </text>
+          <line
+            x1={x(activeDay)}
+            x2={x(activeDay)}
+            y1={PAD.top}
+            y2={HEIGHT - PAD.bottom}
+            stroke="currentColor"
+            strokeOpacity="0.25"
+          />
+          {series.map(({ condition, points }) => {
+            const style = STROKE[condition] ?? { color: "currentColor" };
+            const path = points
+              .map((p, i) => `${i === 0 ? "M" : "L"}${x(dayOf(p.t))},${y(p.median)}`)
+              .join(" ");
+            const current = points.find((p) => dayOf(p.t) === activeDay);
+            return (
+              <g key={condition}>
+                {points.length > 1 ? (
+                  <path
+                    d={path}
+                    fill="none"
+                    stroke={style.color}
+                    strokeWidth="2"
+                    strokeDasharray={style.dash}
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                  />
+                ) : null}
+                {points.length === 1 || current ? (
+                  <circle
+                    cx={x(dayOf((current ?? points[0]!).t))}
+                    cy={y((current ?? points[0]!).median)}
+                    r="4"
+                    fill={style.color}
+                    stroke="white"
+                    strokeWidth="1.5"
+                  />
+                ) : null}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
     </figure>
   );
 }

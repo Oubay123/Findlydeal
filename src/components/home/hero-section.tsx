@@ -53,7 +53,7 @@ export async function HeroSection() {
         className="absolute inset-0 -z-10 bg-linear-to-b from-black/30 via-transparent to-black/50"
       />
 
-      <Container className="flex min-h-[34rem] flex-col items-center justify-center py-20 text-center sm:min-h-[40rem] sm:py-28">
+      <Container className="hero-exit flex min-h-[34rem] flex-col items-center justify-center py-20 text-center sm:min-h-[40rem] sm:py-28">
         <h1 className="max-w-3xl text-4xl leading-[1.06] font-semibold tracking-tight text-balance sm:text-6xl">
           Le même produit, neuf, reconditionné ou d&apos;occasion.
         </h1>
@@ -66,49 +66,18 @@ export async function HeroSection() {
           </Suspense>
         </div>
         {popular.length > 0 ? (
-          <p className="mt-6 flex max-w-xl flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-white/75">
+          <p className="mt-6 flex max-w-xl flex-wrap justify-center gap-x-5 gap-y-0 text-sm text-white/75">
             {popular.map((product) => (
               <LocaleLink
                 key={product.id}
                 href={`/product/${encodeURIComponent(product.id)}`}
-                className="underline-offset-4 hover:text-white hover:underline"
+                className="py-1.5 underline-offset-4 hover:text-white hover:underline"
               >
                 {product.model ?? product.title.replace(`${product.brand ?? ""} `, "")}
               </LocaleLink>
             ))}
           </p>
         ) : null}
-      </Container>
-    </section>
-  );
-}
-
-/**
- * Four facts anyone can check on the site, in plain text under the photos:
- * no icons, no badges. Hidden on the demonstration catalogue, whose figures
- * would describe nothing real.
- */
-export async function HeroFacts() {
-  if (isDemoCatalogueActive()) return null;
-  const products = await getPricedCatalogue();
-  if (products.length === 0) return null;
-  const facts = [
-    { value: products.length.toLocaleString("fr-FR"), label: "modèles suivis" },
-    { value: "3 états", label: "neuf, reconditionné, occasion" },
-    { value: "Prix livrés", label: "frais de port compris" },
-    { value: "Plusieurs fois par jour", label: "relevé des offres" },
-  ];
-  return (
-    <section aria-label="Findlydeal en bref" className="border-b">
-      <Container>
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-6 py-8 sm:py-10 lg:grid-cols-4">
-          {facts.map((fact) => (
-            <div key={fact.label} className="flex flex-col-reverse">
-              <dt className="mt-1 text-sm text-muted-foreground">{fact.label}</dt>
-              <dd className="text-lg font-semibold tracking-tight sm:text-xl">{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
       </Container>
     </section>
   );

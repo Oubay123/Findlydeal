@@ -226,7 +226,7 @@ export default async function BarometerPage({ params }: { params: Promise<{ loca
       {byCategory.map(({ category, rows: categoryRows, summary }) => (
         <section key={category.slug} aria-labelledby={`cat-${category.slug}`} className="space-y-3">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 id={`cat-${category.slug}`} className="font-display text-xl font-bold">
+            <h2 id={`cat-${category.slug}`} className="font-display text-xl font-semibold">
               {category.name}
             </h2>
             <p className="text-sm text-muted-foreground">

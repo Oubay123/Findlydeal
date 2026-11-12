@@ -1,7 +1,7 @@
 import type { UiLocale } from "@/i18n";
 import { localeAlternates } from "@/lib/seo/locale";
 import { FaqSection } from "@/components/home/faq-section";
-import { HeroFacts, HeroSection } from "@/components/home/hero-section";
+import { HeroSection } from "@/components/home/hero-section";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { HomeCategories } from "@/components/home/home-categories";
 import { HomeDeals } from "@/components/home/home-deals";
@@ -31,8 +31,8 @@ export async function generateMetadata({
 }
 
 /**
- * Landing page: what the site does, the one product grid, the categories, how
- * it works, the FAQ.
+ * Landing page: what the site does, how it works in three steps, the one
+ * product grid, the categories, the FAQ.
  * Every block is its own component in `@/components/home`.
  */
 export default function HomePage() {
@@ -40,10 +40,9 @@ export default function HomePage() {
     <>
       <DemoBanner />
       <HeroSection />
-      <HeroFacts />
+      <HowItWorks />
       <HomeDeals />
       <HomeCategories />
-      <HowItWorks />
       <FaqSection limit={5} />
     </>
   );

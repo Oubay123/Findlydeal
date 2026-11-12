@@ -31,8 +31,8 @@ export function DealBadge({ deal }: DealBadgeProps) {
   return (
     <span
       title={deal.reasons.join(", ")}
-      className={`rounded-md px-2.5 py-1 text-xs font-semibold text-white ${
-        hasDiscount ? "bg-primary" : "bg-deal-soft"
+      className={`rounded-md px-2.5 py-1 text-xs font-semibold ${
+        hasDiscount ? "bg-primary text-white" : "bg-deal-soft text-deal"
       }`}
     >
       {hasDiscount ? formatBelowMedian(deal.discountPercent!) : "Meilleure affaire"}

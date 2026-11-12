@@ -26,7 +26,7 @@ export function SectionTitle({
 }: SectionTitleProps) {
   return (
     <div className={cn("space-y-2", centered && "text-center", className)}>
-      <Heading className="text-3xl font-bold sm:text-[2rem]">{title}</Heading>
+      <Heading className="text-3xl font-semibold sm:text-[2rem]">{title}</Heading>
       {description ? (
         <p className={cn("max-w-2xl text-muted-foreground", centered && "mx-auto")}>
           {description}

@@ -65,7 +65,7 @@ export const fr = {
     offersCompared: "offres comparées",
     seeOffer: "Voir l'offre",
     compareOffers: "Voir l'offre",
-    cheapest: "Moins cher",
+    cheapest: "La moins chère",
     specs: "Fiche technique",
     reviews: "Avis clients",
     similar: "Produits similaires",

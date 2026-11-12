@@ -1,62 +1,87 @@
 import { LocaleLink } from "@/components/common/locale-link";
-import { CONDITION_TONE } from "@/components/product/condition-ladder";
 import { CONDITION_LABELS } from "@/lib/constants";
 import { lastFetchedAt, marketByCondition } from "@/lib/catalogue/market";
-import { formatPrice, formatRelativeTime } from "@/lib/utils";
+import { cn, formatPrice, formatRelativeTime } from "@/lib/utils";
 import type { Offer } from "@/types";
 
 const eur = (cents: number) => formatPrice({ amount: cents, currency: "EUR" });
 
 /**
- * The market at a glance: for new, refurbished and used, the cheapest offer,
- * how many offers, and how much a second-hand condition saves against the
- * cheapest new offer right now. Only offers priced in line with the others
- * count; a doubtful listing never sets a figure.
+ * The market at a glance: for new, refurbished and used, the cheapest
+ * delivered offer, drawn as a bar whose length is the price. The bars make
+ * the gap readable before any figure is: no tint per condition, only the
+ * cheapest bar takes the brand colour. Only offers priced in line with the
+ * others count; a doubtful listing never sets a figure.
  */
 export function ConditionPrices({ offers }: { offers: Offer[] }) {
   const market = marketByCondition(offers);
-  if (market.filter((row) => row.lowestCents).length < 2) return null;
+  const priced = market.filter((row) => row.lowestCents);
+  if (priced.length < 2) return null;
   const fetchedAt = lastFetchedAt(offers);
+  const highest = Math.max(...priced.map((row) => row.lowestCents as number));
+  const lowest = Math.min(...priced.map((row) => row.lowestCents as number));
 
   return (
-    <section aria-labelledby="market-now" className="space-y-2">
-      <h2 id="market-now" className="text-sm font-semibold">
-        Prix livrés les plus bas
-      </h2>
-      <dl className="grid grid-cols-3 divide-x overflow-hidden rounded-xl border bg-white text-center">
-        {market.map(({ condition, lowestCents, count, gapWithNewPercent }) => (
-          <div key={condition} className="px-2 py-3.5">
-            <dt>
-              <span
-                className={`inline-block rounded-md px-1.5 py-0.5 text-xs font-medium ${CONDITION_TONE[condition]}`}
-              >
-                {CONDITION_LABELS[condition]}
-              </span>
-            </dt>
-            <dd className="mt-1">
-              {lowestCents ? (
-                <>
-                  <span className="block text-lg font-bold tabular-nums">{eur(lowestCents)}</span>
-                  <span className="block text-[0.7rem] text-muted-foreground">
-                    {count} offre{count > 1 ? "s" : ""}
-                  </span>
-                  {gapWithNewPercent ? (
-                    <span className="mt-0.5 block text-xs font-medium text-deal">
-                      −{gapWithNewPercent} % par rapport au neuf
+    <section aria-labelledby="market-now">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h2 id="market-now" className="text-sm font-semibold">
+          Prix livrés les plus bas
+        </h2>
+        {fetchedAt ? (
+          <p className="text-xs text-muted-foreground">Relevés {formatRelativeTime(fetchedAt)}</p>
+        ) : null}
+      </div>
+      <dl className="reveal-group mt-2 divide-y border-y">
+        {market.map(({ condition, lowestCents, count, gapWithNewPercent }) => {
+          const isLowest = lowestCents === lowest;
+          return (
+            <div
+              key={condition}
+              className="grid grid-cols-[6.5rem_minmax(0,1fr)_7.5rem] items-center gap-x-4 py-3 sm:grid-cols-[8rem_minmax(0,1fr)_8rem]"
+            >
+              <dt>
+                <span className="block text-sm font-medium">{CONDITION_LABELS[condition]}</span>
+                <span className="block text-xs text-muted-foreground">
+                  {count > 0 ? `${count} offre${count > 1 ? "s" : ""}` : "Aucune offre"}
+                </span>
+              </dt>
+              <div aria-hidden className="h-1.5 overflow-hidden rounded-full bg-muted">
+                {lowestCents ? (
+                  <span
+                    className={cn(
+                      "reveal-bar block h-full rounded-full",
+                      isLowest ? "bg-primary" : "bg-foreground/30",
+                    )}
+                    style={{ width: `${Math.max(6, (lowestCents / highest) * 100)}%` }}
+                  />
+                ) : null}
+              </div>
+              <dd className="text-right">
+                {lowestCents ? (
+                  <>
+                    <span
+                      className={cn(
+                        "block text-lg leading-tight font-semibold tabular-nums",
+                        isLowest && "text-primary",
+                      )}
+                    >
+                      {eur(lowestCents)}
                     </span>
-                  ) : null}
-                </>
-              ) : (
-                <span className="block pt-1 text-sm text-muted-foreground">Aucune offre</span>
-              )}
-            </dd>
-          </div>
-        ))}
+                    <span className="block text-xs text-muted-foreground tabular-nums">
+                      {gapWithNewPercent ? `${gapWithNewPercent} % sous le neuf` : " "}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-sm text-muted-foreground">-</span>
+                )}
+              </dd>
+            </div>
+          );
+        })}
       </dl>
-      <p className="text-[0.7rem] leading-relaxed text-muted-foreground">
-        Offre la moins chère de chaque état, livraison comprise
-        {fetchedAt ? `, relevée ${formatRelativeTime(fetchedAt)}` : ""}. L&apos;écart compare deux
-        offres disponibles au même moment ; ce n&apos;est pas une remise.{" "}
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+        Offre la moins chère de chaque état, livraison comprise. L&apos;écart compare deux offres
+        disponibles au même moment ; ce n&apos;est pas une remise.{" "}
         <LocaleLink href="/barometre-des-prix" className="underline underline-offset-2">
           Baromètre des prix
         </LocaleLink>

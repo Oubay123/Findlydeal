@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <Container className="flex max-w-xl flex-col items-center gap-4 py-28 text-center">
       <p className="font-display text-sm font-semibold text-primary">404</p>
-      <h1 className="text-3xl font-bold">Cette page n&apos;existe pas</h1>
+      <h1 className="text-3xl font-semibold">Cette page n&apos;existe pas</h1>
       <p className="text-muted-foreground">
         Le lien est peut-être obsolète. Repartez d&apos;une recherche : c&apos;est là que nous
         sommes bons.

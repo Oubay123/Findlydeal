@@ -45,7 +45,7 @@ export async function HomeDeals() {
       <Container className="space-y-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 id="home-deals" className="text-2xl font-bold tracking-tight sm:text-3xl">
+            <h2 id="home-deals" className="text-2xl font-semibold tracking-tight sm:text-3xl">
               Les plus gros écarts avec le neuf
             </h2>
             <p className="mt-1 text-muted-foreground">

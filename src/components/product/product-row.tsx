@@ -52,7 +52,7 @@ export async function ProductRow({
     <section className={cn("space-y-4", className)} aria-label={title}>
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div className="space-y-1">
-          <Heading className="text-xl font-bold sm:text-2xl">{title}</Heading>
+          <Heading className="text-xl font-semibold sm:text-2xl">{title}</Heading>
           {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
         </div>
 

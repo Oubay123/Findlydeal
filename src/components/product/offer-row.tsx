@@ -1,5 +1,4 @@
 import { ExternalLink } from "lucide-react";
-import { CONDITION_TONE } from "@/components/product/condition-ladder";
 import { DealBadge } from "@/components/product/deal-badge";
 import { PriceBadge } from "@/components/product/price-badge";
 import { Button } from "@/components/ui/button";
@@ -28,24 +27,12 @@ interface OfferRowProps {
 export async function OfferRow({ offer, isBest }: OfferRowProps) {
   const t = await getServerDictionary();
   return (
-    <li
-      className={`flex flex-wrap items-center gap-x-4 gap-y-3 rounded-xl border bg-white p-4 sm:p-5 ${
-        isBest ? "border-primary ring-1 ring-primary" : ""
-      }`}
-    >
+    <li className="flex flex-wrap items-center gap-x-6 gap-y-3 py-5">
       <div className="min-w-40 flex-1 space-y-1.5">
-        <div className="flex flex-wrap items-center gap-2">
-          <span
-            className={`rounded-md px-2 py-0.5 text-xs font-medium ${CONDITION_TONE[offer.condition]}`}
-          >
-            {CONDITION_LABELS[offer.condition]}
-          </span>
-          {isBest ? (
-            <span className="rounded-md bg-deal-soft px-2 py-0.5 text-xs font-semibold text-deal">
-              {t.product.cheapest}
-            </span>
-          ) : null}
-        </div>
+        <p className="text-xs font-medium">
+          <span className="text-muted-foreground">{CONDITION_LABELS[offer.condition]}</span>
+          {isBest ? <span className="ml-3 text-primary">{t.product.cheapest}</span> : null}
+        </p>
         <p className="line-clamp-2 text-sm font-medium" title={offer.title}>
           {offer.title}
         </p>

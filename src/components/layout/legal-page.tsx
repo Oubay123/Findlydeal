@@ -42,7 +42,7 @@ export function LegalPage({
     <Container className="max-w-3xl py-16">
       <Breadcrumbs items={breadcrumb ?? [{ name: title }]} className="mb-6" />
 
-      <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
 
       {intro ? (
         <p className="mt-3 leading-relaxed text-pretty text-muted-foreground">{intro}</p>

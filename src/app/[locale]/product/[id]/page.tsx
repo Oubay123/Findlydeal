@@ -192,7 +192,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {product.brand ? (
                 <p className="text-sm text-muted-foreground">{product.brand}</p>
               ) : null}
-              <h1 className="text-2xl leading-tight font-bold tracking-tight sm:text-3xl">
+              <h1 className="text-2xl leading-tight font-semibold tracking-tight sm:text-3xl">
                 {product.title}
               </h1>
             </div>

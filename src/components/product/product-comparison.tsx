@@ -39,7 +39,7 @@ export function ProductComparison({ product }: ProductComparisonProps) {
           </span>
         </h2>
         {saving > 0 ? (
-          <p className="text-sm font-medium text-deal">
+          <p className="text-sm text-muted-foreground">
             Jusqu&apos;à {formatPrice({ amount: saving, currency: cheapest!.totalPrice.currency })}{" "}
             d&apos;écart
           </p>
@@ -60,7 +60,7 @@ export function ProductComparison({ product }: ProductComparisonProps) {
       </p>
 
       {offers.length > 0 ? (
-        <ul className="space-y-3">
+        <ul className="divide-y border-y">
           {offers.map((offer) => (
             <OfferRow key={offer.id} offer={offer} isBest={offer.id === best?.id} />
           ))}

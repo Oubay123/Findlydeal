@@ -22,7 +22,7 @@ export function ProductGallery({ title, alt, images }: ProductGalleryProps) {
 
   if (!primary) {
     return (
-      <div className="flex aspect-square w-full items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+      <div className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl bg-muted text-muted-foreground sm:aspect-square">
         <ImageOff className="size-8" strokeWidth={1.5} aria-hidden />
       </div>
     );
@@ -30,7 +30,7 @@ export function ProductGallery({ title, alt, images }: ProductGalleryProps) {
 
   return (
     <div className="space-y-3">
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-muted">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-muted sm:aspect-square">
         {/* The one image worth prioritising on this page: it is the LCP. */}
         <SmartImage
           src={primary}

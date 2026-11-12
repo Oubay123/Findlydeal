@@ -28,22 +28,22 @@ interface FaqAccordionProps {
  */
 export function FaqAccordion({ items, headingLevel = 3, className }: FaqAccordionProps) {
   return (
-    <Accordion type="single" collapsible className={cn("space-y-3", className)}>
+    <Accordion type="single" collapsible className={cn("border-t border-foreground/15", className)}>
       {items.map((item) => (
         <AccordionItem
           key={item.question}
           value={item.question}
-          className="rounded-xl border bg-white px-5 last:border-b"
+          className="border-b border-foreground/15"
         >
           <AccordionTrigger
             headingLevel={headingLevel}
-            className="py-4 text-left text-[15px] font-semibold hover:no-underline"
+            className="py-5 text-left text-base font-semibold hover:no-underline"
           >
             {item.question}
           </AccordionTrigger>
           <AccordionContent
             forceMount
-            className="pb-4 text-sm leading-relaxed text-muted-foreground"
+            className="max-w-2xl pb-5 text-sm leading-relaxed text-muted-foreground"
           >
             {item.answer}
           </AccordionContent>

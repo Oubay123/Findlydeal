@@ -36,7 +36,7 @@ const components: MDXComponents = {
   h2: ({ children }) => (
     <h2
       id={slugify(textOf(children))}
-      className="mt-12 mb-4 scroll-mt-24 font-display text-2xl leading-tight font-bold"
+      className="mt-12 mb-4 scroll-mt-24 font-display text-2xl leading-tight font-semibold"
     >
       {children}
     </h2>

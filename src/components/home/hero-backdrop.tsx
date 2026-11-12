@@ -12,34 +12,32 @@ interface HeroBackdropProps {
 }
 
 /**
- * Photos cross-fading behind the home page headline.
+ * Photos dissolving one into the next behind the home page headline.
  *
  * - Only the first photo is rendered on the server: it is the LCP of the
- *   page, preloaded. The others are mounted once the browser is idle, so they
- *   never compete with it for bandwidth.
- * - Each photo stays 7 s and fades into the next over 1.5 s. Only opacity
- *   animates: no zoom, which reads as an advert and can cause motion
- *   sickness.
- * - Rotation stops when the tab is hidden, when the visitor presses pause
- *   (WCAG 2.2.2: anything moving for more than five seconds can be stopped),
- *   and never starts for visitors who asked for reduced motion: they keep the
- *   first photo, still, and no button.
+ *   page, preloaded. The others are mounted shortly after, so they never
+ *   compete with it for bandwidth.
+ * - The show only moves on to a photo that has finished loading: a slow
+ *   network never fades the headline onto an empty background.
+ * - Each photo stays 6 s and dissolves into the next over 1.5 s. Only opacity
+ *   changes, nothing moves or zooms: a dissolve is also what iOS and macOS
+ *   use in place of motion when "Reduce motion" is on, so it plays for those
+ *   visitors too (an earlier version froze on the first photo for them).
+ * - Rotation stops while the tab is hidden and when the visitor presses
+ *   pause (WCAG 2.2.2: anything changing for more than five seconds can be
+ *   stopped).
  */
-export function HeroBackdrop({ photos, intervalMs = 7000 }: HeroBackdropProps) {
+export function HeroBackdrop({ photos, intervalMs = 6000 }: HeroBackdropProps) {
   const [index, setIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [loaded, setLoaded] = useState<ReadonlySet<number>>(() => new Set([0]));
   const [paused, setPaused] = useState(false);
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     if (photos.length < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const schedule =
-      window.requestIdleCallback ??
-      ((callback: IdleRequestCallback) => window.setTimeout(callback, 1200));
-    const cancel = window.cancelIdleCallback ?? window.clearTimeout;
-    const handle = schedule(() => setMounted(true));
-    return () => cancel(handle as number);
+    const timer = window.setTimeout(() => setMounted(true), 800);
+    return () => window.clearTimeout(timer);
   }, [photos.length]);
 
   useEffect(() => {
@@ -50,18 +48,24 @@ export function HeroBackdrop({ photos, intervalMs = 7000 }: HeroBackdropProps) {
 
   useEffect(() => {
     if (!mounted || paused || hidden) return;
-    const timer = window.setInterval(
-      () => setIndex((current) => (current + 1) % photos.length),
-      intervalMs,
-    );
-    return () => window.clearInterval(timer);
-  }, [mounted, paused, hidden, photos.length, intervalMs]);
+    const timer = window.setTimeout(() => {
+      // Next photo that is ready; stay put if none is yet.
+      for (let step = 1; step < photos.length; step++) {
+        const candidate = (index + step) % photos.length;
+        if (loaded.has(candidate)) {
+          setIndex(candidate);
+          return;
+        }
+      }
+    }, intervalMs);
+    return () => window.clearTimeout(timer);
+  }, [mounted, paused, hidden, index, loaded, photos.length, intervalMs]);
 
   const visible = mounted ? photos : photos.slice(0, 1);
 
   return (
     <>
-      <div aria-hidden className="absolute inset-0 -z-20 overflow-hidden">
+      <div aria-hidden className="hero-parallax absolute inset-0 -z-20 overflow-hidden">
         {visible.map((src, position) => (
           <SmartImage
             key={src}
@@ -70,9 +74,15 @@ export function HeroBackdrop({ photos, intervalMs = 7000 }: HeroBackdropProps) {
             fill
             context="fullBleed"
             preload={position === 0}
+            loading={position === 0 ? undefined : "eager"}
             fetchPriority={position === 0 ? "high" : "low"}
+            onLoad={() =>
+              setLoaded((current) =>
+                current.has(position) ? current : new Set(current).add(position),
+              )
+            }
             className={cn(
-              "object-cover transition-opacity duration-[1500ms] ease-in-out motion-reduce:transition-none",
+              "object-cover transition-opacity duration-[1500ms] ease-in-out",
               position === index ? "opacity-100" : "opacity-0",
             )}
           />
@@ -83,7 +93,7 @@ export function HeroBackdrop({ photos, intervalMs = 7000 }: HeroBackdropProps) {
           type="button"
           onClick={() => setPaused((value) => !value)}
           aria-pressed={paused}
-          className="absolute right-4 bottom-4 inline-flex size-9 items-center justify-center rounded-full border border-white/30 bg-black/25 text-white/85 hover:bg-black/40 hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none sm:right-6 sm:bottom-6"
+          className="absolute right-4 bottom-4 z-10 inline-flex size-10 items-center justify-center rounded-full border border-white/30 bg-black/25 text-white/85 hover:bg-black/40 hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none sm:right-6 sm:bottom-6"
         >
           {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
           <span className="sr-only">

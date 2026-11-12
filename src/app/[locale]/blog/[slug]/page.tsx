@@ -110,7 +110,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             ))}
           </ul>
 
-          <h1 className="text-3xl leading-tight font-bold text-balance sm:text-4xl">
+          <h1 className="text-3xl leading-tight font-semibold text-balance sm:text-4xl">
             {article.title}
           </h1>
 
@@ -187,7 +187,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {article.faq?.length ? (
           <section aria-labelledby="article-faq" className="mx-auto mt-12 max-w-[68ch]">
-            <h2 id="article-faq" className="font-display text-2xl leading-tight font-bold">
+            <h2 id="article-faq" className="font-display text-2xl leading-tight font-semibold">
               Questions fréquentes
             </h2>
             <dl className="mt-4 divide-y rounded-2xl border bg-white">
@@ -205,7 +205,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {article.sources?.length ? (
           <section aria-labelledby="article-sources" className="mx-auto mt-12 max-w-[68ch]">
-            <h2 id="article-sources" className="font-display text-xl font-bold">
+            <h2 id="article-sources" className="font-display text-xl font-semibold">
               Sources
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -245,7 +245,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </p>
 
         <aside className="mx-auto mt-14 max-w-[68ch] space-y-3 rounded-2xl bg-cream p-8 text-center">
-          <h2 className="font-display text-xl font-bold">Passez de la théorie à la pratique</h2>
+          <h2 className="font-display text-xl font-semibold">Passez de la théorie à la pratique</h2>
           <p className="text-sm text-muted-foreground">
             Comparez le prix d&apos;un produit chez de nombreux vendeurs en une seule recherche.
           </p>
@@ -257,7 +257,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
       {related.length > 0 ? (
         <Container className="max-w-5xl pb-16">
-          <h2 className="mb-6 font-display text-xl font-bold">À lire ensuite</h2>
+          <h2 className="mb-6 font-display text-xl font-semibold">À lire ensuite</h2>
           <div className="grid gap-6 sm:grid-cols-2">
             {related.map((item) => (
               <ArticleCard key={item.slug} article={item} />

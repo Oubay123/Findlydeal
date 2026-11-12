@@ -20,7 +20,7 @@ export function CategoryGuide({ slug, name }: { slug: CategorySlug; name: string
   return (
     <section aria-labelledby={`guide-${slug}`} className="space-y-6 border-t pt-10">
       <div className="max-w-[70ch] space-y-4">
-        <h2 id={`guide-${slug}`} className="font-display text-2xl leading-tight font-bold">
+        <h2 id={`guide-${slug}`} className="font-display text-2xl leading-tight font-semibold">
           Bien acheter en {name}
         </h2>
         {guide.intro.map((paragraph) => (
