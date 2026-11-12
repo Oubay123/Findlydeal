@@ -53,7 +53,15 @@ export async function OfferRow({ offer, isBest }: OfferRowProps) {
       </div>
 
       <div className="space-y-1 text-right">
-        <PriceBadge price={offer.totalPrice} comparedTo={offer.deal?.referencePrice} />
+        <PriceBadge
+          price={offer.totalPrice}
+          comparedTo={offer.deal?.referencePrice}
+          marker={
+            offer.source === "ebay"
+              ? { symbol: "*", label: "eBay peut ajouter des frais au paiement" }
+              : undefined
+          }
+        />
         {offer.shippingPrice ? (
           <p className="text-xs text-muted-foreground">{t.product.shippingIncluded}</p>
         ) : null}

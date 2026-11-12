@@ -98,3 +98,8 @@ export function summarize(rows: BarometerRow[]): BarometerSummary {
     usedGap: used.length >= 3 ? Math.round(median(used) as number) : undefined,
   };
 }
+
+/** Lowest delivered new price, in cents, as counted by `marketByCondition`. */
+export function lowestNewCents(offers: Offer[]): number | undefined {
+  return marketByCondition(offers).find((row) => row.condition === "new")?.lowestCents;
+}

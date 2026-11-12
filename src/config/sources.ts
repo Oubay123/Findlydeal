@@ -13,8 +13,8 @@ import type { SourceId } from "@/types";
  *
  * ## About the logos
  *
- * These are **monograms**, not the partners' logos. Reproducing eBay's or
- * Back Market's logotype requires their permission, and every affiliate
+ * These are **monograms**, not the partners' logos. Reproducing a
+ * marketplace's logotype requires their permission, and every affiliate
  * programme ships brand guidelines that govern exactly how their marks may be
  * displayed. Shipping a made-up approximation of a real logo would be worse
  * than shipping none.
@@ -54,20 +54,6 @@ export const sourcePresentation: Record<SourceId, SourcePresentation> = {
     accent: "#0064d2",
     accentForeground: "#ffffff",
     homepage: "https://www.ebay.fr",
-  },
-  backmarket: {
-    label: "Back Market",
-    monogram: "BM",
-    accent: "#0f4c3a",
-    accentForeground: "#ffffff",
-    homepage: "https://www.backmarket.fr",
-  },
-  creationwatches: {
-    label: "Creation Watches",
-    monogram: "CW",
-    accent: "#1c2a3a",
-    accentForeground: "#ffffff",
-    homepage: "https://www.creationwatches.com",
   },
   wayfair: {
     label: "Wayfair",

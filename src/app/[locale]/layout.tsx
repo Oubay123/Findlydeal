@@ -6,6 +6,7 @@ import { CookieConsent } from "@/components/common/cookie-consent";
 import { JsonLd } from "@/components/common/json-ld";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { DevelopmentNotice } from "@/components/common/development-notice";
 import { siteConfig } from "@/config/site";
 import { getDictionary, isLocaleTranslated, isUiLocale, UI_LOCALES } from "@/i18n";
 import { buildGraph, organizationNode, webSiteNode } from "@/lib/seo/json-ld";
@@ -100,6 +101,7 @@ export default async function RootLayout({
         {/* Site-wide entities: every page's graph points at these two `@id`s. */}
         <JsonLd data={buildGraph(organizationNode(), webSiteNode())} />
         <Header locale={locale} />
+        <DevelopmentNotice />
         <main id="contenu" className="flex-1">
           {children}
         </main>

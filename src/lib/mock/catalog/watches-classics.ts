@@ -2,19 +2,11 @@ import type { MockProductSeed } from "@/lib/mock/build";
 import { productImages } from "@/lib/mock/images";
 
 /**
- * Montres & Bijoux: the Creation Watches selection.
- *
- * Kept in its own file rather than merged into `watches-jewelry.ts` so the
- * whole block can be replaced in one move the day the real feed arrives.
- *
- * Every offer here points at `creationwatches`, whose outbound URL is built by
- * `src/lib/sources/creationwatches.ts`. Those links are **plain public store
- * URLs**: the affiliate application has not been approved, so nothing is
- * tagged. See the adapter for how that changes later.
- *
- * Prices are indicative and, like the rest of the catalogue, fabricated.
+ * Montres & Bijoux: five classic watches. Their editorial content (description,
+ * specifications) is also what the live catalogue shows; the demonstration
+ * offers below are fabricated, like the rest of the mock catalogue.
  */
-export const creationWatchesSeeds: MockProductSeed[] = [
+export const classicWatchSeeds: MockProductSeed[] = [
   {
     slug: "seiko-prospex-turtle-srpe93",
     title: "Seiko Prospex Turtle SRPE93K1, plongée 200 m",
@@ -60,14 +52,6 @@ export const creationWatchesSeeds: MockProductSeed[] = [
       },
     ],
     offers: [
-      {
-        source: "creationwatches",
-        price: 289,
-        condition: "new",
-        seller: "Creation Watches",
-        sellerRating: 4.7,
-        sellerReviewCount: 18420,
-      },
       {
         source: "ebay",
         price: 349,
@@ -125,14 +109,6 @@ export const creationWatchesSeeds: MockProductSeed[] = [
       },
     ],
     offers: [
-      {
-        source: "creationwatches",
-        price: 229,
-        condition: "new",
-        seller: "Creation Watches",
-        sellerRating: 4.7,
-        sellerReviewCount: 18420,
-      },
       {
         source: "ebay",
         price: 299,
@@ -197,14 +173,6 @@ export const creationWatchesSeeds: MockProductSeed[] = [
     ],
     offers: [
       {
-        source: "creationwatches",
-        price: 139,
-        condition: "new",
-        seller: "Creation Watches",
-        sellerRating: 4.7,
-        sellerReviewCount: 18420,
-      },
-      {
         source: "ebay",
         price: 179,
         shipping: 5.9,
@@ -261,14 +229,6 @@ export const creationWatchesSeeds: MockProductSeed[] = [
       },
     ],
     offers: [
-      {
-        source: "creationwatches",
-        price: 449,
-        condition: "new",
-        seller: "Creation Watches",
-        sellerRating: 4.7,
-        sellerReviewCount: 18420,
-      },
       {
         source: "ebay",
         price: 529,
@@ -334,14 +294,6 @@ export const creationWatchesSeeds: MockProductSeed[] = [
     ],
     offers: [
       {
-        source: "creationwatches",
-        price: 89,
-        condition: "new",
-        seller: "Creation Watches",
-        sellerRating: 4.7,
-        sellerReviewCount: 18420,
-      },
-      {
         source: "ebay",
         price: 109,
         shipping: 4.9,
@@ -357,70 +309,6 @@ export const creationWatchesSeeds: MockProductSeed[] = [
         seller: "SonCenter",
         sellerRating: 4.8,
         sellerReviewCount: 6740,
-      },
-    ],
-  },
-  {
-    slug: "bracelet-acier-milanais-20mm",
-    title: "Bracelet milanais acier inoxydable 20 mm, fermoir papillon",
-    brand: "Creation Straps",
-    model: "Milanese 20",
-    category: "watches-jewelry",
-    releasedAt: "2024-02-01",
-    imageSubject: "Bracelet de montre en maille milanaise",
-    description:
-      "La maille milanaise tissée serrée s'ajuste au millimètre grâce à son fermoir papillon coulissant, sans outil ni maillon à retirer. Acier 316L brossé, compatible avec la plupart des montres à cornes de 20 millimètres, livré avec des barrettes à ressort de rechange.",
-    rating: { value: 4.4, count: 918 },
-    images: productImages.braceletSteel,
-    specs: [
-      { label: "Matériau", value: "Acier inoxydable 316L brossé" },
-      { label: "Entrecorne", value: "20 mm" },
-      { label: "Longueur", value: "Ajustable de 145 à 215 mm" },
-      { label: "Fermoir", value: "Papillon coulissant, réglage sans outil" },
-      { label: "Épaisseur", value: "2,8 mm" },
-      { label: "Poids", value: "48 g" },
-      { label: "Inclus", value: "2 barrettes à ressort de rechange" },
-    ],
-    reviews: [
-      {
-        author: "Franck L.",
-        rating: 5,
-        comment:
-          "Le réglage sans outil est un vrai confort, on ajuste selon la température de la journée.",
-        date: "2026-06-30",
-      },
-      {
-        author: "Valérie N.",
-        rating: 4,
-        comment: "Belle maille, bien finie. Elle accroche un peu les poils de bras au début.",
-        date: "2026-04-17",
-      },
-    ],
-    offers: [
-      {
-        source: "creationwatches",
-        price: 29,
-        condition: "new",
-        seller: "Creation Watches",
-        sellerRating: 4.7,
-        sellerReviewCount: 18420,
-      },
-      {
-        source: "ebay",
-        price: 39,
-        shipping: 2.9,
-        condition: "new",
-        seller: "BijouxAtelier",
-        sellerRating: 4.5,
-        sellerReviewCount: 4120,
-      },
-      {
-        source: "ebay",
-        price: 45,
-        condition: "new",
-        seller: "MaisonJoaillerie",
-        sellerRating: 4.7,
-        sellerReviewCount: 2680,
       },
     ],
   },

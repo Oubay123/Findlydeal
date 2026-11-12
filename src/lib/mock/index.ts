@@ -1,3 +1,4 @@
+import { classicWatchSeeds } from "@/lib/mock/catalog/watches-classics";
 import { getConfiguredSources } from "@/lib/sources";
 import { filterProducts } from "@/lib/search/filter";
 import { buildMockProduct, type MockProductSeed } from "@/lib/mock/build";
@@ -5,7 +6,6 @@ import { techSeeds } from "@/lib/mock/catalog/tech";
 import { homeApplianceSeeds } from "@/lib/mock/catalog/home-appliances";
 import { furnitureSeeds } from "@/lib/mock/catalog/furniture";
 import { watchesJewelrySeeds } from "@/lib/mock/catalog/watches-jewelry";
-import { creationWatchesSeeds } from "@/lib/mock/catalog/creation-watches";
 import { lifestyleSeeds } from "@/lib/mock/catalog/lifestyle";
 import type { Product, SearchQuery } from "@/types";
 
@@ -39,7 +39,7 @@ export const catalogueSeeds: readonly MockProductSeed[] = [
   ...homeApplianceSeeds,
   ...furnitureSeeds,
   ...watchesJewelrySeeds,
-  ...creationWatchesSeeds,
+  ...classicWatchSeeds,
   ...lifestyleSeeds,
 ];
 

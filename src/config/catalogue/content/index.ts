@@ -1,3 +1,4 @@
+import { beautyContent } from "./beauty";
 import { diyContent } from "./diy";
 import { fashionContent } from "./fashion";
 import { gamingContent } from "./gaming";
@@ -5,6 +6,8 @@ import { furnitureContent } from "./furniture";
 import { homeContent } from "./home";
 import { kidsContent } from "./kids";
 import { leisureContent } from "./leisure";
+import { mobilityContent } from "./mobility";
+import { sportContent } from "./sport";
 import { techContent } from "./tech";
 import { watchesContent } from "./watches";
 import type { CatalogueContent } from "./define";
@@ -26,4 +29,7 @@ export const catalogueContent: Record<string, CatalogueContent> = {
   ...gamingContent,
   ...kidsContent,
   ...diyContent,
+  ...mobilityContent,
+  ...beautyContent,
+  ...sportContent,
 };

@@ -115,4 +115,9 @@ export const gamingCatalogue = [
   game("Nintendo", "Pokémon Écarlate (Switch)", "pokemon | ecarlate", 20, 70, {
     exclude: ["violet", "carte", "boite vide"],
   }),
+
+  consoleDef("Sony", "Sony PlayStation 5 Pro", "ps5 pro/playstation 5 pro", 500, 1000, {
+    exclude: ["manette seule", "support", "lecteur seul"],
+  }),
+  consoleDef("Meta", "Meta Quest 3S 128 Go", "quest 3s | 128", 180, 450),
 ];

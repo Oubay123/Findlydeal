@@ -1,5 +1,4 @@
 import { annotateOffersWithDeals, summarizeOffers } from "@/lib/deals";
-import { buildStoreSearchUrl } from "@/lib/sources/creationwatches";
 import { fromMajorUnits } from "@/lib/utils";
 import type {
   CategorySlug,
@@ -65,11 +64,7 @@ const FETCHED_AT = "2026-08-21T08:30:00.000Z";
 
 const SEARCH_URLS: Record<SourceId, (term: string) => string> = {
   ebay: (term) => `https://www.ebay.fr/sch/i.html?_nkw=${term}`,
-  backmarket: (term) => `https://www.backmarket.fr/fr-fr/search?q=${term}`,
   wayfair: (term) => `https://www.wayfair.com/keyword.php?keyword=${term}`,
-  // Built by the adapter, so the day affiliate tagging arrives there is one
-  // place to change. See src/lib/sources/creationwatches.ts.
-  creationwatches: (term) => buildStoreSearchUrl(decodeURIComponent(term)),
 };
 
 /**

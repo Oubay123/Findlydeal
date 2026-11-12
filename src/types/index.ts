@@ -11,7 +11,7 @@
  */
 
 /** Identifier of an affiliate source. Add a new source here first. */
-export type SourceId = "ebay" | "backmarket" | "wayfair" | "creationwatches";
+export type SourceId = "ebay" | "wayfair";
 
 /** Top-level product categories. Mirrored by `src/config/categories.ts`. */
 export type CategorySlug =
@@ -25,7 +25,10 @@ export type CategorySlug =
   | "leisure"
   | "gaming"
   | "kids"
-  | "diy";
+  | "diy"
+  | "mobility"
+  | "beauty"
+  | "sport";
 
 /** Locales the search engine can query sources in (multilingual search). */
 export type Locale = "fr" | "en" | "de" | "es" | "it";

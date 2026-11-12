@@ -157,4 +157,23 @@ export const techCatalogue = [
   gear("Logitech", "Logitech MX Master 3S", "mx master 3s", 50, 200),
   gear("Apple", "Apple TV 4K (2022) 64 Go", "apple tv 4k | 2022/3e/3rd/3eme", 80, 300),
   gear("Synology", "Synology DS224+", "ds224+/ds224 +/ds224plus", 250, 700),
+
+  phone("Apple", "Apple iPhone 16 Pro 128 Go", "iphone 16 pro | 128", 600, 1400, {
+    exclude: ["max", "coque"],
+  }),
+  phone("Apple", "Apple iPhone 17 256 Go", "iphone 17 | 256", 650, 1300, {
+    exclude: ["pro", "air", "max", "coque"],
+  }),
+  phone("Samsung", "Samsung Galaxy S25 128 Go", "galaxy s25/s25 | 128", 400, 1000, {
+    exclude: ["ultra", "plus", "edge", "fe", "coque"],
+  }),
+  phone("Google", "Google Pixel 9 128 Go", "pixel 9 | 128", 300, 900, {
+    exclude: ["pro", "xl", "fold", "9a", "coque"],
+  }),
+  laptop("Apple", 'Apple MacBook Air M4 13" 256 Go', "macbook air | m4 | 256", 750, 1400, {
+    exclude: ["15", "coque"],
+  }),
+  audio("Apple", "Apple AirPods Pro 3", "airpods pro 3/airpods pro (3", 150, 300, {
+    exclude: ["boitier seul", "ecouteur seul", "gauche", "droit"],
+  }),
 ];

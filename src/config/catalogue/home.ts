@@ -3,7 +3,6 @@ import { define } from "./define";
 const vacuum = define("home-appliances", "Aspirateur");
 const kitchen = define("home-appliances", "Appareil de cuisine");
 const coffee = define("home-appliances", "Machine à café");
-const care = define("home-appliances", "Appareil de soin");
 const home = define("home-appliances", "Appareil ménager");
 
 export const homeAppliancesCatalogue = [
@@ -17,6 +16,9 @@ export const homeAppliancesCatalogue = [
   vacuum("Dreame", "Dreame L10s Ultra", "dreame l10s ultra", 280, 1500),
   vacuum("Kärcher", "Kärcher K5 nettoyeur haute pression", "karcher k5/karcher k 5", 140, 750),
 
+  kitchen("Vorwerk", "Vorwerk Thermomix TM7", "thermomix tm7", 1000, 2000, {
+    exclude: ["varoma seul", "bol seul", "couvercle"],
+  }),
   kitchen("Vorwerk", "Vorwerk Thermomix TM6", "thermomix tm6", 550, 2200, {
     exclude: ["bol", "varoma"],
   }),
@@ -48,15 +50,6 @@ export const homeAppliancesCatalogue = [
   coffee("Philips", "Philips LatteGo série 3200", "lattego | 3200/ep3241/ep3246", 250, 1000),
   coffee("Nespresso", "Nespresso Vertuo Next", "vertuo next", 45, 280),
   coffee("Rocket", "Rocket Appartamento", "rocket appartamento", 800, 2700),
-
-  care("Dyson", "Dyson Airwrap", "dyson airwrap", 220, 900, { exclude: ["embout", "accessoire"] }),
-  care("Dyson", "Dyson Supersonic", "dyson supersonic", 160, 750, { exclude: ["embout"] }),
-  care("ghd", "ghd Platinum+", "ghd platinum", 100, 480),
-  care("Philips", "Philips Lumea Prestige", "lumea prestige", 150, 850),
-  care("Braun", "Braun Series 9 Pro", "braun | series 9/serie 9 | pro", 150, 750),
-  care("Oral-B", "Oral-B iO Series 9", "oral b io | 9/io9", 110, 550, {
-    exclude: ["brossette", "tete"],
-  }),
 
   home("Dyson", "Dyson Purifier Cool TP07", "dyson | tp07", 220, 950),
   home(

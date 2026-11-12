@@ -2,7 +2,6 @@ import { define } from "./define";
 
 const camera = define("leisure", "Appareil photo");
 const music = define("leisure", "Instrument");
-const sport = define("leisure", "Équipement de sport");
 // A set or a puzzle is described by its number of pieces: not a spare part.
 const toy = define("leisure", "Jeu", { allow: ["piece", "pieces"] });
 const outdoor = define("leisure", "Équipement de plein air");
@@ -54,32 +53,6 @@ export const leisureCatalogue = [
   music("Pioneer DJ", "Pioneer DJ DDJ-FLX4", "ddjflx4/ddj-flx4", 180, 520),
   music("Rega", "Rega Planar 1 platine vinyle", "rega planar 1", 180, 650),
   music("Audio-Technica", "Audio-Technica AT-LP120X", "atlp120/at-lp120", 160, 580),
-
-  sport(
-    "Brompton",
-    "Brompton vélo pliant",
-    "brompton | velo/pliant/m6l/c line/h6l/s2l",
-    600,
-    3200,
-    {
-      exclude: ["sacoche", "selle", "pedale"],
-    },
-  ),
-  sport("Garmin", "Garmin Edge 530", "garmin edge 530", 110, 500),
-  sport("Garmin", "Garmin Edge 1040", "garmin edge 1040", 300, 1100),
-  sport("Wahoo", "Wahoo Kickr Core", "wahoo kickr core", 250, 950),
-  sport("Tacx", "Tacx Neo 2T", "tacx neo 2t", 550, 2000),
-  sport("Peloton", "Peloton Bike", "peloton bike", 500, 3200),
-  sport("Concept2", "Concept2 RowErg", "concept2/concept 2 | rowerg/rameur/model d", 600, 1900),
-  sport(
-    "Xiaomi",
-    "Xiaomi Electric Scooter 4 Pro",
-    "xiaomi | scooter 4 pro/trottinette 4 pro",
-    280,
-    1200,
-  ),
-  sport("Theragun", "Theragun Elite", "theragun elite", 150, 650),
-  sport("Bowflex", "Bowflex SelectTech 552", "bowflex | 552", 180, 800),
 
   toy("LEGO", "LEGO Star Wars Millennium Falcon 75192", "lego | 75192", 450, 1400),
   toy("LEGO", "LEGO Icons Orchidée 10311", "lego | 10311", 25, 110),

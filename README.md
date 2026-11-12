@@ -1,7 +1,8 @@
 # Findlydeal
 
-Comparateur de prix multi-plateformes : une recherche, plusieurs marketplaces (eBay, Back Market,
-Wayfair…), un prix total comparable et une détection des vraies bonnes affaires.
+Comparateur de prix neuf, reconditionné et occasion : une recherche, les offres eBay livrables en
+France, un prix livré comparable et une détection des vraies bonnes affaires. D'autres places de
+marché viendront avec les programmes d'affiliation.
 
 **Stack :** Next.js 16 (App Router, Turbopack) · TypeScript strict · Tailwind CSS v4 · shadcn/ui ·
 ESLint + Prettier. Structure compatible avec un déploiement futur sur Cloudflare Workers via
@@ -121,21 +122,6 @@ Le jour de la bascule, il suffit donc de :
 Les badges « meilleure affaire » et les pourcentages d'économie ne sont **pas** écrits en dur dans
 le mock : ils sont calculés par le vrai moteur `annotateOffersWithDeals()`
 ([lib/deals/score.ts](src/lib/deals/score.ts)). Aucune logique métier n'est dupliquée.
-
-### Creation Watches : liens simples aujourd'hui, affiliés demain
-
-Les 6 produits de [creation-watches.ts](src/lib/mock/catalog/creation-watches.ts) pointent vers de
-**vraies pages publiques** de creationwatches.com, sans aucun paramètre de suivi : le programme
-d'affiliation n'est pas validé, et un lien tagué laisserait croire à une relation qui n'existe pas.
-
-**Toute URL Creation Watches est construite à un seul endroit**,
-[src/lib/sources/creationwatches.ts](src/lib/sources/creationwatches.ts). Le jour de la validation :
-
-1. renseigner `CREATIONWATCHES_AFFILIATE_ID` dans `.env.local` ;
-2. ajuster le paramètre dans `buildAffiliateUrl()` si le programme n'utilise pas `?aff=`.
-
-C'est tout : `buildAffiliateUrl()` renvoie l'URL inchangée tant que l'identifiant est absent, donc
-la bascule ne touche aucun autre fichier.
 
 ### Honnêteté (indispensable pour l'affiliation)
 
@@ -429,8 +415,6 @@ src/
     sources/               # Un fichier par source d'affiliation + contrat commun
       types.ts             #   SourceAdapter : l'interface que TOUTE source implémente
       ebay.ts              #   stub, en attente de validation eBay Partner Network
-      creationwatches.ts   #   stub + construction des URLs Creation Watches
-      backmarket.ts        #   stub, en attente de validation Back Market
       index.ts             #   registre des sources
     search/                # normalize · translate (multilingue) · params (URL) · aggregate
     deals/                 # score : prix de référence + score de bonne affaire
@@ -438,7 +422,7 @@ src/
     mock/                  # CATALOGUE DE DÉMONSTRATION, voir la section dédiée
       images.ts            #   pool de photos Unsplash vérifiées
       build.ts             #   types de seed + constructeur vers `Product`
-      catalog/             #   un fichier par univers, dont creation-watches.ts
+      catalog/             #   un fichier par univers
       index.ts             #   API de requête : searchMockProducts, getMockProductById…
     seo/                   # json-ld : Product, Article, BreadcrumbList, Organization
     utils/                 # cn, format (prix, dates), currency, slug, images (Unsplash)

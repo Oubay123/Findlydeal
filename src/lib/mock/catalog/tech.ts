@@ -50,7 +50,7 @@ export const techSeeds: MockProductSeed[] = [
     ],
     offers: [
       {
-        source: "backmarket",
+        source: "ebay",
         price: 389,
         condition: "refurbished",
         seller: "Smaaart",
@@ -75,7 +75,7 @@ export const techSeeds: MockProductSeed[] = [
         sellerReviewCount: 8840,
       },
       {
-        source: "backmarket",
+        source: "ebay",
         price: 619,
         condition: "refurbished",
         seller: "Reborn",
@@ -122,7 +122,7 @@ export const techSeeds: MockProductSeed[] = [
     ],
     offers: [
       {
-        source: "backmarket",
+        source: "ebay",
         price: 429,
         condition: "refurbished",
         seller: "Certideal",
@@ -193,7 +193,7 @@ export const techSeeds: MockProductSeed[] = [
         sellerReviewCount: 1870,
       },
       {
-        source: "backmarket",
+        source: "ebay",
         price: 459,
         condition: "refurbished",
         seller: "Smaaart",
@@ -255,7 +255,7 @@ export const techSeeds: MockProductSeed[] = [
     ],
     offers: [
       {
-        source: "backmarket",
+        source: "ebay",
         price: 789,
         condition: "refurbished",
         seller: "Recommerce",
@@ -280,7 +280,7 @@ export const techSeeds: MockProductSeed[] = [
         sellerReviewCount: 19400,
       },
       {
-        source: "backmarket",
+        source: "ebay",
         price: 1149,
         condition: "new",
         seller: "Apple Premium Store",
@@ -335,7 +335,7 @@ export const techSeeds: MockProductSeed[] = [
         sellerReviewCount: 1290,
       },
       {
-        source: "backmarket",
+        source: "ebay",
         price: 899,
         condition: "refurbished",
         seller: "Certideal",
@@ -389,7 +389,7 @@ export const techSeeds: MockProductSeed[] = [
     ],
     offers: [
       {
-        source: "backmarket",
+        source: "ebay",
         price: 389,
         condition: "refurbished",
         seller: "Reborn",
@@ -467,7 +467,7 @@ export const techSeeds: MockProductSeed[] = [
         sellerReviewCount: 980,
       },
       {
-        source: "backmarket",
+        source: "ebay",
         price: 269,
         condition: "refurbished",
         seller: "Recommerce",
@@ -529,7 +529,7 @@ export const techSeeds: MockProductSeed[] = [
     ],
     offers: [
       {
-        source: "backmarket",
+        source: "ebay",
         price: 289,
         condition: "refurbished",
         seller: "Certideal",

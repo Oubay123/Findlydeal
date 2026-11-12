@@ -28,13 +28,16 @@
  */
 
 import { fashionCatalogue } from "@/config/catalogue/fashion";
+import { beautyCatalogue } from "@/config/catalogue/beauty";
 import { diyCatalogue } from "@/config/catalogue/diy";
 import { furnitureCatalogue } from "@/config/catalogue/furniture";
 import { gamingCatalogue } from "@/config/catalogue/gaming";
 import { homeAppliancesCatalogue } from "@/config/catalogue/home";
 import { kidsCatalogue } from "@/config/catalogue/kids";
 import { leisureCatalogue } from "@/config/catalogue/leisure";
+import { mobilityCatalogue } from "@/config/catalogue/mobility";
 import { queryOverrides } from "@/config/catalogue/queries";
+import { sportCatalogue } from "@/config/catalogue/sport";
 import { techCatalogue } from "@/config/catalogue/tech";
 import { watchesCatalogue } from "@/config/catalogue/watches";
 import type { CategorySlug } from "@/types";
@@ -298,6 +301,9 @@ export const catalogueEbayEntries: CatalogueEbayEntry[] = [
       ...gamingCatalogue,
       ...kidsCatalogue,
       ...diyCatalogue,
+      ...mobilityCatalogue,
+      ...beautyCatalogue,
+      ...sportCatalogue,
     ]
       .reverse()
       .map((entry) => [entry.slug, withQueryOverride(entry)] as const),

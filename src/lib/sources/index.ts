@@ -1,6 +1,4 @@
 import type { SourceId } from "@/types";
-import { backMarketSource } from "./backmarket";
-import { creationWatchesSource } from "./creationwatches";
 import { ebaySource } from "./ebay";
 import type { SourceAdapter } from "./types";
 
@@ -10,7 +8,7 @@ export * from "./types";
  * Registry of every affiliate source.
  * Register a new adapter here and the search aggregator picks it up.
  */
-const adapters: SourceAdapter[] = [ebaySource, backMarketSource, creationWatchesSource];
+const adapters: SourceAdapter[] = [ebaySource];
 
 const adaptersById = new Map<SourceId, SourceAdapter>(
   adapters.map((adapter) => [adapter.id, adapter]),

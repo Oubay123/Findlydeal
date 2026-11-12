@@ -207,4 +207,22 @@ export const gamingContent: Record<string, CatalogueContent> = {
       spec("Support", "Cartouche"),
     ],
   },
+  "sony-playstation-5-pro": {
+    description:
+      "La PS5 Pro affiche les jeux compatibles avec plus de détails et de fluidité. Elle est vendue sans lecteur de disque : comparez les offres à équipement égal, le lecteur s'achète à part.",
+    specs: [
+      spec("Stockage", "SSD 2 To"),
+      spec("Lecteur de disque", "Vendu séparément"),
+      spec("Sortie", "Novembre 2024"),
+    ],
+  },
+  "meta-quest-3s-128-go": {
+    description:
+      "Le Quest 3S reprend la puce du Quest 3 dans un casque moins cher, avec des lentilles plus simples. D'occasion, demandez la réinitialisation et la dissociation du compte Meta du vendeur.",
+    specs: [
+      spec("Puce", "Snapdragon XR2 Gen 2"),
+      spec("Stockage", "128 Go"),
+      spec("Sortie", "Octobre 2024"),
+    ],
+  },
 };

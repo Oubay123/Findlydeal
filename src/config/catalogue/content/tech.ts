@@ -676,4 +676,54 @@ export const techContent: Record<string, CatalogueContent> = {
       spec("Sortie", "2023"),
     ],
   },
+  "apple-iphone-16-pro-128-go": {
+    description:
+      "L'iPhone 16 Pro ajoute à l'iPhone 16 l'écran ProMotion à 120 Hz, le téléobjectif 5x et la puce A18 Pro. En reconditionné, vérifiez la capacité de la batterie, indiquée dans les réglages.",
+    specs: [
+      spec("Écran", '6,3", ProMotion 120 Hz'),
+      spec("Puce", "Apple A18 Pro"),
+      spec("Sortie", "Septembre 2024"),
+    ],
+  },
+  "apple-iphone-17-256-go": {
+    description:
+      "L'iPhone 17 démarre à 256 Go et reprend l'écran ProMotion à 120 Hz, jusque-là réservé aux modèles Pro. Récent, il se trouve surtout neuf ou en reconditionné presque neuf.",
+    specs: [
+      spec("Écran", '6,3", ProMotion 120 Hz'),
+      spec("Puce", "Apple A19"),
+      spec("Sortie", "Septembre 2025"),
+    ],
+  },
+  "samsung-galaxy-s25-128-go": {
+    description:
+      "Le Galaxy S25 tient dans un format compact et profite de sept ans de mises à jour promis par Samsung. Vérifiez que l'appareil n'est pas verrouillé à un opérateur ni lié à un compte Samsung.",
+    specs: [
+      spec("Écran", '6,2", 120 Hz'),
+      spec("Puce", "Snapdragon 8 Elite for Galaxy"),
+      spec("Mises à jour", "7 ans annoncés"),
+    ],
+  },
+  "google-pixel-9-128-go": {
+    description:
+      "Le Pixel 9 mise sur la photo et sur sept ans de mises à jour d'Android. D'occasion, regardez l'écran sous une lumière rasante : les micro-rayures sont fréquentes.",
+    specs: [
+      spec("Écran", '6,3", 120 Hz'),
+      spec("Puce", "Google Tensor G4"),
+      spec("Mises à jour", "7 ans annoncées"),
+    ],
+  },
+  "apple-macbook-air-m4-13-256-go": {
+    description:
+      "Le MacBook Air M4 démarre à 16 Go de mémoire unifiée et pilote deux écrans externes, capot fermé ou non. Le nombre de cycles de la batterie s'affiche dans les informations système : demandez-le.",
+    specs: [
+      spec("Puce", "Apple M4"),
+      spec("Mémoire", "16 Go de base"),
+      spec("Sortie", "Mars 2025"),
+    ],
+  },
+  "apple-airpods-pro-3": {
+    description:
+      "Les AirPods Pro 3 améliorent la réduction de bruit et ajoutent un capteur de fréquence cardiaque. Pour des raisons d'hygiène et de batterie, préférez le neuf ou le reconditionné vendu par un professionnel.",
+    specs: [spec("Sortie", "Septembre 2025"), spec("Capteur", "Fréquence cardiaque")],
+  },
 };

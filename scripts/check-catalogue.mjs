@@ -28,6 +28,7 @@ writeFileSync(
   export { catalogueSeeds } from "@/lib/mock";
   export { matchesEntry } from "@/lib/catalogue";
   export { bucketOf, BUCKET_COUNT } from "@/lib/catalogue/store";
+  export { referencePrices } from "@/config/reference-prices";
   `,
 );
 execFileSync(
@@ -47,6 +48,7 @@ const {
   catalogueEbayEntries,
   catalogueContent,
   catalogueSeeds,
+  referencePrices,
   matchesEntry,
   bucketOf,
   BUCKET_COUNT,
@@ -77,6 +79,16 @@ for (const entry of catalogueEbayEntries) {
 }
 for (const slug of Object.keys(catalogueContent)) {
   if (!known.has(slug)) errors.push(`content/${slug}: ne correspond à aucun produit du catalogue`);
+}
+
+for (const [slug, prices] of Object.entries(referencePrices)) {
+  if (!known.has(slug))
+    errors.push(`prix de référence : ${slug} n'est pas un produit du catalogue`);
+  for (const price of prices) {
+    if (!(price.euros > 0) || !price.url.startsWith("https://")) {
+      errors.push(`prix de référence : ${slug} (${price.seller}) incomplet`);
+    }
+  }
 }
 
 const sizes = Array.from({ length: BUCKET_COUNT }, () => 0);

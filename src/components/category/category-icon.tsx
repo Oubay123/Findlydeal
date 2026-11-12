@@ -4,13 +4,16 @@ import {
   Gamepad2,
   Hammer,
   Bike,
+  Dumbbell,
   Package,
   Recycle,
   RefreshCcw,
+  Scissors,
   Shirt,
   Smartphone,
   WashingMachine,
   Watch,
+  Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -32,6 +35,9 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   Shirt,
   Recycle,
   Bike,
+  Dumbbell,
+  Scissors,
+  Zap,
 };
 
 interface CategoryIconProps {

@@ -13,6 +13,7 @@ import { Container } from "@/components/common/container";
 import { DemoBanner } from "@/components/common/demo-notice";
 import { JsonLd } from "@/components/common/json-ld";
 import { RatingStars } from "@/components/common/rating-stars";
+import { OfficialNewPrices } from "@/components/product/official-new-prices";
 import { ConditionPrices } from "@/components/product/condition-prices";
 import { PriceHistory } from "@/components/product/price-history";
 import { ProductComparison } from "@/components/product/product-comparison";
@@ -225,13 +226,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     <>
                       {" "}
                       <a href="#offres" className="underline underline-offset-2">
-                        Voir les {product.offers.length} offres
+                        Voir les meilleures offres
                       </a>
                     </>
                   ) : null}
                 </p>
               </div>
             ) : null}
+
+            <OfficialNewPrices slug={product.id} offers={product.offers} />
 
             {product.description ? (
               <p className="text-sm leading-relaxed text-muted-foreground">{product.description}</p>
@@ -250,7 +253,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         <ProductSpecs product={product} category={category} />
 
-        <ProductComparison product={product} />
+        <ProductComparison product={product} pageUrl={url} />
 
         {priceHistory.length > 0 ? <PriceHistory history={priceHistory} /> : null}
 

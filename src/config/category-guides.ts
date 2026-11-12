@@ -341,4 +341,91 @@ export const categoryGuides: Record<CategorySlug, CategoryGuide> = {
     ],
     articles: ["neuf-reconditionne-occasion-que-choisir", "reperer-une-vraie-bonne-affaire"],
   },
+  mobility: {
+    intro: [
+      "Trottinettes et vélos électriques se revendent beaucoup : un modèle d'un ou deux ans coûte souvent nettement moins cher que neuf, à condition que la batterie ait été bien traitée.",
+      "La batterie représente une grande partie de la valeur. Un écart de prix entre deux annonces du même modèle s'explique souvent par son état et par le kilométrage.",
+    ],
+    checks: [
+      {
+        title: "La batterie avant tout",
+        detail:
+          "Demandez le kilométrage et, si l'application l'affiche, l'état de la batterie ; essayez l'appareil chargé.",
+      },
+      {
+        title: "Version européenne bridée",
+        detail:
+          "En France, une trottinette ne doit pas dépasser 25 km/h ; une version débridée n'est pas autorisée sur la voie publique.",
+      },
+      {
+        title: "Pneus, freins et pliage",
+        detail:
+          "Regardez l'usure des pneus, l'efficacité des freins et le jeu de la colonne ou de la charnière de pliage.",
+      },
+      {
+        title: "Facture et antivol",
+        detail:
+          "Demandez la facture d'origine et, pour un vélo, que l'appareil soit retiré du compte ou de l'application du vendeur.",
+      },
+    ],
+    articles: ["neuf-reconditionne-occasion-que-choisir", "reperer-une-vraie-bonne-affaire"],
+  },
+  beauty: {
+    intro: [
+      "Les appareils de coiffure et de soin haut de gamme coûtent cher en neuf et se trouvent souvent reconditionnés par la marque ou par des professionnels, avec garantie.",
+      "Pour tout ce qui touche la peau ou la bouche (tête de brosse à dents, épilateur, rasoir), préférez le neuf ou le reconditionné professionnel avec pièces d'hygiène neuves.",
+    ],
+    checks: [
+      {
+        title: "Attention aux contrefaçons",
+        detail:
+          "Dyson et ghd sont très copiés : un prix très bas sans facture est un signal d'alerte.",
+      },
+      {
+        title: "Accessoires inclus",
+        detail:
+          "Comparez à embouts égaux : le nombre d'accessoires varie beaucoup d'un pack à l'autre.",
+      },
+      {
+        title: "Hygiène",
+        detail:
+          "Têtes de brosse, grilles de rasoir et embouts en contact avec la peau doivent être neufs.",
+      },
+      {
+        title: "Garantie",
+        detail:
+          "Un reconditionné vendu par un professionnel bénéficie de la garantie légale de conformité, pas une vente entre particuliers.",
+      },
+    ],
+    articles: ["garantie-produit-reconditionne", "bien-acheter-produit-reconditionne"],
+  },
+  sport: {
+    intro: [
+      "Home trainers, rameurs et compteurs vélo sont achetés avec enthousiasme puis souvent peu utilisés : le marché de l'occasion est fourni, en très bon état.",
+      "Ce matériel est encombrant et lourd : à prix égal, une offre avec remise en main propre ou livraison comprise vaut plus qu'une annonce dont le port reste à payer.",
+    ],
+    checks: [
+      {
+        title: "Compatibilité",
+        detail:
+          "Pour un home trainer, vérifiez la cassette fournie et l'axe de votre vélo ; pour un compteur, la fixation.",
+      },
+      {
+        title: "Comptes et applications",
+        detail:
+          "Demandez que l'appareil soit dissocié du compte du vendeur (Garmin, Wahoo, Zwift, Peloton).",
+      },
+      {
+        title: "Usure mécanique",
+        detail:
+          "Bruits, jeu ou courroie usée sur un rameur ou un vélo d'appartement : demandez une vidéo de fonctionnement.",
+      },
+      {
+        title: "Abonnement",
+        detail:
+          "Certains appareils connectés réclament un abonnement pour leurs programmes : comptez-le dans le coût total.",
+      },
+    ],
+    articles: ["neuf-reconditionne-occasion-que-choisir", "reperer-une-vraie-bonne-affaire"],
+  },
 };

@@ -183,7 +183,7 @@ export const watchesJewelrySeeds: MockProductSeed[] = [
     ],
     offers: [
       {
-        source: "backmarket",
+        source: "ebay",
         price: 279,
         condition: "refurbished",
         seller: "Recommerce",

@@ -22,7 +22,7 @@ export const categories: Category[] = [
       "Comparez les prix des smartphones, ordinateurs, tablettes et casques entre de nombreux vendeurs : neuf, reconditionné et occasion, bonnes affaires signalées.",
     icon: "Smartphone",
     image: unsplash("photo-1531297484001-80022131f5a1", 700),
-    sources: ["ebay", "backmarket"],
+    sources: ["ebay"],
   },
   {
     slug: "home-appliances",
@@ -55,7 +55,7 @@ export const categories: Category[] = [
       "Comparez les prix des montres et bijoux entre de nombreux vendeurs : montres automatiques, chronographes, montres connectées et bijoux en argent ou plaqué or.",
     icon: "Watch",
     image: unsplash("photo-1509941943102-10c232535736", 700),
-    sources: ["ebay", "creationwatches"],
+    sources: ["ebay"],
   },
   {
     slug: "gaming",
@@ -88,6 +88,36 @@ export const categories: Category[] = [
     sources: ["ebay"],
   },
   {
+    slug: "mobility",
+    seoTitle: "Trottinettes et vélos électriques : prix neuf et occasion",
+    name: "Mobilité électrique",
+    description: "Trottinettes, vélos électriques et vélos pliants.",
+    metaDescription:
+      "Comparez les prix des trottinettes électriques Xiaomi et Segway-Ninebot, des vélos électriques et des Brompton, neufs, reconditionnés ou d'occasion, livraison comprise.",
+    icon: "Zap",
+    sources: ["ebay"],
+  },
+  {
+    slug: "beauty",
+    seoTitle: "Beauté et soin : prix des Dyson, ghd et épilateurs",
+    name: "Beauté & Soin",
+    description: "Coiffure, rasage, épilation et soin.",
+    metaDescription:
+      "Comparez les prix des Dyson Airwrap et Supersonic, des lisseurs ghd, des rasoirs et des épilateurs à lumière pulsée, en neuf comme en reconditionné.",
+    icon: "Scissors",
+    sources: ["ebay"],
+  },
+  {
+    slug: "sport",
+    seoTitle: "Sport et fitness : prix des home trainers et appareils",
+    name: "Sport & Fitness",
+    description: "Home trainers, compteurs vélo, rameurs et récupération.",
+    metaDescription:
+      "Comparez les prix des home trainers Wahoo, Tacx et Zwift, des compteurs Garmin, des rameurs Concept2 et des pistolets de massage, neufs ou d'occasion.",
+    icon: "Dumbbell",
+    sources: ["ebay"],
+  },
+  {
     slug: "refurbished",
     seoTitle: "Reconditionné : comparer les prix et les garanties",
     name: "Reconditionné",
@@ -96,7 +126,7 @@ export const categories: Category[] = [
       "Comparez les prix du matériel reconditionné entre de nombreux vendeurs : smartphones, ordinateurs et montres remis en état et vendus moins cher que le neuf.",
     icon: "RefreshCcw",
     image: unsplash("photo-1588508065123-287b28e013da", 700),
-    sources: ["backmarket"],
+    sources: ["ebay"],
   },
   {
     slug: "fashion",
@@ -118,13 +148,13 @@ export const categories: Category[] = [
       "Comparez les prix des produits d'occasion entre de nombreux vendeurs : tech, mobilier, montres et mode de seconde main, avec les bonnes affaires signalées.",
     icon: "Recycle",
     image: unsplash("photo-1556742049-0cfed4f6a45d", 700),
-    sources: ["ebay", "backmarket"],
+    sources: ["ebay"],
   },
   {
     slug: "leisure",
     seoTitle: "Loisirs : comparer les prix neuf et occasion",
     name: "Loisirs",
-    description: "Photo, musique, sport et plein air.",
+    description: "Photo, musique, jeux et plein air.",
     metaDescription:
       "Comparez les prix des articles de loisirs entre de nombreux vendeurs : vélos, instruments de musique et matériel de plein air, bonnes affaires signalées.",
     icon: "Bike",

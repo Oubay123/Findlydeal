@@ -10,11 +10,13 @@ interface PriceBadgeProps {
    */
   comparedTo?: Money;
   size?: "sm" | "lg";
+  /** Footnote mark after the price ("*"), with its meaning for screen readers. */
+  marker?: { symbol: string; label: string };
   className?: string;
 }
 
 /** Canonical way to display a price. Never format a price inline elsewhere. */
-export function PriceBadge({ price, comparedTo, size = "sm", className }: PriceBadgeProps) {
+export function PriceBadge({ price, comparedTo, size = "sm", marker, className }: PriceBadgeProps) {
   const isDiscounted = Boolean(comparedTo && comparedTo.amount > price.amount);
 
   return (
@@ -27,6 +29,17 @@ export function PriceBadge({ price, comparedTo, size = "sm", className }: PriceB
         )}
       >
         {formatPrice(price)}
+        {marker ? (
+          <>
+            <span
+              aria-hidden
+              className="ml-0.5 align-super text-xs font-medium text-muted-foreground"
+            >
+              {marker.symbol}
+            </span>
+            <span className="sr-only"> ({marker.label})</span>
+          </>
+        ) : null}
       </span>
       {isDiscounted ? (
         <span className="text-xs text-muted-foreground">

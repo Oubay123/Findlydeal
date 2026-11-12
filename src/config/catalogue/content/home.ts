@@ -380,4 +380,9 @@ export const homeContent: Record<string, CatalogueContent> = {
       spec("Fabrication", "Suisse"),
     ],
   },
+  "vorwerk-thermomix-tm7": {
+    description:
+      "Le TM7 succède au TM6 avec un écran plus grand et une cuisson couvercle ouvert. Vendu par démonstration à domicile, il apparaît vite en occasion : vérifiez que l'appareil est dissocié du compte Cookidoo du vendeur.",
+    specs: [spec("Écran", "Tactile 10 pouces"), spec("Sortie", "2025")],
+  },
 };

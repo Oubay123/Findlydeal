@@ -2,7 +2,7 @@ import { getAllSources, getConfiguredSources } from "./index";
 
 /**
  * The marketplaces offers actually come from, as a French list:
- * "eBay", "eBay et Back Market", "eBay, Back Market et Wayfair".
+ * "eBay", "eBay et Wayfair".
  *
  * Copy that names sources goes through here, so the site never claims more
  * marketplaces than are connected. In demonstration mode (nothing
