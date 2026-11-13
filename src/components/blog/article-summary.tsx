@@ -1,5 +1,3 @@
-import { Check } from "lucide-react";
-
 interface ArticleSummaryProps {
   /** Three to six takeaways. Beyond that it stops being a summary. */
   points: string[];
@@ -17,17 +15,14 @@ export function ArticleSummary({ points }: ArticleSummaryProps) {
   return (
     <aside
       aria-labelledby="article-summary"
-      className="not-prose my-8 rounded-2xl bg-cream px-6 py-5"
+      className="not-prose my-8 border-l-2 border-primary py-1 pl-5"
     >
       <h2 id="article-summary" className="text-sm font-semibold">
-        En résumé
+        L&apos;essentiel
       </h2>
-      <ul className="mt-3 space-y-2">
+      <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-foreground/85 marker:text-primary">
         {points.map((point) => (
-          <li key={point} className="flex gap-2.5 text-sm leading-relaxed text-foreground/85">
-            <Check className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
-            <span>{point}</span>
-          </li>
+          <li key={point}>{point}</li>
         ))}
       </ul>
     </aside>

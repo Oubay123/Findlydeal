@@ -19,7 +19,7 @@ export const categoryGuides: Record<CategorySlug, CategoryGuide> = {
   tech: {
     intro: [
       "Smartphones, ordinateurs et casques perdent vite de leur valeur de lancement : un modèle de l'an dernier coûte souvent 25 à 40 % de moins, sans différence sensible à l'usage. C'est la catégorie où comparer le neuf, le reconditionné et l'occasion rapporte le plus.",
-      "Les prix relevés viennent d'annonces réelles des marketplaces partenaires, livrables en France. Chaque offre affiche son état exact, son vendeur et son prix livré ; les annonces d'accessoires, de lots et d'appareils bloqués sont écartées automatiquement.",
+      "Les prix relevés viennent d'annonces réelles des marketplaces interrogées, livrables en France. Chaque offre affiche son état exact, son vendeur et son prix livré ; les annonces d'accessoires, de lots et d'appareils bloqués sont écartées automatiquement.",
     ],
     checks: [
       {

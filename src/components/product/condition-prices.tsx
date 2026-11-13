@@ -1,6 +1,6 @@
 import { LocaleLink } from "@/components/common/locale-link";
 import { CONDITION_LABELS } from "@/lib/constants";
-import { lastFetchedAt, marketByCondition } from "@/lib/catalogue/market";
+import { isStale, lastFetchedAt, marketByCondition } from "@/lib/catalogue/market";
 import { cn, formatPrice, formatRelativeTime } from "@/lib/utils";
 import type { Offer } from "@/types";
 
@@ -28,7 +28,11 @@ export function ConditionPrices({ offers }: { offers: Offer[] }) {
           Prix livrés les plus bas
         </h2>
         {fetchedAt ? (
-          <p className="text-xs text-muted-foreground">Relevés {formatRelativeTime(fetchedAt)}</p>
+          <p className="text-xs text-muted-foreground">
+            {isStale(offers)
+              ? "Derniers relevés anciens : les prix ont pu changer"
+              : `Relevés ${formatRelativeTime(fetchedAt)}`}
+          </p>
         ) : null}
       </div>
       <dl className="reveal-group mt-2 divide-y border-y">

@@ -53,11 +53,11 @@ export function LegalPage({
       </p>
 
       {sections && sections.length > 0 ? (
-        <nav aria-labelledby="sommaire" className="mt-8 rounded-2xl bg-cream p-6">
-          <h2 id="sommaire" className="font-display text-sm font-semibold">
+        <nav aria-labelledby="sommaire" className="mt-8 border-l-2 border-foreground/15 py-1 pl-5">
+          <h2 id="sommaire" className="text-sm font-semibold">
             Sommaire
           </h2>
-          <ol className="mt-3 space-y-2 text-sm text-muted-foreground">
+          <ol className="mt-2 space-y-1 text-sm text-muted-foreground">
             {sections.map((section, index) => (
               <li key={section.title}>
                 <a

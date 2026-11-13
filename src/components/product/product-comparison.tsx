@@ -4,7 +4,7 @@ import { priceErrorMailto } from "@/components/common/development-notice";
 import { OfferRow } from "@/components/product/offer-row";
 import { getSourcePresentation } from "@/config/sources";
 import { compareOffers, selectDisplayedOffers, typicalOffers } from "@/lib/deals";
-import { lastFetchedAt } from "@/lib/catalogue/market";
+import { isStale, lastFetchedAt } from "@/lib/catalogue/market";
 import { formatPrice, formatRelativeTime } from "@/lib/utils";
 import type { Product } from "@/types";
 
@@ -56,7 +56,11 @@ export function ProductComparison({ product, pageUrl }: ProductComparisonProps) 
         à la plus chère ; celles dont la livraison n&apos;est pas connue viennent après. Par site,
         quatre offres au plus (cinq quand toutes sont au prix du marché), dont la moins chère de
         chaque état. Liste non exhaustive, aucune position payante
-        {fetchedAt ? `, prix relevés ${formatRelativeTime(fetchedAt)}` : ""}. Les liens sont
+        {fetchedAt
+          ? isStale(product.offers)
+            ? `, prix relevés ${formatRelativeTime(fetchedAt)} - vérifiez-les sur l'annonce, ils ont pu changer`
+            : `, prix relevés ${formatRelativeTime(fetchedAt)}`
+          : ""}. Les liens sont
         affiliés : Findlydeal peut percevoir une commission, sans effet sur le prix ni sur
         l&apos;ordre.{" "}
         <LocaleLink href="/methodologie" className="underline underline-offset-2">

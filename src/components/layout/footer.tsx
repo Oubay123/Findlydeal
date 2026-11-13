@@ -84,8 +84,9 @@ export function Footer({ locale }: { locale: UiLocale }) {
             ))}
           </nav>
           <p className="sm:text-right">
-            {siteConfig.name} peut percevoir une commission sur certains achats via des liens
-            affiliés, sans surcoût pour vous.
+            {siteConfig.name} ne perçoit aujourd&apos;hui aucune commission : les liens vers les
+            marchands ne sont pas affiliés. Si un programme d&apos;affiliation est activé un jour,
+            la page Affiliation l&apos;indiquera, sans surcoût pour vous.
           </p>
         </div>
       </Container>

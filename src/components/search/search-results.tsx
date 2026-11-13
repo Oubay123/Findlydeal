@@ -116,8 +116,8 @@ function RankingNotice({ sort }: { sort: SearchFilters["sort"] }) {
   return (
     <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
       Classement : <span className="font-medium text-foreground">{label}</span>. Liste non
-      exhaustive : seules les marketplaces partenaires sont interrogées. Aucune position n&apos;est
-      payante ; nos liens sont affiliés.{" "}
+      exhaustive : seules les marketplaces listées sur la page Méthodologie sont interrogées. Aucune
+      position n&apos;est payante.{" "}
       <LocaleLink href="/methodologie" className="underline underline-offset-2">
         Comment nous classons les offres
       </LocaleLink>
@@ -159,7 +159,7 @@ function EmptyState({ query }: { query: SearchQuery }) {
       <Placeholder
         icon={<PackageSearch className="size-6" aria-hidden />}
         title="Pas encore d'offres dans cette catégorie"
-        description="Ses produits arriveront avec nos prochaines marketplaces partenaires. En attendant, parcourez les catégories déjà couvertes."
+        description="Ses produits ne sont pas encore suivis par le catalogue. En attendant, parcourez les catégories déjà couvertes."
         action={
           <LocaleLink
             href="/categories"
@@ -177,7 +177,7 @@ function EmptyState({ query }: { query: SearchQuery }) {
       <Placeholder
         icon={<PackageSearch className="size-6" aria-hidden />}
         title="Lancez une recherche"
-        description="Tapez ce que vous cherchez et Findlydeal compare les offres de nombreux vendeurs en une fois."
+        description="Tapez ce que vous cherchez et Findlydeal compare les offres des vendeurs eBay en une fois."
       />
     );
   }

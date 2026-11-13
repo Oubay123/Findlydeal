@@ -23,7 +23,7 @@ export async function generateMetadata({
   return {
     title: "Toutes les catégories",
     description:
-      "Toutes les catégories comparées par Findlydeal : tech, électroménager, meubles, montres et bijoux, mode, loisirs, reconditionné et occasion, entre de nombreux vendeurs.",
+      "Toutes les catégories comparées par Findlydeal : tech, électroménager, meubles, montres, mode, mobilité, beauté, sport, loisirs, reconditionné et occasion.",
     alternates: localeAlternates(locale, "/categories"),
   };
 }
@@ -43,7 +43,7 @@ export default async function CategoriesPage({
       <SectionTitle
         as="h1"
         title="Toutes les catégories"
-        description="Chaque univers renvoie vers les offres comparées chez de nombreux vendeurs, en neuf, reconditionné et occasion."
+        description="Chaque univers renvoie vers les offres comparées en neuf, reconditionné et occasion, livraison comprise."
       />
 
       <CategoryGrid />

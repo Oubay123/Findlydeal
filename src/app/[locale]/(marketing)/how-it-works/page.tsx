@@ -20,7 +20,7 @@ export async function generateMetadata({
     alternates: localeAlternates(locale, "/how-it-works"),
     title: "Comment ça marche",
     description:
-      "Comment marche Findlydeal : une seule recherche interroge les marketplaces partenaires, normalise leurs offres dans un format comparable et note les vraies bonnes affaires.",
+      "Comment marche Findlydeal : une seule recherche relève les offres eBay livrables en France, les ramène au prix livré et signale les vraies bonnes affaires.",
   };
 }
 
@@ -61,8 +61,8 @@ export default function HowItWorksPage() {
           ))}
         </ul>
         <p className="text-sm text-muted-foreground">
-          D&apos;autres marketplaces s&apos;ajoutent au fur et à mesure que leurs programmes
-          d&apos;affiliation sont validés.
+          D&apos;autres marketplaces s&apos;ajouteront quand leurs conditions d&apos;accès le
+          permettront ; chacune sera indiquée ici et sur la page Méthodologie.
         </p>
       </section>
 

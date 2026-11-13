@@ -18,11 +18,11 @@ export function getFaqItems(): FaqItem[] {
     {
       question: "Findlydeal est-il gratuit ?",
       answer:
-        "Oui, totalement. Vous ne payez jamais rien. Lorsque vous achetez via l'un de nos liens, c'est la marketplace qui nous verse une commission, et le prix que vous payez reste identique.",
+        "Oui, totalement. Vous ne payez jamais rien, et les prix affichés sont ceux des marchands. Le site ne perçoit aujourd'hui aucune commission ; à terme, il a vocation à être financé par des programmes d'affiliation, qui ne changent ni le prix payé ni l'ordre des offres.",
     },
     {
       question: "Sur quelles plateformes comparez-vous ?",
-      answer: `Aujourd'hui, les offres viennent de ${describeLiveSources()}, auprès de vendeurs professionnels comme de particuliers. D'autres marketplaces seront ajoutées à mesure que leurs programmes d'affiliation sont validés ; chacune sera indiquée ici et sur la page Méthodologie.`,
+      answer: `Aujourd'hui, les offres viennent de ${describeLiveSources()}, auprès de vendeurs professionnels comme de particuliers. D'autres marketplaces seront ajoutées quand leurs conditions d'accès le permettront ; chacune sera indiquée ici et sur la page Méthodologie.`,
     },
     {
       question: "Comment sont détectées les bonnes affaires ?",

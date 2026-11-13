@@ -1,6 +1,7 @@
 import type { UiLocale } from "@/i18n";
 import { localeAlternates } from "@/lib/seo/locale";
 import { Breadcrumbs } from "@/components/common/breadcrumbs";
+import { LocaleLink } from "@/components/common/locale-link";
 import type { Metadata } from "next";
 import { Container } from "@/components/common/container";
 import { SectionTitle } from "@/components/common/section-title";
@@ -18,7 +19,7 @@ export async function generateMetadata({
     alternates: localeAlternates(locale, "/about"),
     title: "À propos",
     description:
-      "À propos de Findlydeal : un comparateur de prix indépendant qui agrège les offres des marketplaces partenaires, détecte les vraies remises et vit de commissions d'affiliation.",
+      "À propos de Findlydeal : un comparateur de prix indépendant qui relève les offres eBay livrables en France, les ramène au prix livré et signale les vraies remises.",
   };
 }
 
@@ -44,15 +45,22 @@ export default function AboutPage() {
           n&apos;incluent pas la livraison, et de ne jamais savoir si la remise affichée est réelle.
         </p>
         <p>
-          Nous relevons les offres des marketplaces partenaires, nous les ramenons à un format
+          Nous relevons les offres des marketplaces interrogées, nous les ramenons à un format
           comparable (prix total, état, vendeur), et nous évaluons chacune d&apos;elles par rapport
           aux offres du même produit dans le même état, pour qu&apos;un badge « bonne affaire »
           veuille enfin dire quelque chose.
         </p>
         <p>
-          {siteConfig.name} est gratuit et le restera. Nous sommes rémunérés par les marketplaces
-          via des commissions d&apos;affiliation, ce qui n&apos;influence jamais le classement des
-          offres.
+          {siteConfig.name} est gratuit et le restera. Le site est en développement et ne perçoit
+          aujourd&apos;hui aucune commission ; des candidatures aux programmes d&apos;affiliation
+          des marketplaces sont en cours. Si l&apos;une aboutit, elle sera annoncée sur la page{" "}
+          <LocaleLink
+            href="/legal/affiliate-disclosure"
+            className="text-primary underline underline-offset-4"
+          >
+            Affiliation
+          </LocaleLink>
+          , et cela ne changera ni les prix affichés ni l&apos;ordre des offres.
         </p>
         {isDemo ? (
           <p>
@@ -66,8 +74,8 @@ export default function AboutPage() {
           <p>
             Aujourd&apos;hui, les offres viennent de{" "}
             <strong className="text-foreground">{describeLiveSources()}</strong>, livrables en
-            France. D&apos;autres marketplaces seront ajoutées à mesure que leurs programmes
-            d&apos;affiliation sont validés.
+            France. D&apos;autres marketplaces seront ajoutées quand leurs conditions d&apos;accès
+            le permettront ; chacune sera indiquée sur la page Méthodologie.
           </p>
         )}
         <p>

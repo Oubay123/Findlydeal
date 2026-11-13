@@ -7,6 +7,7 @@ import { JsonLd } from "@/components/common/json-ld";
 import { LocaleLink } from "@/components/common/locale-link";
 import { SectionTitle } from "@/components/common/section-title";
 import { siteConfig } from "@/config/site";
+import { isAffiliationActive } from "@/lib/sources/describe";
 import {
   DEAL_SCORE_THRESHOLDS,
   MIN_OFFERS_FOR_REFERENCE_PRICE,
@@ -82,6 +83,7 @@ export default async function MethodologyPage({
   const isDemo = isDemoCatalogueActive();
   // Live: only the marketplaces actually queried. Demo: the planned ones.
   const sources = (isDemo ? getAllSources() : getConfiguredSources()).map((source) => source.label);
+  const affiliationActive = isAffiliationActive();
 
   return (
     <Container className="max-w-3xl space-y-10 py-16">
@@ -101,17 +103,17 @@ export default async function MethodologyPage({
       <SectionTitle
         as="h1"
         title={TITLE}
-        description={`${siteConfig.name} compare le prix total des offres des marketplaces partenaires. Aucune position n'est payante, et une commission ne change jamais l'ordre des offres.`}
+        description={`${siteConfig.name} compare le prix total des offres des marketplaces interrogées. Aucune position n'est payante, et aucune rémunération ne change l'ordre des offres.`}
       />
 
       <div className="space-y-10 text-sm leading-relaxed text-muted-foreground [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground">
         <section className="space-y-3">
           <h2>D&apos;où viennent les prix</h2>
           <p>
-            Les offres proviennent des marketplaces partenaires de {siteConfig.name} :{" "}
-            {sources.join(", ")}. Elles sont interrogées via leurs programmes d&apos;affiliation,
-            puis ramenées à un format commun : prix, frais de livraison, état du produit,
-            disponibilité et vendeur.
+            Les offres proviennent des marketplaces interrogées par {siteConfig.name} :{" "}
+            {sources.join(", ")}. Elles sont relevées via leurs interfaces officielles, puis
+            ramenées à un format commun : prix, frais de livraison, état du produit, disponibilité
+            et vendeur.
           </p>
           <p>
             Le prix affiché est le <strong className="text-foreground">prix total</strong> : prix de
@@ -155,7 +157,7 @@ export default async function MethodologyPage({
             ))}
           </ul>
           <p>
-            La liste n&apos;est pas exhaustive : seules les marketplaces partenaires sont
+            La liste n&apos;est pas exhaustive : seules les marketplaces listées ci-dessus sont
             interrogées, et d&apos;autres vendeurs peuvent proposer le même produit. Aucun marchand
             ne paie pour apparaître ou pour être mieux placé.
           </p>
@@ -223,12 +225,24 @@ export default async function MethodologyPage({
         </section>
 
         <section className="space-y-3">
-          <h2>Comment {siteConfig.name} est rémunéré</h2>
+          <h2>Comment {siteConfig.name} est financé</h2>
           <p>
-            Les liens vers les marchands sont des liens d&apos;affiliation : quand vous achetez
-            après avoir cliqué, la marketplace peut nous verser une commission. Le prix que vous
-            payez ne change pas, et le montant de la commission n&apos;entre dans aucun calcul de
-            classement.{" "}
+            {affiliationActive ? (
+              <>
+                Les liens vers les marchands sont des liens d&apos;affiliation : quand vous achetez
+                après avoir cliqué, la marketplace peut nous verser une commission. Le prix que vous
+                payez ne change pas, et le montant de la commission n&apos;entre dans aucun calcul
+                de classement.
+              </>
+            ) : (
+              <>
+                Le site ne perçoit aujourd&apos;hui aucune rémunération : les liens vers les
+                marchands ne sont pas affiliés. À terme, il a vocation à être financé par les
+                programmes d&apos;affiliation des marketplaces ; le jour où l&apos;un sera actif,
+                cette page et la page Affiliation le diront, et cela ne changera ni les prix ni
+                l&apos;ordre des offres.
+              </>
+            )}{" "}
             <LocaleLink
               href="/legal/affiliate-disclosure"
               className="text-primary underline underline-offset-2"

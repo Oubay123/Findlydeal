@@ -19,7 +19,7 @@ export async function generateMetadata({
     alternates: localeAlternates(locale, "/faq"),
     title: "FAQ",
     description:
-      "Questions fréquentes sur Findlydeal : gratuité du comparateur, méthode de détection des bonnes affaires, liens affiliés et plateformes comparées.",
+      "Questions fréquentes sur Findlydeal : gratuité du comparateur, méthode de détection des bonnes affaires, financement et plateformes comparées.",
   };
 }
 

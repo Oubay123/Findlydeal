@@ -14,141 +14,125 @@ export async function generateMetadata({
   const { locale } = await params;
   return {
     alternates: localeAlternates(locale, "/legal/cookies"),
-    title: "Cookies",
+    title: "Politique de cookies",
     description:
-      "Politique de cookies de Findlydeal : cookies strictement nécessaires, mesure d'audience et cookies d'affiliation déposés par les marketplaces partenaires.",
+      "Politique de cookies de Findlydeal : aucun cookie non essentiel, pas de bandeau parce qu'il n'y a rien à accepter, et le détail du stockage local utilisé.",
   };
 }
 
 const SECTIONS = [
-  { title: "Qu'est-ce qu'un cookie" },
-  { title: "Ce que Findlydeal dépose aujourd'hui" },
-  { title: "Les cookies d'affiliation" },
-  { title: "Mesure d'audience" },
-  { title: "Gérer vos cookies" },
-  { title: "Supprimer les cookies existants" },
+  { title: "L'essentiel" },
+  { title: "Pourquoi il n'y a pas de bandeau cookies" },
+  { title: "Stockage utilisé par le site" },
+  { title: "Cookies déposés par l'hébergeur" },
+  { title: "Ce qui se passe quand vous cliquez vers un marchand" },
+  { title: "Si un outil de mesure d'audience est ajouté un jour" },
+  { title: "Gérer et supprimer le stockage" },
 ];
 
 /**
  * GENERIC TEMPLATE, NOT LEGAL ADVICE.
  *
- * This page describes the site as it actually is today: no analytics, no
- * advertising pixel, no third-party script, and therefore nothing requiring
- * consent. The "Mesure d'audience" section is written as a forward-looking
- * commitment rather than a description of an existing tool.
- *
- * REVISE THIS PAGE the day a measurement tool is added, and flip
- * `CONSENT_REQUIRED` in `src/lib/consent/index.ts` at the same time.
+ * Grounded in the code as it ships: no analytics script, no third-party tag,
+ * no advertising cookie; sessionStorage for the comparison basket and
+ * localStorage for a dormant consent record (see src/lib/consent). The legal
+ * frame is the ePrivacy rules as implemented by article 82 of the French
+ * loi Informatique et Libertés (CNIL doctrine: strictly necessary storage is
+ * exempt from consent) and article 45c let. b of the Swiss LTC (information
+ * and opt-out). If any tracker ships later, this page AND a consent banner
+ * must land in the same release.
  */
 export default function CookiesPage() {
   return (
     <LegalPage
       title="Politique de cookies"
-      intro="Ce que le site dépose sur votre appareil, ce que déposent les marchands quand vous suivez un lien, et comment reprendre la main."
-      lastUpdated="2026-08-23"
+      intro="Le site n'utilise aujourd'hui aucun cookie non essentiel et n'embarque aucun traceur tiers. Cette page détaille le peu qui existe."
+      lastUpdated="2026-11-13"
       sections={SECTIONS}
     >
-      <h2 id={slugify("Qu'est-ce qu'un cookie")}>Qu&apos;est-ce qu&apos;un cookie</h2>
-      <p>
-        Un cookie est un petit fichier déposé par un site dans votre navigateur. Il permet de
-        mémoriser une information entre deux pages ou entre deux visites : une préférence
-        d&apos;affichage, une session, ou l&apos;origine d&apos;une visite.
-      </p>
-      <p>
-        On distingue les cookies <strong>internes</strong>, déposés par le site que vous consultez,
-        et les cookies <strong>tiers</strong>, déposés par un autre domaine.
-      </p>
+      <h2 id={slugify("L'essentiel")}>1. L&apos;essentiel</h2>
+      <ul>
+        <li>Aucun cookie publicitaire, aucun pistage entre sites.</li>
+        <li>Aucun outil de mesure d&apos;audience à ce jour.</li>
+        <li>Aucun bouton de partage ni script de réseau social.</li>
+        <li>
+          Le site n&apos;écrit dans votre navigateur que deux informations, décrites ci-dessous, et
+          elles ne sont jamais transmises à nos serveurs.
+        </li>
+      </ul>
 
-      <h2 id={slugify("Ce que Findlydeal dépose aujourd'hui")}>
-        Ce que {siteConfig.name} dépose aujourd&apos;hui
+      <h2 id={slugify("Pourquoi il n'y a pas de bandeau cookies")}>
+        2. Pourquoi il n&apos;y a pas de bandeau cookies
       </h2>
       <p>
-        <strong>Aucun cookie non essentiel.</strong> Le site n&apos;intègre à ce jour ni outil de
-        mesure d&apos;audience, ni pixel publicitaire, ni script tiers.
-      </p>
-      <p>
-        Il utilise en revanche le <strong>stockage de session</strong> de votre navigateur, une
-        technologie voisine, pour mémoriser les produits que vous sélectionnez en vue d&apos;une
-        comparaison. Cette information reste sur votre appareil, n&apos;est jamais transmise à un
-        serveur, et disparaît lorsque vous fermez l&apos;onglet. Elle est strictement nécessaire au
-        fonctionnement de la fonction de comparaison et ne requiert pas de consentement.
+        Le consentement n&apos;est requis que pour les cookies et traceurs non essentiels au service
+        demandé (article 82 de la loi française «&nbsp;Informatique et Libertés&nbsp;», transposant
+        la directive ePrivacy, et lignes directrices de la CNIL&nbsp;; article 45c, let.&nbsp;b de
+        la loi suisse sur les télécommunications). Le site n&apos;en utilisant aucun, il n&apos;y a
+        rien à accepter ni à refuser&nbsp;: afficher un bandeau serait de la décoration. Le
+        mécanisme de consentement est prêt dans le code et sera activé <em>avant</em> tout ajout
+        d&apos;un traceur soumis à consentement.
       </p>
 
-      <h2 id={slugify("Les cookies d'affiliation")}>Les cookies d&apos;affiliation</h2>
+      <h2 id={slugify("Stockage utilisé par le site")}>3. Stockage utilisé par le site</h2>
+      <ul>
+        <li>
+          <strong>findlydeal:compare</strong> (stockage de session)&nbsp;: la liste des produits que
+          vous avez ajoutés au comparateur, pour la durée de l&apos;onglet. Supprimée
+          automatiquement à sa fermeture. Strictement nécessaire à la fonction
+          «&nbsp;Comparer&nbsp;», donc exemptée de consentement.
+        </li>
+        <li>
+          <strong>findlydeal:consent</strong> (stockage local)&nbsp;: l&apos;enregistrement de votre
+          choix si un consentement devait être demandé un jour. Tant qu&apos;aucun traceur
+          n&apos;existe, rien n&apos;y est écrit.
+        </li>
+      </ul>
+
+      <h2 id={slugify("Cookies déposés par l'hébergeur")}>
+        4. Cookies déposés par l&apos;hébergeur
+      </h2>
       <p>
-        C&apos;est le point le plus important de cette page. Lorsque vous cliquez sur une offre et
-        que vous êtes redirigé vers une marketplace,{" "}
-        <strong>
-          c&apos;est cette marketplace, et non {siteConfig.name}, qui dépose un cookie sur votre
-          appareil
-        </strong>
-        . Ce cookie sert à lui indiquer que la visite vient de notre site, afin que la commission
-        nous soit attribuée si vous achetez.
+        Le site est diffusé par Cloudflare, qui peut déposer des cookies strictement techniques de
+        sécurité et d&apos;équilibrage (par exemple <code>__cf_bm</code>, protection contre les
+        robots, durée de vie d&apos;environ trente minutes). Ils ne servent qu&apos;à protéger le
+        service, ne suivent pas votre navigation d&apos;un site à l&apos;autre, et relèvent de la
+        catégorie des cookies essentiels exemptés de consentement.
       </p>
+
+      <h2 id={slugify("Ce qui se passe quand vous cliquez vers un marchand")}>
+        5. Ce qui se passe quand vous cliquez vers un marchand
+      </h2>
       <p>
-        Ces cookies sont déposés sur le domaine du marchand, sous sa responsabilité et selon sa
-        propre politique. Leur durée de vie varie généralement de quelques jours à trente jours
-        selon le programme. Nous n&apos;y avons pas accès et ne pouvons ni les lire, ni les
-        supprimer.
-      </p>
-      <p>
-        Le fonctionnement de ce modèle est détaillé sur notre page{" "}
+        Quand vous ouvrez une annonce, vous arrivez sur le site de la marketplace (eBay
+        aujourd&apos;hui), qui applique sa propre politique de cookies et vous présente ses propres
+        choix de consentement. Si un programme d&apos;affiliation devient actif un jour, c&apos;est
+        la marketplace qui déposerait, sur son propre site, le cookie servant à attribuer
+        l&apos;achat&nbsp;; la page{" "}
         <LocaleLink href="/legal/affiliate-disclosure">
-          transparence sur l&apos;affiliation
-        </LocaleLink>
-        .
+          Transparence sur l&apos;affiliation
+        </LocaleLink>{" "}
+        décrit ce mécanisme et son état actuel (inactif).
       </p>
 
-      <h2 id={slugify("Mesure d'audience")}>Mesure d&apos;audience</h2>
+      <h2 id={slugify("Si un outil de mesure d'audience est ajouté un jour")}>
+        6. Si un outil de mesure d&apos;audience est ajouté un jour
+      </h2>
       <p>
-        Aucun outil de mesure d&apos;audience n&apos;est actuellement installé. Si nous en ajoutons
-        un, nous nous engageons à :
-      </p>
-      <ul>
-        <li>
-          recueillir votre consentement préalable par une bannière offrant un refus aussi simple
-          qu&apos;une acceptation ;
-        </li>
-        <li>ne déclencher aucun script de mesure avant ce consentement ;</li>
-        <li>mettre à jour cette page et la politique de confidentialité en même temps.</li>
-      </ul>
-
-      <h2 id={slugify("Gérer vos cookies")}>Gérer vos cookies</h2>
-      <p>
-        Tant qu&apos;aucun cookie non essentiel n&apos;est déposé, aucune bannière de consentement
-        ne s&apos;affiche : il serait trompeur de vous demander d&apos;accepter ou de refuser
-        quelque chose qui n&apos;existe pas. Le mécanisme de recueil est en place et s&apos;activera
-        automatiquement le jour où un traitement soumis à consentement sera introduit.
-      </p>
-      <p>
-        Vous gardez la possibilité de bloquer tous les cookies depuis les réglages de votre
-        navigateur. Notez que bloquer les cookies tiers empêchera l&apos;attribution des ventes aux
-        sites qui, comme le nôtre, vivent de l&apos;affiliation, sans rien changer au prix que vous
-        payez.
+        Le besoin viendra peut-être de mesurer la fréquentation. Le choix se portera d&apos;abord
+        sur une solution sans cookie et sans donnée personnelle, exemptée de consentement au sens
+        des lignes directrices de la CNIL. Si une solution soumise à consentement était retenue, le
+        bandeau serait activé au préalable et cette page mise à jour, avec le nom de l&apos;outil,
+        les données traitées et la durée de vie exacte de chaque traceur.
       </p>
 
-      <h2 id={slugify("Supprimer les cookies existants")}>Supprimer les cookies existants</h2>
-      <p>La marche à suivre selon votre navigateur :</p>
-      <ul>
-        <li>
-          <strong>Chrome</strong> : Paramètres, Confidentialité et sécurité, Cookies et autres
-          données des sites.
-        </li>
-        <li>
-          <strong>Firefox</strong> : Paramètres, Vie privée et sécurité, Cookies et données de
-          sites.
-        </li>
-        <li>
-          <strong>Safari</strong> : Réglages, Confidentialité, Gérer les données de sites web.
-        </li>
-        <li>
-          <strong>Edge</strong> : Paramètres, Cookies et autorisations de site.
-        </li>
-      </ul>
+      <h2 id={slugify("Gérer et supprimer le stockage")}>7. Gérer et supprimer le stockage</h2>
       <p>
-        Pour toute question :{" "}
-        <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>. Voir aussi
-        notre <LocaleLink href="/legal/privacy">politique de confidentialité</LocaleLink>.
+        Vous pouvez à tout moment supprimer cookies et stockage local depuis les réglages de votre
+        navigateur (généralement «&nbsp;Confidentialité&nbsp;» puis «&nbsp;Données de sites&nbsp;»),
+        ou naviguer en fenêtre privée&nbsp;: le site reste entièrement utilisable, seule la
+        sélection du comparateur se vide. Pour toute question&nbsp;:{" "}
+        <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.
       </p>
     </LegalPage>
   );

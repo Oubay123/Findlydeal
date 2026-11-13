@@ -16,3 +16,15 @@ export function describeLiveSources(): string {
   if (labels.length <= 1) return labels[0] ?? "";
   return `${labels.slice(0, -1).join(", ")} et ${labels[labels.length - 1]}`;
 }
+
+/**
+ * Whether outbound links actually carry an affiliate tag right now.
+ *
+ * True only when `EBAY_CAMPAIGN_ID` is set in the environment, which is also
+ * exactly when `itemAffiliateWebUrl` / `buildAffiliateUrl` produce tracked
+ * links. Every page that talks about affiliation reads this instead of
+ * assuming, so the site never claims commissions it does not earn.
+ */
+export function isAffiliationActive(): boolean {
+  return Boolean(process.env.EBAY_CAMPAIGN_ID?.trim());
+}

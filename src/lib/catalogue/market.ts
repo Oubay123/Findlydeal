@@ -103,3 +103,12 @@ export function summarize(rows: BarometerRow[]): BarometerSummary {
 export function lowestNewCents(offers: Offer[]): number | undefined {
   return marketByCondition(offers).find((row) => row.condition === "new")?.lowestCents;
 }
+
+/** Readings older than this are flagged on the page instead of shown quietly. */
+export const STALE_AFTER_MS = 48 * 3600 * 1000;
+
+/** True when the newest reading of these offers is older than `STALE_AFTER_MS`. */
+export function isStale(offers: Offer[]): boolean {
+  const latest = lastFetchedAt(offers);
+  return Boolean(latest && Date.now() - Date.parse(latest) > STALE_AFTER_MS);
+}

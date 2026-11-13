@@ -97,18 +97,19 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         />
 
         <header className="mx-auto mt-8 max-w-[68ch] space-y-4">
-          <ul className="flex flex-wrap gap-2">
-            {article.tags.map((tag) => (
-              <li key={tag}>
+          <p className="text-sm font-medium text-primary">
+            {article.tags.map((tag, index) => (
+              <span key={tag}>
+                {index > 0 ? <span className="text-muted-foreground"> et </span> : null}
                 <LocaleLink
                   href={`/blog/theme/${tagSlug(tag)}`}
-                  className="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                  className="underline-offset-4 hover:underline"
                 >
                   {tag}
                 </LocaleLink>
-              </li>
+              </span>
             ))}
-          </ul>
+          </p>
 
           <h1 className="text-3xl leading-tight font-semibold text-balance sm:text-4xl">
             {article.title}
@@ -161,12 +162,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {article.outline.length > 2 ? (
           <nav
             aria-labelledby="article-toc"
-            className="mx-auto mb-8 max-w-[68ch] rounded-2xl border bg-white px-6 py-5"
+            className="mx-auto mb-10 max-w-[68ch] border-l-2 border-foreground/15 py-1 pl-5"
           >
             <h2 id="article-toc" className="text-sm font-semibold">
               Dans cet article
             </h2>
-            <ol className="mt-3 space-y-1.5 text-sm">
+            <ol className="mt-2 space-y-1 text-sm">
               {article.outline.map((heading) => (
                 <li key={heading}>
                   <a
@@ -190,9 +191,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <h2 id="article-faq" className="font-display text-2xl leading-tight font-semibold">
               Questions fréquentes
             </h2>
-            <dl className="mt-4 divide-y rounded-2xl border bg-white">
+            <dl className="mt-4 divide-y border-y">
               {article.faq.map((item) => (
-                <div key={item.question} className="px-6 py-4">
+                <div key={item.question} className="py-4">
                   <dt className="font-display text-base font-semibold">{item.question}</dt>
                   <dd className="mt-1.5 text-sm leading-relaxed text-foreground/80">
                     {item.answer}
@@ -232,8 +233,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         <p className="mx-auto mt-10 max-w-[68ch] border-t pt-5 text-xs leading-relaxed text-muted-foreground">
           Article rédigé par {article.author.name}. Findlydeal ne vend aucun produit et aucun
-          marchand ne paie pour être cité dans nos guides ; les liens vers le comparateur mènent à
-          des offres dont les liens sont affiliés, selon les règles décrites dans notre{" "}
+          marchand ne paie pour être cité dans nos guides. Les offres vers lesquelles le comparateur
+          renvoie suivent les règles décrites dans notre{" "}
           <LocaleLink href="/methodologie" className="underline underline-offset-2">
             méthodologie
           </LocaleLink>
@@ -244,13 +245,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           .
         </p>
 
-        <aside className="mx-auto mt-14 max-w-[68ch] space-y-3 rounded-2xl bg-cream p-8 text-center">
-          <h2 className="font-display text-xl font-semibold">Passez de la théorie à la pratique</h2>
-          <p className="text-sm text-muted-foreground">
-            Comparez le prix d&apos;un produit chez de nombreux vendeurs en une seule recherche.
-          </p>
-          <Button asChild size="md" className="mt-2">
-            <LocaleLink href="/search">Lancer une comparaison</LocaleLink>
+        <aside className="mx-auto mt-14 flex max-w-[68ch] flex-wrap items-center justify-between gap-4 border-y py-6">
+          <div>
+            <h2 className="text-base font-semibold">Comparer un prix maintenant</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Neuf, reconditionné et occasion, livraison comprise, en une recherche.
+            </p>
+          </div>
+          <Button asChild size="md">
+            <LocaleLink href="/search">Ouvrir le comparateur</LocaleLink>
           </Button>
         </aside>
       </Container>

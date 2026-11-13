@@ -67,6 +67,6 @@ export const config = {
    * engines look for by convention.
    */
   matcher: [
-    "/((?!_next|api|\\.well-known|favicon\\.ico|icon\\.svg|apple-icon\\.png|robots\\.txt|sitemap\\.xml).*)",
+    "/((?!_next|api|\\.well-known|favicon\\.ico|icon\\.svg|apple-icon\\.png|robots\\.txt|sitemap\\.xml|llms\\.txt|[0-9a-f]{32}\\.txt).*)",
   ],
 };

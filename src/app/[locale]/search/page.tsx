@@ -39,7 +39,7 @@ export async function generateMetadata({
   return {
     title: "Comparateur de prix",
     description:
-      "Recherchez un produit et comparez son prix chez de nombreux vendeurs : filtres par catégorie, budget, état et plateforme, tri par meilleure affaire.",
+      "Recherchez un produit et comparez son prix en neuf, reconditionné et occasion : filtres par catégorie, budget et état, tri par meilleure affaire.",
     alternates: localeAlternates(locale, "/search"),
     ...(isQueryPage || isDemoCatalogueActive() ? { robots: { index: false, follow: true } } : {}),
   };

@@ -54,7 +54,7 @@ export const siteConfig = {
    * marketplaces" while there are four) and identical on every surface.
    */
   description:
-    "Findlydeal compare les prix du neuf, du reconditionné et de l'occasion entre de nombreux vendeurs, en une seule recherche, et signale les offres nettement sous le prix médian.",
+    "Findlydeal compare les prix du neuf, du reconditionné et de l'occasion, livraison comprise, en une seule recherche, et signale les offres nettement sous le prix médian.",
   url: resolveSiteUrl(),
   locale: "fr",
   contactEmail: "contact@findlydeal.com",
