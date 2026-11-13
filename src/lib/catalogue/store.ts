@@ -301,7 +301,13 @@ function supabaseStore({ url, key }: SupabaseConfig): CatalogueStore {
         });
       }
 
-      // One price point per product and condition: the start of a history.
+      // One price point per product, condition and day. The history is read
+      // by day (median of the day), so writing at every pass (~6/day) would
+      // only grow the table six times faster for the same chart. A full pass
+      // takes under four hours, so every bucket comes through the 00:00-04:00
+      // UTC window at least once: writing only in that window yields one
+      // point per day (occasionally two, harmless for a median).
+      const writePoints = new Date().getUTCHours() < 4;
       const points = products.flatMap((product) => {
         const byCondition = new Map<string, number[]>();
         for (const offer of product.offers) {
@@ -323,11 +329,21 @@ function supabaseStore({ url, key }: SupabaseConfig): CatalogueStore {
           };
         });
       });
-      if (points.length > 0) {
+      if (writePoints && points.length > 0) {
         await rest("price_points", {
           method: "POST",
           prefer: "return=minimal",
           body: JSON.stringify(points),
+        });
+      }
+
+      // Retention: 13 months of history is enough to show a year of seasons.
+      // One cheap DELETE per day (first bucket, same window), so the table
+      // reaches a steady size instead of growing forever.
+      if (writePoints && bucket === 0) {
+        const horizon = new Date(Date.now() - 395 * 24 * 3600 * 1000).toISOString();
+        await rest(`price_points?captured_at=lt.${encodeURIComponent(horizon)}`, {
+          method: "DELETE",
         });
       }
 
